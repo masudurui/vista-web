@@ -216,6 +216,73 @@
             gap: 40px;
         }
 
+        /* Comparison Section */
+        .comparison {
+            padding: 80px 0;
+            background: var(--safe-bg);
+        }
+
+        .comparison h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tbody tr:nth-child(odd) {
+            background: var(--safe-bg);
+        }
+
+        .comparison-table th:first-child,
+        .comparison-table td:first-child {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .comparison-table .check {
+            color: var(--success);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .comparison-table .cross {
+            color: var(--text-secondary);
+            font-weight: 700;
+            font-size: 1.2rem;
+            opacity: 0.4;
+        }
+
+        .comparison-table .vista-highlight {
+            background: rgba(0, 102, 255, 0.05);
+            font-weight: 600;
+        }
+
         .feature-card {
             padding: 30px;
             background: var(--safe-bg);
@@ -375,8 +442,8 @@
                 <div class="logo">Vista</div>
                 <ul class="nav-links">
                     <li><a href="#features">Features</a></li>
+                    <li><a href="#comparison">Compare</a></li>
                     <li><a href="#faq">FAQ</a></li>
-                    <li><a href="#privacy">Privacy</a></li>
                 </ul>
             </nav>
         </div>
@@ -442,6 +509,94 @@
                     <p>All processing on your Mac. No accounts, no cloud, no tracking. Design and privacy, never compromised.</p>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison" id="comparison">
+        <div class="container">
+            <h2>How Vista compares</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th style="color: var(--accent);">Vista</th>
+                        <th>Homy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="vista-highlight">
+                        <td>Design Customization</td>
+                        <td class="check">✓ Infinite personalization</td>
+                        <td class="cross">✗ 2 fixed looks</td>
+                    </tr>
+                    <tr class="vista-highlight">
+                        <td>Interface Philosophy</td>
+                        <td class="check">✓ Design-first</td>
+                        <td class="cross">Finder-replacement</td>
+                    </tr>
+                    <tr class="vista-highlight">
+                        <td>Large File Library Support</td>
+                        <td class="check">✓ Built for creators</td>
+                        <td class="check">✓ Works well</td>
+                    </tr>
+                    <tr>
+                        <td>Natural Language Search</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Text in Images Search</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Download Source Tracking</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Duplicate File Finder</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Quick Search (⇧⌘Space)</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr class="vista-highlight">
+                        <td>Local-Only Processing</td>
+                        <td class="check">✓ No cloud</td>
+                        <td class="check">✓ No cloud</td>
+                    </tr>
+                    <tr class="vista-highlight">
+                        <td>Pricing Model</td>
+                        <td class="check">✓ One-time purchase</td>
+                        <td class="cross">✗ Annual subscription</td>
+                    </tr>
+                    <tr class="vista-highlight">
+                        <td>Menu Bar Integration</td>
+                        <td class="check">✓ Customizable</td>
+                        <td class="check">✓ Fixed design</td>
+                    </tr>
+                    <tr>
+                        <td>Saved Searches</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td>Automatic Cleanup Rules</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr class="vista-highlight">
+                        <td>Target Audience</td>
+                        <td class="check">✓ Creative professionals</td>
+                        <td class="cross">General users</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 
