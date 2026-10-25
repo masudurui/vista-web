@@ -6,9 +6,12 @@
 <title>Vista — A visual file browser for macOS</title>
 <meta name="description" content="Vista is a file browser for macOS that shows your files as thumbnails, sorted by kind. Color and shape each folder, and search the text inside screenshots and PDFs. Everything runs on your Mac.">
 <meta name="theme-color" content="#FFFFFF">
-<link rel="icon" type="image/svg+xml" href="images/vista-icon.svg">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" type="image/svg+xml" href="images/vista-icon.svg" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -354,20 +357,14 @@
   .cta-arrow:focus-visible .cta-icon { opacity: 0; filter: blur(8px); transform: translateX(-100%) scaleX(.5); }
   .cta-arrow:focus-visible .cta-arrow-icon { opacity: 1; filter: blur(0); transform: translateX(0) scaleX(1); }
 
-  /* Hero CTAs sit a touch wider so the hover arrow clears the rounded edge. */
+  /* Hero CTAs sit a touch wider so the hover arrow clears the rounded edge.
+     The header CTA is the same primary button at the same size. */
   .hero-cta .btn,
-  .hero-cta .btn-quiet { min-width: 160px; padding-inline: 22px; justify-content: center; }
+  .hero-cta .btn-quiet,
+  #site-head .btn { min-width: 160px; padding-inline: 22px; justify-content: center; }
 
   /* Same component, one step larger for the footer's closing panel. */
   .cta-lg { height: 50px; padding-inline: 26px; font-size: 16px; min-width: 170px; justify-content: center; }
-  /* Compact version of the same CTA component, sized for the header. */
-  .cta-sm { height: 38px; padding-inline: 14px; font-size: 13.5px; min-width: 138px; justify-content: center; }
-  .cta-sm .cta-arrow-icon { right: 12px; }
-  @media (max-width: 420px) {
-    /* Touch widths: no hover arrow, so the buttons can sit tighter. */
-    #site-head .cta-sm { min-width: 0; padding-inline: 12px; font-size: 13px; gap: 0; }
-    #site-head .cta-sm .cta-arrow-icon { display: none; }
-  }
   @media (max-width: 480px) {
     .foot-panel-foot .cta-lg { flex: 1 1 100%; }
   }
@@ -1010,10 +1007,10 @@
         <a href="#faq" class="hover:text-ink transition-colors">FAQ</a>
       </nav>
       <div class="flex items-center gap-2">
-        <a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" class="btn cta-arrow cta-sm" data-polar-checkout data-polar-checkout-theme="light">
+        <a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" class="btn cta-arrow" data-polar-checkout data-polar-checkout-theme="light">
           <span class="cta-label">Buy now — $19</span>
           <span class="cta-arrow-icon" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
           </span>
         </a>
       </div>
