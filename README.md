@@ -11,12 +11,6 @@ A beautiful landing page for Vista, a Mac app that automatically organizes your 
 - **Live Text Search** — Search inside screenshots and images
 - **Privacy First** — All processing happens on your Mac, no cloud, no tracking
 
-## Design Inspiration
-
-This landing page draws design patterns from:
-- [Onlook (Ring companion app)](https://onlook.cam) — Menu bar app UI as hero, privacy-first messaging
-- [Onlight (Hue companion app)](https://onlig.ht) — Lifestyle-focused copy, minimal aesthetic
-
 ## Tech Stack
 
 - Single-file HTML + CSS + vanilla JavaScript
