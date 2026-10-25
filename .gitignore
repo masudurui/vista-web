@@ -1,9 +1,24 @@
+# Dependencies / build output
 node_modules/
-.DS_Store
-*.log
-.env
-.vscode/
-.idea/
 dist/
 build/
 .cache/
+*.log
+.env
+
+# Editor + agent config
+.vscode/
+.idea/
+.claude/
+
+# macOS
+.DS_Store
+images/.DS_Store
+
+# Raw screen recordings — the page ships compressed .mp4 files only
+*.mov
+
+# Source/backup images and HTML snapshots not used by the page
+images/_originals/
+index.before-*.html
+index.original.html

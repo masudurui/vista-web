@@ -1,698 +1,2146 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Vista: Organize your Mac. Find anything. Reclaim storage without digging.">
-    <title>Vista – File Organization for Mac</title>
-    <style>
-        :root {
-            --bg: #ffffff;
-            --text-primary: #1a1a1a;
-            --text-secondary: #666666;
-            --border: #e5e5e5;
-            --accent: #0066ff;
-            --accent-hover: #0052cc;
-            --success: #34a853;
-            --safe-bg: #f8f9fa;
-            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vista — A visual file browser for macOS</title>
+<meta name="description" content="Vista is a file browser for macOS that shows your files as thumbnails, sorted by kind. Color and shape each folder, and search the text inside screenshots and PDFs. Everything runs on your Mac.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" type="image/svg+xml" href="images/vista-icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          bg: 'var(--bg)', stage: 'var(--stage)', surface: 'var(--surface)',
+          ink: 'var(--ink)', muted: 'var(--muted)', faint: 'var(--faint)', line: 'var(--line)', accent: 'var(--accent)'
+        },
+        fontFamily: { sans: ['var(--font)'] }
+      }
+    }
+  };
+</script>
+<style>
+  :root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  html{scroll-padding-top:calc(64px + env(safe-area-inset-top,0px))}
+  body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}
+  img{max-width:100%}
+  [hidden]:not([hidden=until-found i]){display:none!important}
+</style>
+<style>
+  :root {
+    color-scheme: light;
+    /* Page canvas. */
+    --bg: #FFFFFF;
+    --bg-rgb: 255 255 255; /* --bg as channels, for the header's frosted layer */
+    --stage: #F5F8F6;
+    --surface: #FFFFFF;
+    --paper: #E9F3EE;
+    --ink: #05261C;
+    --muted: #42554C;
+    --faint: #52645C;
+    --line: #E4EBE7;
+    --line-strong: #CFDCD5;
+    --accent: #13803B;
+    --accent-hover: #0F6B31;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #D3E8DA;
+    --accent-soft-hover: #C5E0CD;
+    --accent-strong: #0F6B31;
+    --ease-out: cubic-bezier(.23, 1, .32, 1);
+    --ease-in-out: cubic-bezier(.77, 0, .175, 1);
+    --r-card: 18px;
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", system-ui, sans-serif;
+  }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #0f0f0f;
-                --text-primary: #ffffff;
-                --text-secondary: #a0a0a0;
-                --border: #2a2a2a;
-                --accent: #4d94ff;
-                --accent-hover: #66a3ff;
-                --success: #4adb6a;
-                --safe-bg: #1a1a1a;
-                --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-                --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.3);
-            }
-        }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  /* Site header (Atlas-style): hidden on arrival, slides in once the page is
+     scrolled past --head-show-at, and leaves again at the top. */
+  .site-head {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 70;
+    padding-top: env(safe-area-inset-top, 0px);
+    --head-show-at: 80px;
+    transform: translateY(-100%);
+    pointer-events: none;
+    transition: transform 400ms cubic-bezier(.2, .9, .3, 1.08), box-shadow 200ms ease;
+    will-change: transform;
+  }
+  .site-head::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgb(var(--bg-rgb) / .86);
+    -webkit-backdrop-filter: blur(14px) saturate(1.04);
+    backdrop-filter: blur(14px) saturate(1.04);
+    opacity: 0;
+    transition: opacity 200ms ease;
+    pointer-events: none;
+  }
+  .site-head.is-visible { transform: translateY(0); pointer-events: auto; box-shadow: 0 1px 0 var(--line), 0 16px 30px -28px rgba(5, 38, 28, .45); }
+  .site-head.is-visible::before { opacity: 1; }
+  .site-head-inner {
+    width: 100%;
+    max-width: 1232px;
+    margin-inline: auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  h1, h2 { text-wrap: balance; }
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
-            background: var(--bg);
-            color: var(--text-primary);
-            line-height: 1.6;
-            transition: background 0.3s, color 0.3s;
-        }
+  .h1 { font-weight: 600; letter-spacing: -0.05em; line-height: 0.95; font-size: clamp(48px, 8vw, 100px); }
+  .h2 { font-weight: 600; letter-spacing: -0.04em; line-height: 1.02; font-size: clamp(36px, 5.2vw, 64px); }
+  .eyebrow { font-size: 13px; font-weight: 500; color: var(--accent-strong); }
+  .lede { font-size: clamp(17px, 1.6vw, 19px); line-height: 1.5; color: var(--muted); text-wrap: pretty; }
+  .label { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink); }
+  .label-sub { margin-left: 6px; font-weight: 400; color: var(--faint); }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+  .hero-eyebrow { font-size: 15px; }
+  .hero-h1 { font-size: clamp(46px, 6.4vw, 84px); }
+  @media (min-width: 768px) { .hero-h1 { white-space: nowrap; text-wrap: nowrap; } }
+  .hero-lede { font-size: clamp(19px, 2vw, 24px); line-height: 1.42; letter-spacing: -0.012em; color: var(--muted); max-width: var(--hero-measure, 34em); text-wrap: pretty; }
+  .hero-lede .hl { color: var(--ink); }
+  @media (max-width: 640px) { .hero-lede { max-width: none; } }
 
-        /* Header / Navigation */
-        header {
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            background: var(--bg);
-            z-index: 100;
-        }
+  /* Hero entrance — Linear-style: the copy rises in with a short blur, then the
+     product shot lifts in behind it. `backwards` fill means the delayed start is
+     already hidden, and once each run ends the element falls back to its base
+     state so the scroll parallax below can take over the transform. */
+  @keyframes hero-copy-in {
+    from { opacity: 0; transform: translate3d(0, 16px, 0); filter: blur(8px); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
+  }
+  @keyframes hero-shot-in {
+    from { opacity: 0; filter: blur(14px); }
+    to   { opacity: 1; filter: blur(0); }
+  }
+  .hero-eyebrow, .hero-h1, .hero-lede, .hero-cta, .hero-meta {
+    animation: hero-copy-in .95s cubic-bezier(.16, 1, .3, 1) backwards;
+  }
+  .hero-eyebrow { animation-delay: .05s; }
+  .hero-h1 { animation-delay: .13s; }
+  .hero-lede { animation-delay: .22s; }
+  .hero-cta { animation-delay: .31s; }
+  .hero-meta { animation-delay: .39s; }
+  .media.hero-media {
+    animation: hero-shot-in 1.15s cubic-bezier(.16, 1, .3, 1) .44s backwards;
+  }
+  /* MacBook-style frame around the hero shot: dark bezel = display surround,
+     silver base with a hinge notch underneath. */
+  .laptop {
+    position: relative;
+    isolation: isolate;
+    --lid-pad: clamp(5px, .6vw, 9px);
+    --lid-r: clamp(18px, 2.1vw, 28px);
+    --base-h: 12px;
+  }
+  /* The lid has four equal corners, so its bottom corners lift off the base.
+     This silver plane sits behind those corners and fills the white notch. */
+  .laptop::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: var(--base-h);
+    height: calc(var(--lid-r) + 6px);
+    z-index: -1;
+    background: linear-gradient(180deg, #232825, #0E1210);
+    pointer-events: none;
+  }
+  /* A soft floor shadow under the device, independent of the base edge. */
+  .laptop::after {
+    content: "";
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    bottom: -14px;
+    height: clamp(20px, 3vw, 42px);
+    z-index: -2;
+    border-radius: 50%;
+    background: radial-gradient(50% 50% at 50% 50%, rgba(5, 38, 28, .2), rgba(5, 38, 28, 0) 72%);
+    filter: blur(10px);
+    pointer-events: none;
+  }
+  .laptop-lid {
+    position: relative;
+    padding: var(--lid-pad);
+    border-radius: var(--lid-r);
+    background: linear-gradient(180deg, #252927, #0d100f);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14),
+                0 34px 70px -56px rgba(20, 32, 24, .4);
+  }
+  .laptop .laptop-lid > .media {
+    border: 0;
+    box-shadow: none;
+    /* Fallback only — data-src media carry their own source aspect inline, so a
+       1.82:1 video isn't forced into a 16:10 box and cropped. */
+    aspect-ratio: 16 / 10;
+    /* Rounded where it meets the lid at the top; the screen/video bottom edge is
+       deliberately square. */
+    border-radius: calc(var(--lid-r) - var(--lid-pad)) calc(var(--lid-r) - var(--lid-pad)) 0 0;
+    overflow: hidden;
+  }
+  /* Framed screens fill the display exactly; the frame's aspect ratio comes from
+     the media itself (see the aspect-ratio style on each figure / the loader), so
+     nothing is cropped. */
+  .laptop .laptop-lid > .media > img,
+  .laptop .laptop-lid > .media > video {
+    object-fit: cover;
+    object-position: center;
+  }
+  .laptop .laptop-lid > .media.center > img,
+  .laptop .laptop-lid > .media.center > video { object-position: center; }
+  .laptop-base {
+    position: relative;
+    height: var(--base-h);
+    margin: 0 -1.4%;
+    border-radius: 5px 5px 0 0;
+    background: linear-gradient(180deg, #1E2421, #101412 55%, #0A0D0C);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08),
+                0 1px 0 rgba(0, 0, 0, .25),
+                0 18px 30px -26px rgba(5, 38, 28, .45);
+  }
+  .laptop-base::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 72px;
+    height: 4px;
+    border-radius: 0 0 6px 6px;
+    background: rgba(255, 255, 255, .08);
+  }
+  /* Isometric pose for the card art: tilted while out of view, settles flat as it
+     enters. Only added by JS, so reduced-motion users just get the flat state. */
+  .iso {
+    transform: perspective(1400px) rotateX(15deg) rotateY(-11deg) rotateZ(1.5deg) translateY(14px);
+    transform-origin: 50% 100%;
+    transition: transform 1.05s cubic-bezier(.16, 1, .3, 1);
+    will-change: transform;
+  }
+  .iso.is-flat {
+    transform: perspective(1400px) rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateY(0);
+  }
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+  .section { padding-top: clamp(112px, 13vw, 176px); }
 
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--accent);
-        }
+  /* Shared entrance for the sections below the hero: a short rise + blur,
+     staggered 50ms per item. Marketing motion can be slower than UI feedback. */
+  .rise {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    filter: blur(6px);
+    transition:
+      opacity 500ms var(--ease-out) var(--d, 0ms),
+      transform 600ms var(--ease-out) var(--d, 0ms),
+      filter 500ms var(--ease-out) var(--d, 0ms);
+  }
+  .rise.is-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+  @keyframes faq-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-        .nav-links {
-            display: flex;
-            gap: 40px;
-            list-style: none;
-        }
+  /* Section header: grid on desktop — eyebrow spans full width, title left,
+     paragraph beside it. Paragraph stays left-aligned at every breakpoint. */
+  .sec-head { display: grid; row-gap: 40px; column-gap: 56px; align-items: center; }
+  .sec-head > .lede { max-width: 44ch; margin-top: 12px; }
+  @media (min-width: 768px) {
+    .sec-head { grid-template-columns: fit-content(55%) minmax(0, 1fr); column-gap: 320px; }
+    .sec-head > .eyebrow { grid-column: 1 / -1; }
+    .sec-head > .lede { max-width: none; margin-top: 0; }
+  }
 
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
+  .intro-title { font-weight: 600; font-size: clamp(28px, 3.6vw, 48px); line-height: 1.2; letter-spacing: -0.032em; color: var(--muted); text-wrap: pretty; }
+  .intro-title .hl { color: var(--ink); }
+  .pillars { display: grid; gap: 56px; margin-top: clamp(48px, 6vw, 80px); }
+  @media (min-width: 768px) { .pillars { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; } }
+  @media (min-width: 1024px) { .pillars { gap: 48px; } }
+  .pillar-art { aspect-ratio: 4 / 3; position: relative; transform: perspective(1000px) translate3d(var(--mx, 0px), calc(var(--py, 0px) + var(--my, 0px)), 0) scale(var(--s, 1)) rotateX(calc(var(--brx, 0deg) + var(--rx, 0deg))) rotateY(calc(var(--bry, 0deg) + var(--ry, 0deg))); transform-origin: 50% 62%; will-change: transform; }
+  /* Private card: signals leaving the lock — stacks of dashes sliding along each
+     rail (a comet), plus a slow radar ping from the centre. */
+  .pulse { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .pulse-meteor { stroke-dasharray: 6 100; animation: pulse-meteor 3.4s linear infinite; }
+  @keyframes pulse-meteor { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -100; } }
+  .pulse-ping { transform-box: fill-box; transform-origin: center; animation: pulse-ping 3.4s cubic-bezier(.2, .7, .3, 1) infinite; }
+  @keyframes pulse-ping { 0% { transform: scale(.3); opacity: .5; } 70% { opacity: 0; } 100% { transform: scale(1.6); opacity: 0; } }
+  /* Linear-style figure caption: tiny label, then a hairline running to the edge. */
+  .pillar .fig { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+  .pillar .fig::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  /* Section motion — Linear-style: content rises out of a soft blur, the artwork
+     wipes up inside it, and each card drifts at a slightly different rate. */
+  .reveal { opacity: 0; transform: translate3d(0, 26px, 0); filter: blur(8px); }
+  .reveal.is-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+    transition: opacity .8s cubic-bezier(.16, 1, .3, 1),
+                transform .95s cubic-bezier(.16, 1, .3, 1),
+                filter .8s cubic-bezier(.16, 1, .3, 1);
+    transition-delay: var(--d, 0ms);
+  }
+  .pillar-art.reveal-clip { clip-path: inset(0 0 100% 0); }
+  .pillar-art.reveal-clip.is-in {
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 1s cubic-bezier(.16, 1, .3, 1);
+    transition-delay: var(--d, 0ms);
+  }
+  .pillar-art svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .pillar-art svg * { vector-effect: non-scaling-stroke; }
+  /* Visual card: the stacked planes lift apart on hover, staggered per layer —
+     the same idea as Linear's purposeLift, using --l and --d on each group. */
+  .pillar-art .lift { transition: transform .5s cubic-bezier(.16, 1, .3, 1); transition-delay: var(--d, 0ms); }
+  .pillar-art:hover .lift { transform: translateY(var(--l, 0px)); }
+  /* "Yours" fan: everything turns around the hub, so the five swatches open and
+     extend from the fixed centre instead of lifting away and binding together. */
+  .pillar-art--fan .lift { transform-origin: 200px 246px; }
+  .pillar-art--fan:hover .lift { transform: rotate(var(--fan, 0deg)) scale(var(--grow, 1)); }
+  .pillar-art--fan .fan-hub { transform-origin: 200px 246px; transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
+  .pillar-art--fan:hover .fan-hub { transform: scale(1.35); }
+  .pillar h3 { margin-top: 24px; font-size: 19px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
+  .pillar p { margin-top: 12px; font-size: 16px; line-height: 1.55; color: var(--muted); }
 
-        .nav-links a:hover {
-            color: var(--accent);
-        }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 20px; border-radius: 12px; background: var(--accent); color: var(--accent-ink); font-weight: 500; font-size: 15px; transition: background-color .15s ease, transform 140ms var(--ease-out); }
+  .btn:active { transform: scale(.97); }
+  @media (hover: hover) and (pointer: fine) {
+    .btn:hover { background: var(--accent-hover); }
+  }
+  .btn-quiet { display: inline-flex; align-items: center; height: 46px; padding: 0 20px; border-radius: 12px; background: var(--accent-soft); color: var(--accent-strong); font-weight: 500; font-size: 15px; box-shadow: inset 0 0 0 1px rgba(19, 128, 59, .10); transition: background-color .15s ease, transform 140ms var(--ease-out); }
+  .btn-quiet:active { transform: scale(.97); }
+  @media (hover: hover) and (pointer: fine) {
+    .btn-quiet:hover { background: var(--accent-soft-hover); }
+  }
 
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-        }
+  /* Hero CTAs — Atlas-style hover: the label slides left while an arrow wipes
+     in from the right (blur + scale), and a leading icon fades out. */
+  .cta-arrow { position: relative; overflow: hidden; }
+  .cta-arrow .cta-label { display: inline-block; --cta-shift: -14px; transition: transform 300ms cubic-bezier(.4, 0, .2, 1); }
+  .cta-arrow.has-icon { gap: 8px; }
+  .cta-arrow.has-icon .cta-label { --cta-shift: -24px; }
+  .cta-arrow .cta-icon,
+  .cta-arrow .cta-arrow-icon { display: inline-flex; align-items: center; justify-content: center; flex: none; transition: transform 300ms cubic-bezier(.4, 0, .2, 1), opacity 300ms cubic-bezier(.4, 0, .2, 1), filter 300ms cubic-bezier(.4, 0, .2, 1); }
+  .cta-arrow .cta-arrow-icon { position: absolute; right: 14px; opacity: 0; filter: blur(8px); transform: translateX(100%) scaleX(.5); }
+  @media (hover: hover) and (pointer: fine) {
+    .cta-arrow:hover .cta-label { transform: translateX(var(--cta-shift)); }
+    .cta-arrow:hover .cta-icon { opacity: 0; filter: blur(8px); transform: translateX(-100%) scaleX(.5); }
+    .cta-arrow:hover .cta-arrow-icon { opacity: 1; filter: blur(0); transform: translateX(0) scaleX(1); }
+  }
+  .cta-arrow:focus-visible .cta-label { transform: translateX(var(--cta-shift)); }
+  .cta-arrow:focus-visible .cta-icon { opacity: 0; filter: blur(8px); transform: translateX(-100%) scaleX(.5); }
+  .cta-arrow:focus-visible .cta-arrow-icon { opacity: 1; filter: blur(0); transform: translateX(0) scaleX(1); }
 
-        /* Hero Section */
-        .hero {
-            padding: 80px 0;
-            text-align: center;
-        }
+  /* Hero CTAs sit a touch wider so the hover arrow clears the rounded edge. */
+  .hero-cta .btn,
+  .hero-cta .btn-quiet { min-width: 160px; padding-inline: 22px; justify-content: center; }
 
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            line-height: 1.2;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+  /* Same component, one step larger for the footer's closing panel. */
+  .cta-lg { height: 50px; padding-inline: 26px; font-size: 16px; min-width: 170px; justify-content: center; }
+  /* Compact version of the same CTA component, sized for the header. */
+  .cta-sm { height: 38px; padding-inline: 14px; font-size: 13.5px; min-width: 138px; justify-content: center; }
+  .cta-sm .cta-arrow-icon { right: 12px; }
+  @media (max-width: 420px) {
+    /* Touch widths: no hover arrow, so the buttons can sit tighter. */
+    #site-head .cta-sm { min-width: 0; padding-inline: 12px; font-size: 13px; gap: 0; }
+    #site-head .cta-sm .cta-arrow-icon { display: none; }
+  }
+  @media (max-width: 480px) {
+    .foot-panel-foot .cta-lg { flex: 1 1 100%; }
+  }
+  .btn-sm { display: inline-flex; align-items: center; height: 34px; padding: 0 14px; border-radius: 10px; font-size: 13.5px; font-weight: 500; background: var(--accent-soft); color: var(--accent-strong); box-shadow: inset 0 0 0 1px rgba(19, 128, 59, .10); transition: background-color .15s ease, transform 140ms var(--ease-out); }
+  .btn-sm:active { transform: scale(.97); }
+  @media (hover: hover) and (pointer: fine) {
+    .btn-sm:hover { background: var(--accent-soft-hover); }
+  }
 
-        .hero .subheading {
-            font-size: 1.3rem;
-            color: var(--text-secondary);
-            margin-bottom: 40px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+  .appicon { border-radius: 23%; background: url("images/vista-icon.svg") center / cover no-repeat; overflow: hidden; flex: none; }
 
-        .cta-primary {
-            display: inline-block;
-            background: var(--accent);
-            color: white;
-            padding: 14px 32px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background 0.2s, transform 0.1s;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-        }
+  .media { position: relative; overflow: hidden; border-radius: var(--r-card); background: var(--stage); border: 1px solid var(--line); box-shadow: 0 1px 2px rgba(20, 32, 24, .04), 0 32px 64px -44px rgba(20, 32, 24, .32); max-width: 100%; }
+  .media.sm { border-radius: var(--r-card); }
+  .media.has-media { background: transparent; }
+  .media.is-video { border-radius: var(--r-card); }
+  .media.sm.is-video { border-radius: var(--r-card); }
+  .media > img, .media > video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  /* Clips whose own ratio is slightly off get a common 16:10 frame. */
+  .media.fit { aspect-ratio: 16 / 10; }
+  .fade { -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent); mask-image: linear-gradient(to bottom, #000 82%, transparent); }
+  .media.hero-media { box-shadow: 0 1px 2px rgba(20, 32, 24, .04), 0 48px 96px -56px rgba(20, 32, 24, .4); }
 
-        .cta-primary:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
-        }
+  .ph { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 24px; text-align: center; }
+  .ph::before { content: ""; position: absolute; inset: 12px; border: 1px dashed var(--line-strong); border-radius: 10px; pointer-events: none; }
+  .media.sm .ph::before { inset: 10px; border-radius: 8px; }
+  .ph svg { color: var(--faint); margin-bottom: 4px; }
+  .ph b { font-size: 14px; font-weight: 500; color: var(--ink); }
+  .ph span { font-size: 13px; color: var(--muted); max-width: 42ch; }
+  .ph em { font-style: normal; font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; }
 
-        .trial-badge {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 12px;
-        }
+  button.vbtn { position: absolute; right: 14px; bottom: 14px; width: 34px; height: 34px; border-radius: 999px; display: grid; place-items: center; color: var(--ink); background: rgba(246, 250, 245, .85); box-shadow: 0 0 0 1px var(--line); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); cursor: pointer; opacity: 0; transition: opacity 200ms var(--ease-out), transform 140ms var(--ease-out); }
+  .fade button.vbtn { top: 14px; bottom: auto; }
+  .media:hover button.vbtn, button.vbtn:focus-visible, .media.is-paused button.vbtn { opacity: 1; }
+  @media (hover: none) { button.vbtn { opacity: 1; } }
+  @media (hover: hover) and (pointer: fine) {
+    .media:hover button.vbtn { transform: scale(1.04); }
+  }
+  button.vbtn:active { transform: scale(.94); }
 
-        /* Dashboard Preview */
-        .dashboard-preview {
-            margin-top: 60px;
-            padding: 40px;
-            background: var(--safe-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
+  .cue, .badge { position: absolute; display: inline-flex; align-items: center; gap: 8px; color: var(--ink); background: rgba(252, 252, 251, .92); box-shadow: 0 0 0 1px var(--line), 0 10px 24px -14px rgba(5, 38, 28, .4); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); font-size: 13px; font-weight: 500; pointer-events: none; }
+  .cue { left: 50%; bottom: 16px; padding: 5px 12px 5px 5px; border-radius: 12px; opacity: 0; transform: translate(-50%, 6px); transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out); }
+  .cue.on { opacity: 1; transform: translate(-50%, 0); }
+  .cue kbd { min-width: 28px; height: 28px; padding: 0 8px; display: inline-grid; place-items: center; border-radius: 8px; background: #FFFFFF; box-shadow: 0 0 0 1px var(--line-strong), 0 1px 0 var(--line-strong); font: 600 14px/1 var(--font); }
+  .badge { left: 16px; bottom: 16px; height: 30px; padding: 0 12px 0 10px; border-radius: 999px; gap: 6px; font-size: 12.5px; }
+  .badge svg { color: var(--accent); }
+  @media (max-width: 560px) { .cue { display: none; } .badge { left: 10px; bottom: 10px; } }
 
-        .dashboard-mockup {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            aspect-ratio: 16/10;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 600;
-            text-align: center;
-            padding: 20px;
-        }
+  kbd.key { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 7px; margin: 0 2px; border-radius: 7px; background: #FFFFFF; box-shadow: 0 0 0 1px var(--line-strong), 0 1px 0 var(--line-strong); font: 600 14px/1 var(--font); color: var(--ink); vertical-align: 1px; }
 
-        /* Privacy Banner */
-        .privacy-banner {
-            background: var(--safe-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 30px;
-            margin: 80px 0;
-            text-align: center;
-        }
+  .sup-art { aspect-ratio: 16 / 10; border: 1px solid var(--line); border-radius: var(--r-card); overflow: hidden; }
+  .sup-art svg { display: block; width: 100%; height: 100%; }
+  .sup-art img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .sup-art svg text { font-family: var(--font); }
+  .sup-art.is-4x3 { aspect-ratio: 4 / 3; }
 
-        .privacy-banner h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: var(--success);
-        }
+  /* Make it yours — crops of the real product art (folder05.png, Colors.png, Icons.png).
+     Swatches are clipped to circles; icons sit on a white screenshot, so multiply
+     drops the white and leaves the glyph, with no panel behind either. */
+  .cz { display: grid; place-items: center; padding: 16px; }
+  .sup-art .cz-folder { width: auto; height: 112px; object-fit: contain; }
+  .sup-art .cz-folder.is-large { height: 168px; }
+  .cz-tile { display: block; width: 52px; height: 52px; }
+  .cz-grid { display: grid; grid-template-columns: repeat(2, 52px); gap: 14px; justify-content: center; }
+  /* Single specimen per column: one gradient, one folder, one icon. */
+  .sup-art .cz-single { display: block; width: auto; height: 168px; max-width: 100%; object-fit: contain; }
+  .sup-art .cz-single.is-icon { height: 160px; }
 
-        .privacy-banner p {
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto;
-        }
+  .stat { display: flex; align-items: baseline; gap: 10px; font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--muted); }
+  .stat b { font-size: 32px; font-weight: 600; letter-spacing: -0.04em; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
 
-        /* Features Section */
-        .features {
-            padding: 80px 0;
-        }
+  .fact { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--r-card); background: var(--surface); font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink); }
+  .fact svg { color: var(--accent); flex: none; }
 
-        .features h2 {
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 60px;
-        }
+  .theme-switch { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-top: 20px; }
+  .theme-tab { height: 34px; padding: 0 16px; border-radius: 999px; font-size: 13.5px; font-weight: 500; background: var(--accent-soft); color: var(--accent-strong); box-shadow: inset 0 0 0 1px rgba(19, 128, 59, .10); transition: background-color .15s ease, transform 140ms var(--ease-out); }
+  .theme-tab:active { transform: scale(.97); }
+  @media (hover: hover) and (pointer: fine) {
+    .theme-tab:hover { background: var(--accent-soft-hover); }
+  }
+  .theme-tab.is-on { background: var(--accent); color: var(--accent-ink); box-shadow: none; }
+  #theme-shot { transition: opacity 250ms var(--ease-out), filter 250ms var(--ease-out); }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 40px;
-        }
+  /* FAQ rows: a hairline under every question, and a real height transition
+     so opening an answer never snaps the content below it. */
+  #faq details { border-bottom: 1px solid var(--line); }
+  details > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px 0; font-size: 17px; font-weight: 500; transition: color 160ms ease; }
+  @media (hover: hover) and (pointer: fine) {
+    details > summary:hover { color: var(--accent-strong); }
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary .pm { width: 18px; height: 18px; flex: none; color: var(--faint); transition: transform 220ms var(--ease-out), color 160ms ease; }
+  @media (hover: hover) and (pointer: fine) {
+    details > summary:hover .pm { color: var(--accent); }
+  }
+  details[open] summary .pm { transform: rotate(45deg); }
+  details p { padding: 10px 0 26px; color: var(--muted); font-size: 16px; line-height: 1.55; max-width: 60ch; }
+  .faq-panel { overflow: hidden; }
+  details[open] .faq-panel > p { animation: faq-in 240ms var(--ease-out) both; }
+  /* Pricing — a poster, not a table. The field keeps the dot pattern, the accent
+     ticket is the only solid block, and a cropped $19 anchors the composition. */
+  .price-poster {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin-top: clamp(40px, 5vw, 60px);
+    padding: clamp(28px, 4vw, 56px);
+    padding-bottom: clamp(190px, 23vw, 320px);
+    border: 1px solid var(--line);
+    border-radius: clamp(20px, 2.2vw, 28px);
+    background: var(--stage);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(5, 38, 28, .04), 0 40px 80px -60px rgba(5, 38, 28, .45);
+  }
+  .price-poster::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(rgba(5, 38, 28, .45) 1px, transparent 1.2px);
+    background-size: 16px 16px;
+    opacity: .3;
+    -webkit-mask-image: radial-gradient(130% 90% at 80% 105%, #000 12%, transparent 68%);
+    mask-image: radial-gradient(130% 90% at 80% 105%, #000 12%, transparent 68%);
+    pointer-events: none;
+  }
+  .price-poster-head {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 24px;
+    align-items: end;
+  }
+  @media (min-width: 900px) {
+    .price-poster-head { grid-template-columns: minmax(0, 1.1fr) minmax(300px, .9fr); gap: clamp(40px, 6vw, 96px); }
+  }
+  .price-eyebrow {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+  }
+  .price-title {
+    margin: 16px 0 0;
+    font-size: clamp(42px, 5.4vw, 74px);
+    font-weight: 600;
+    letter-spacing: -.05em;
+    line-height: .96;
+    color: var(--ink);
+  }
+  .price-heading-side { max-width: 36ch; }
+  @media (min-width: 900px) {
+    .price-heading-side { margin-left: auto; padding-bottom: 4px; }
+  }
+  .price-lede {
+    margin: 0;
+    font-size: clamp(15px, 1.3vw, 17px);
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .price-signs { display: flex; align-items: center; gap: 14px; margin: 18px 0 0; color: var(--faint); }
+  .price-sign-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .price-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: clamp(32px, 4vw, 48px);
+    margin-top: clamp(36px, 4.4vw, 60px);
+  }
+  @media (min-width: 900px) {
+    .price-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(340px, .8fr);
+      gap: clamp(40px, 5vw, 80px);
+      align-items: stretch;
+    }
+  }
+  .price-kicker {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .price-sub {
+    margin: 14px 0 0;
+    font-size: clamp(28px, 3.2vw, 42px);
+    font-weight: 600;
+    letter-spacing: -.04em;
+    line-height: 1.04;
+    color: var(--ink);
+  }
+  .price-copy {
+    max-width: 46ch;
+    margin: 16px 0 0;
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .price-features {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(24px, 3vw, 40px);
+    margin: clamp(26px, 3vw, 36px) 0 0;
+    padding: 0;
+  }
+  .price-features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .price-features svg { flex: none; color: var(--accent); }
+  @media (max-width: 519px) {
+    .price-features { grid-template-columns: minmax(0, 1fr); }
+  }
+  .price-local {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: clamp(24px, 3vw, 32px) 0 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .price-local svg { flex: none; margin-top: 1px; color: var(--accent); }
 
-        /* Comparison Section */
-        .comparison {
-            padding: 80px 0;
-            background: var(--safe-bg);
-        }
+  /* The ticket: the price card, lifted off the poster with a soft shadow. */
+  .price-ticket {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(24px, 2.6vw, 34px);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(5, 38, 28, .04), 0 30px 60px -36px rgba(5, 38, 28, .3);
+  }
+  .price-ticket-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .price-ticket-name { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+  @media (max-width: 340px) {
+    .price-ticket-top { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .price-ticket-name { font-size: 14px; }
+    .price-ticket-tag { padding: 0 10px; font-size: 10px; }
+  }
+  .price-ticket-tag {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+    white-space: nowrap;
+    height: 26px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+  }
+  .price-ticket-band { display: flex; align-items: center; gap: 16px; margin-top: clamp(18px, 2.2vw, 24px); }
+  .price-ticket-dots {
+    flex: 1;
+    height: 24px;
+    background-image: radial-gradient(rgba(5, 38, 28, .3) 1px, transparent 1.2px);
+    background-size: 11px 11px;
+    opacity: .75;
+    -webkit-mask-image: linear-gradient(90deg, #000 25%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 25%, transparent 100%);
+  }
+  .price-ticket-arrow { flex: none; width: 34px; height: 34px; color: var(--faint); }
+  .price-ticket-price { display: flex; align-items: baseline; gap: 14px; margin-top: clamp(18px, 2.4vw, 28px); }
+  .price-ticket-num {
+    font-size: clamp(64px, 7vw, 92px);
+    font-weight: 600;
+    letter-spacing: -.06em;
+    line-height: .88;
+    font-variant-numeric: tabular-nums;
+  }
+  .price-ticket-was { font-size: clamp(17px, 1.6vw, 20px); color: var(--faint); font-variant-numeric: tabular-nums; }
+  .price-ticket-note { max-width: 32ch; margin: 14px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+  .price-ticket-actions { display: flex; flex-direction: column; gap: 10px; margin-top: auto; padding-top: clamp(24px, 3vw, 36px); }
+  .price-ticket-buy {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 50px;
+    padding: 0 18px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: 15px;
+    font-weight: 600;
+    transition: background-color .15s ease, transform 140ms var(--ease-out);
+  }
+  .price-ticket-buy:active { transform: scale(.97); }
+  .price-ticket-buy svg { flex: none; transition: transform 250ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .price-ticket-buy:hover { background: var(--accent-hover); }
+    .price-ticket-buy:hover svg { transform: translateX(4px); }
+  }
+  .price-ticket-trial {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 46px;
+    border-radius: 12px;
+    box-shadow: inset 0 0 0 1px var(--line-strong);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    transition: background-color .15s ease, transform 140ms var(--ease-out);
+  }
+  .price-ticket-trial:active { transform: scale(.97); }
+  @media (hover: hover) and (pointer: fine) {
+    .price-ticket-trial:hover { background: var(--accent-soft); }
+  }
+  .price-ticket-fine {
+    margin: 16px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--faint);
+  }
+  .price-mega {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    z-index: 1;
+    margin: 0;
+    transform: translate(-50%, 22%);
+    font-size: clamp(180px, 33vw, 440px);
+    font-weight: 600;
+    letter-spacing: -.06em;
+    line-height: .8;
+    white-space: nowrap;
+    color: rgba(5, 38, 28, .16);
+    pointer-events: none;
+    user-select: none;
+  }
 
-        .comparison h2 {
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 60px;
-        }
+  /* Footer — the page closes like a printed spread rather than a utility strip.
+     Two light panels carry the last message; underneath, a full-bleed band sets
+     the sitemap over a dot field and an oversized wordmark cropped by the band edge. */
+  .foot {
+    margin-top: clamp(24px, 4vw, 48px);
+    margin-left: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+    margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+  }
+  .foot-wrap {
+    width: 100%;
+    max-width: 1232px; /* 1200 of content + the 16px body gutters */
+    margin-inline: auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
 
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-        }
+  /* Two-panel call to action */
+  .foot-panels { display: grid; gap: 12px; }
+  @media (min-width: 820px) {
+    .foot-panels { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  .foot-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: clamp(350px, 32vw, 460px);
+    padding: clamp(24px, 3.1vw, 42px);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    isolation: isolate;
+    box-shadow: 0 1px 2px rgba(5, 38, 28, .04), 0 30px 60px -44px rgba(5, 38, 28, .26);
+  }
+  .foot-panel--brand { background: var(--bg); color: var(--ink); }
+  .foot-panel--pattern { background: var(--bg); color: var(--ink); }
+  .foot-panel--brand::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(120% 100% at 12% 0%, rgba(19, 128, 59, .055), transparent 62%);
+    pointer-events: none;
+  }
+  .foot-panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+  .foot-eyebrow {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+  .foot-panel--brand .foot-eyebrow { color: var(--accent-strong); }
+  .foot-panel--pattern .foot-eyebrow { color: var(--faint); }
+  .foot-mark { width: 22px; height: 22px; flex: none; color: currentColor; }
+  .foot-panel--brand .foot-mark { color: var(--accent); }
+  .foot-panel--pattern .foot-mark { color: var(--faint); }
+  .foot-panel-title {
+    margin: clamp(28px, 3vw, 44px) 0 0;
+    font-size: clamp(30px, 3.3vw, 46px);
+    font-weight: 600;
+    letter-spacing: -.042em;
+    line-height: 1.02;
+  }
+  .foot-panel-rule { display: block; height: 1px; margin-top: clamp(20px, 2.2vw, 28px); background: var(--line-strong); }
+  .foot-panel-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    max-width: 36ch;
+    margin: auto 0 0;
+    padding-top: 34px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .foot-panel-note svg { flex: none; margin-top: 2px; color: var(--accent); }
+  .foot-panel-foot { display: flex; flex-direction: column; align-items: flex-start; margin-top: auto; padding-top: clamp(30px, 4vw, 48px); }
+  .foot-panel-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(10px, 1.4vw, 18px);
+    font-size: clamp(31px, 3.5vw, 52px);
+    font-weight: 600;
+    letter-spacing: -.05em;
+    line-height: 1;
+    color: var(--ink);
+    transition: transform 140ms var(--ease-out);
+  }
+  .foot-panel-cta:active { transform: scale(.99); }
+  .foot-panel-cta svg { flex: none; width: 1.02em; height: .6em; transition: transform 250ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .foot-panel-cta:hover svg { transform: translateX(8px); }
+  }
+  @media (max-width: 355px) {
+    .foot-panel-cta { font-size: 26px; gap: 8px; }
+  }
+  .foot-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 44px;
+    margin-top: clamp(22px, 2.4vw, 30px);
+    padding: 0 22px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 1px 2px rgba(5, 38, 28, .1);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    transition: background-color .2s ease, color .2s ease, transform 140ms var(--ease-out);
+  }
+  .foot-pill:active { transform: scale(.97); }
+  @media (hover: hover) and (pointer: fine) {
+    .foot-pill:hover { background: var(--accent-hover); color: var(--accent-ink); }
+  }
 
-        .comparison-table th {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
-            color: white;
-            padding: 20px;
-            text-align: left;
-            font-weight: 600;
-        }
+  /* Full-bleed sitemap band */
+  .foot-band {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin-top: clamp(10px, 1.4vw, 16px);
+    padding-top: clamp(48px, 5.4vw, 76px);
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--muted);
+  }
+  /* Dot field, faded in toward the crop. */
+  .foot-band::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(rgba(5, 38, 28, .45) 1px, transparent 1.2px);
+    background-size: 15px 15px;
+    opacity: .3;
+    -webkit-mask-image: linear-gradient(180deg, transparent 32%, #000 100%);
+    mask-image: linear-gradient(180deg, transparent 32%, #000 100%);
+    pointer-events: none;
+  }
+  .foot-band-inner {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 40px;
+    padding-bottom: clamp(140px, 20vw, 280px);
+  }
+  @media (min-width: 768px) {
+    .foot-band-inner {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: clamp(48px, 8vw, 120px);
+      padding-bottom: clamp(190px, 19vw, 300px);
+    }
+  }
+  .foot-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -.025em;
+    color: var(--ink);
+  }
+  .foot-desc {
+    max-width: 34ch;
+    margin-top: 16px;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .foot-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+  @media (min-width: 768px) {
+    .foot-links { grid-template-columns: repeat(2, minmax(150px, auto)); gap: clamp(56px, 7vw, 104px); }
+  }
+  .foot-col { padding-top: 7px; }
+  .foot-kicker {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .foot-col ul { list-style: none; display: grid; gap: 11px; margin: 15px 0 0; padding: 0; }
+  .foot-col a {
+    font-size: 14px;
+    color: var(--muted);
+    padding-bottom: 1px;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0 1px;
+    transition: background-size .25s cubic-bezier(.16, 1, .3, 1), color .15s ease;
+  }
+  .foot-col a:active { opacity: .6; }
+  @media (hover: hover) and (pointer: fine) {
+    .foot-col a:hover { color: var(--ink); background-size: 100% 1px; }
+  }
+  .foot-mega {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    z-index: 1;
+    margin: 0;
+    transform: translate(-50%, 24%);
+    font-size: clamp(150px, 33vw, 430px);
+    font-weight: 600;
+    letter-spacing: -.06em;
+    line-height: .8;
+    white-space: nowrap;
+    color: rgba(5, 38, 28, .16);
+    pointer-events: none;
+    user-select: none;
+  }
+  @media (min-width: 768px) {
+    .foot-mega { transform: translate(-50%, 27%); }
+  }
+  .foot-bottom {
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+  }
+  .foot-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding: 18px 0 clamp(22px, 2.6vw, 32px);
+    font-size: 12.5px;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .foot-bar-left { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 0; }
+  .foot-bar-right { display: inline-flex; align-items: center; gap: 24px; margin-left: auto; }
+  .foot-top { display: inline-flex; align-items: center; gap: 6px; color: var(--faint); transition: color .15s ease, transform 140ms var(--ease-out); }
+  .foot-top:active { transform: scale(.97); }
+  .foot-top svg { transition: transform 220ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .foot-top:hover { color: var(--ink); }
+    .foot-top:hover svg { transform: translateY(-2px); }
+  }
 
-        .comparison-table td {
-            padding: 18px 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .comparison-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .comparison-table tbody tr:nth-child(odd) {
-            background: var(--safe-bg);
-        }
-
-        .comparison-table th:first-child,
-        .comparison-table td:first-child {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .comparison-table .check {
-            color: var(--success);
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-
-        .comparison-table .cross {
-            color: var(--text-secondary);
-            font-weight: 700;
-            font-size: 1.2rem;
-            opacity: 0.4;
-        }
-
-        .comparison-table .vista-highlight {
-            background: rgba(0, 102, 255, 0.05);
-            font-weight: 600;
-        }
-
-        .feature-card {
-            padding: 30px;
-            background: var(--safe-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-
-        .feature-card h3 {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-        }
-
-        .feature-card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        /* FAQ Section */
-        .faq {
-            padding: 80px 0;
-            background: var(--safe-bg);
-        }
-
-        .faq h2 {
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .faq-container {
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .faq-item {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-bottom: 15px;
-            overflow: hidden;
-        }
-
-        .faq-question {
-            padding: 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-
-        .faq-question:hover {
-            background: var(--safe-bg);
-        }
-
-        .faq-toggle {
-            display: inline-block;
-            transition: transform 0.3s;
-        }
-
-        .faq-item.open .faq-toggle {
-            transform: rotate(180deg);
-        }
-
-        .faq-answer {
-            padding: 0 20px 20px;
-            color: var(--text-secondary);
-            display: none;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .faq-item.open .faq-answer {
-            display: block;
-            max-height: 500px;
-        }
-
-        /* Footer */
-        footer {
-            padding: 40px 0;
-            border-top: 1px solid var(--border);
-            margin-top: 80px;
-            color: var(--text-secondary);
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 30px;
-        }
-
-        .footer-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .footer-links a:hover {
-            color: var(--accent);
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-
-            .hero .subheading {
-                font-size: 1.1rem;
-            }
-
-            .features h2,
-            .faq h2 {
-                font-size: 1.8rem;
-            }
-
-            .features-grid {
-                gap: 20px;
-            }
-
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .footer-links {
-                flex-direction: column;
-                gap: 15px;
-            }
-        }
-    </style>
+  @media (prefers-reduced-motion: reduce) {
+    /* Keep quick color/opacity feedback; remove movement and decorative loops. */
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .pulse-meteor, .pulse-ping, .iso { animation: none !important; }
+    .iso, .rise, .reveal, .pillar-art.reveal-clip,
+    .btn:active, .btn-quiet:active, .btn-sm:active, .theme-tab:active,
+    .price-ticket-buy:active, .price-ticket-trial:active, .foot-pill:active,
+    .foot-panel-cta:active, .foot-top:active, button.vbtn, button.vbtn:active {
+      transform: none !important;
+    }
+    .rise, .reveal, .pillar-art.reveal-clip {
+      opacity: 1 !important;
+      filter: none !important;
+      clip-path: none !important;
+    }
+    .btn, .btn-quiet, .btn-sm, .theme-tab, .price-ticket-buy,
+    .price-ticket-trial, .foot-pill, .foot-col a, .foot-top,
+    #theme-shot, details > summary {
+      transition-duration: .15s !important;
+    }
+  }
+</style>
+<noscript>
+  <style>.site-head { transform: none !important; pointer-events: auto !important; }</style>
+</noscript>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <nav>
-                <div class="logo">Vista</div>
-                <ul class="nav-links">
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#comparison">Compare</a></li>
-                    <li><a href="#faq">FAQ</a></li>
-                </ul>
-            </nav>
+
+<header class="site-head" id="site-head">
+  <div class="site-head-inner">
+    <div class="flex items-center justify-between h-16">
+      <a href="#top" class="flex items-center gap-2.5 font-semibold tracking-[-0.02em] text-[16px]">
+        <span class="appicon w-7 h-7" aria-hidden="true"></span>Vista
+      </a>
+      <nav class="hidden sm:flex items-center gap-8 text-[14px] text-muted" aria-label="Main">
+        <a href="#customize" class="hover:text-ink transition-colors">Features</a>
+        <a href="#pricing" class="hover:text-ink transition-colors">Pricing</a>
+        <a href="#faq" class="hover:text-ink transition-colors">FAQ</a>
+      </nav>
+      <div class="flex items-center gap-2">
+        <a href="#pricing" class="btn cta-arrow cta-sm">
+          <span class="cta-label">Buy now — $19</span>
+          <span class="cta-arrow-icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="max-w-[1200px] mx-auto">
+
+  <main id="top">
+
+    <section class="pt-20 md:pt-32" aria-labelledby="hero-title">
+      <p class="eyebrow hero-eyebrow">A visual file browser for macOS</p>
+      <h1 id="hero-title" class="h1 hero-h1 mt-6">See your files, not filenames.</h1>
+      <p class="hero-lede mt-8 md:mt-10"><span class="hl">Vista shows your files as thumbnails, sorted by kind.</span> Give each folder its own color and shape, and search the words inside screenshots and PDFs.</p>
+      <div class="hero-cta mt-10 md:mt-12 flex flex-wrap items-center gap-x-5 gap-y-4">
+        <div class="flex flex-wrap gap-3">
+          <a href="#pricing" class="btn cta-arrow">
+            <span class="cta-label">Buy now — $19</span>
+            <span class="cta-arrow-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+            </span>
+          </a>
+          <a href="#pricing" class="btn-quiet cta-arrow has-icon">
+            <span class="cta-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 12.54c.03 3.23 2.83 4.3 2.86 4.31-.02.08-.45 1.54-1.48 3.05-.9 1.3-1.83 2.6-3.3 2.63-1.44.03-1.91-.86-3.56-.86-1.64 0-2.16.83-3.53.89-1.42.05-2.5-1.41-3.41-2.71-1.85-2.67-3.27-7.54-1.37-10.84.94-1.64 2.63-2.68 4.46-2.71 1.39-.03 2.7.94 3.55.94.85 0 2.45-1.16 4.13-.99.71.03 2.67.29 3.94 2.16-.1.07-2.35 1.37-2.32 4.13ZM14.34 4.46c.75-.91 1.26-2.18 1.12-3.44-1.08.04-2.38.72-3.15 1.63-.69.8-1.3 2.09-1.14 3.32 1.2.09 2.42-.61 3.17-1.51Z"/></svg>
+            </span>
+            <span class="cta-label">Download</span>
+            <span class="cta-arrow-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+            </span>
+          </a>
         </div>
-    </header>
+        <p class="hero-meta text-[13px] text-faint">14-day free trial · One-time purchase · macOS 14+</p>
+      </div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Your Mac, designed for you.</h1>
-            <p class="subheading">A file organizer that's as beautiful as it is functional. Find anything instantly. Reclaim storage without compromise.</p>
-            <button class="cta-primary" onclick="alert('Coming soon: Download button will link to DMG file')">Download for Mac</button>
-            <span class="trial-badge">7-day free trial. No credit card required.</span>
+      <div class="laptop mt-16 md:mt-28">
+        <div class="laptop-lid">
+          <figure class="media hero-media" style="aspect-ratio: 2880 / 1798" data-static
+                  data-src="images/home" data-video="teaser.mp4"
+                  data-alt="Vista's Home screen in the Sage theme: files grouped into colorful folders by kind, with a storage bar across the top"
+                  data-note="Product teaser: Home, browsing by kind, shaping a folder, searching"
+                  data-size="2880 × 1800">
+            <video autoplay muted loop playsinline preload="auto" poster="images/home.png"
+                   aria-label="A short tour of Vista: files grouped into folders by kind, a folder being customized, and a search">
+              <source src="images/teaser.mp4" type="video/mp4" onerror="this.parentNode.dataset.failed = '1'">
+            </video>
+          </figure>
+        </div>
+        <div class="laptop-base" aria-hidden="true"></div>
+      </div>
+    </section>
 
-            <!-- Dashboard Preview -->
-            <div class="dashboard-preview">
-                <div class="dashboard-mockup">
-                    Vista Dashboard Preview<br>
-                    <small style="font-size: 0.7em; margin-top: 10px;">Screenshots & Live Counts · Photos, Videos, Documents, Archives</small>
-                </div>
+    <section id="intro" class="section" aria-labelledby="intro-title">
+      <h2 id="intro-title" class="intro-title"><span class="hl">Vista shows thumbnails you can recognize at a glance, not long lists of filenames.</span> It sorts your folders by kind, and it never sends a file off your Mac.</h2>
+
+      <ul class="pillars" role="list">
+        <li class="pillar">
+          <p class="fig">01</p>
+          <div class="pillar-art">
+            <svg viewBox="0 0 400 300" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="fv-lift" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FCFCFB"/><stop offset="1" stop-color="#DCEDE3"/></linearGradient>
+              </defs>
+              <g class="lift" style="--l:-4px;--d:0ms"><g transform="matrix(.866 .5 -.866 .5 200 64)" stroke="#9DB3A8" stroke-width="1" fill="#F4F9F6" fill-opacity=".6">
+                <rect x="0" y="0" width="52" height="52" rx="7"/><rect x="60" y="0" width="52" height="52" rx="7"/><rect x="120" y="0" width="52" height="52" rx="7" fill="#E3EEE8" fill-opacity=".9"/><rect x="0" y="60" width="52" height="52" rx="7"/><rect x="60" y="60" width="52" height="52" rx="7" fill="none" stroke-dasharray="3 3"/><rect x="120" y="60" width="52" height="52" rx="7"/><rect x="0" y="120" width="52" height="52" rx="7" fill="#E3EEE8" fill-opacity=".9"/><rect x="60" y="120" width="52" height="52" rx="7"/><rect x="120" y="120" width="52" height="52" rx="7"/>
+              </g></g>
+              <g class="lift" style="--l:-8px;--d:45ms"><g transform="matrix(.866 .5 -.866 .5 200 64)" fill="none" stroke="#B4CABF" stroke-width="1" stroke-linecap="round">
+                <circle cx="16" cy="16" r="4"/><polyline points="8,42 22,28 31,36 37,30 46,42" stroke-linejoin="round"/><path d="M70 14h26"/><path d="M70 22h32"/><path d="M70 30h20"/><path d="M70 38h28"/><path d="M141 17L155 26L141 35Z" stroke-linejoin="round"/><rect x="8" y="70" width="36" height="32" rx="3"/><path d="M8 77h36"/><circle cx="136" cy="76" r="4"/><polyline points="128,102 142,88 151,96 157,90 166,102" stroke-linejoin="round"/><path d="M21 137L35 146L21 155Z" stroke-linejoin="round"/><rect x="68" y="130" width="36" height="32" rx="3"/><path d="M68 137h36"/><path d="M130 134h26"/><path d="M130 142h32"/><path d="M130 150h20"/><path d="M130 158h28"/>
+              </g></g>
+              <g class="lift" style="--l:-12px;--d:90ms"><g stroke="#9DB3A8" stroke-width="1" stroke-dasharray="2 3"><path d="M155 106V150"/><path d="M245 106V150"/><path d="M200 132V176"/></g></g>
+              <g class="lift" style="--l:-16px;--d:135ms"><g transform="matrix(.866 .5 -.866 .5 200 20)"><rect x="60" y="60" width="52" height="52" rx="7" fill="#CFDFD7" stroke="#9DB3A8" stroke-width="1"/></g></g>
+              <g class="lift" style="--l:-22px;--d:180ms"><g transform="matrix(.866 .5 -.866 .5 200 14)">
+                <rect x="60" y="60" width="52" height="52" rx="7" fill="url(#fv-lift)" stroke="#13803B" stroke-width="1"/>
+                <g fill="none" stroke="#13803B" stroke-width="1" stroke-linecap="round"><circle cx="76" cy="76" r="4"/><polyline points="68,102 82,88 91,96 97,90 106,102" stroke-linejoin="round"/></g>
+              </g></g>
+            </svg>
+          </div>
+          <h3>Visual</h3>
+          <p>Large thumbnails instead of filenames, sorted into photos, screenshots, documents and videos.</p>
+        </li>
+
+        <li class="pillar">
+          <p class="fig">02</p>
+          <div class="pillar-art pillar-art--fan">
+            <svg viewBox="0 0 400 300" aria-hidden="true" focusable="false">
+              <g stroke="#9DB3A8" stroke-width="1">
+                <g class="lift" style="--fan:-5deg;--grow:1.02;--d:0ms"><g transform="translate(200 246) rotate(-48)"><rect x="-26" y="-176" width="52" height="176" rx="10" fill="#FCFCFB"/><rect x="-19" y="-166" width="38" height="22" rx="5" fill="#FBEDE4"/><rect x="-19" y="-140" width="38" height="22" rx="5" fill="#F6D9C6"/><rect x="-19" y="-114" width="38" height="22" rx="5" fill="#F0BFA0"/><rect x="-19" y="-88" width="38" height="22" rx="5" fill="#E9A27B"/></g></g><g class="lift" style="--fan:5deg;--grow:1.02;--d:40ms"><g transform="translate(200 246) rotate(48)"><rect x="-26" y="-176" width="52" height="176" rx="10" fill="#FCFCFB"/><rect x="-19" y="-166" width="38" height="22" rx="5" fill="#F2EFF9"/><rect x="-19" y="-140" width="38" height="22" rx="5" fill="#E1DAF4"/><rect x="-19" y="-114" width="38" height="22" rx="5" fill="#CBBEEC"/><rect x="-19" y="-88" width="38" height="22" rx="5" fill="#B2A0E2"/></g></g><g class="lift" style="--fan:-3deg;--grow:1.035;--d:80ms"><g transform="translate(200 246) rotate(-24)"><rect x="-26" y="-176" width="52" height="176" rx="10" fill="#FCFCFB"/><rect x="-19" y="-166" width="38" height="22" rx="5" fill="#F6F2E6"/><rect x="-19" y="-140" width="38" height="22" rx="5" fill="#ECE3C9"/><rect x="-19" y="-114" width="38" height="22" rx="5" fill="#DCCFA8"/><rect x="-19" y="-88" width="38" height="22" rx="5" fill="#C8B888"/></g></g><g class="lift" style="--fan:3deg;--grow:1.035;--d:120ms"><g transform="translate(200 246) rotate(24)"><rect x="-26" y="-176" width="52" height="176" rx="10" fill="#FCFCFB"/><rect x="-19" y="-166" width="38" height="22" rx="5" fill="#EEF5F8"/><rect x="-19" y="-140" width="38" height="22" rx="5" fill="#D8E9F0"/><rect x="-19" y="-114" width="38" height="22" rx="5" fill="#BCD8E4"/><rect x="-19" y="-88" width="38" height="22" rx="5" fill="#9CC4D6"/></g></g><g class="lift" style="--fan:0deg;--grow:1.05;--d:160ms"><g transform="translate(200 246) rotate(0)"><rect x="-26" y="-176" width="52" height="176" rx="10" fill="#FCFCFB" stroke="#13803B"/><rect x="-19" y="-166" width="38" height="22" rx="5" fill="#E3F0E8"/><rect x="-19" y="-140" width="38" height="22" rx="5" fill="#C6E2D0"/><rect x="-19" y="-114" width="38" height="22" rx="5" fill="#8FC9A8"/><rect x="-19" y="-88" width="38" height="22" rx="5" fill="#13803B"/></g></g>
+              </g>
+              <g class="fan-hub">
+                <circle cx="200" cy="246" r="6" fill="#FCFCFB" stroke="#9DB3A8" stroke-width="1"/>
+                <circle cx="200" cy="246" r="1.8" fill="#9DB3A8"/>
+              </g>
+            </svg>
+          </div>
+          <h3>Yours</h3>
+          <p>24 colors, 7 folder shapes and 31 icons, in a Light, Dark or Sage theme.</p>
+        </li>
+
+        <li class="pillar">
+          <p class="fig">03</p>
+          <div class="pillar-art">
+            <svg viewBox="0 0 400 300" aria-hidden="true" focusable="false">
+              <g fill="none" stroke="#9DB3A8" stroke-width="1">
+                <ellipse cx="200" cy="186" rx="84" ry="48"/>
+                <ellipse cx="200" cy="186" rx="120" ry="69" stroke-opacity=".75"/>
+                <ellipse cx="200" cy="186" rx="156" ry="90" stroke-dasharray="3 4"/>
+              </g>
+              <circle cx="310" cy="158.4" r="5" fill="#FCFCFB" stroke="#13803B" stroke-width="1"/>
+              <circle cx="62" cy="228" r="3" fill="#FCFCFB" stroke="#9DB3A8" stroke-width="1"/>
+              <g stroke="#8FA89B" stroke-width="1" stroke-linejoin="round">
+                <path d="M144.6 130L200 162V218L144.6 186Z" fill="#E3EEE8"/>
+                <path d="M200 162L255.4 130V186L200 218Z" fill="#D3E3DA"/>
+                <path d="M200 98L255.4 130L200 162L144.6 130Z" fill="#FCFCFB"/>
+              </g>
+              <g transform="matrix(.866 .5 -.866 .5 200 98)" fill="none" stroke="#13803B" stroke-width="1">
+                <rect x="22" y="29" width="20" height="16" rx="3"/>
+                <path d="M26 29v-5a6 6 0 0 1 12 0v5"/>
+              </g>
+            </svg>
+            <svg class="pulse" viewBox="0 0 400 300" aria-hidden="true" focusable="false">
+              <circle class="pulse-ping" cx="200" cy="186" r="60" fill="none" stroke="#13803B" stroke-width="1"/>
+              <g fill="none" stroke="#9DB3A8" stroke-width="1" stroke-dasharray="2 4" stroke-opacity=".8">
+                <path d="M200 186L356.0 186.0"/>
+                <path d="M200 186L278.0 108.1"/>
+                <path d="M200 186L122.0 108.1"/>
+                <path d="M200 186L44.0 186.0"/>
+                <path d="M200 186L122.0 263.9"/>
+                <path d="M200 186L278.0 263.9"/>
+              </g>
+              <g fill="none" stroke="#13803B" stroke-width="1.4" stroke-linecap="round">
+                <path pathLength="100" class="pulse-meteor" d="M200 186L356.0 186.0" style="animation-delay:0.00s;opacity:1"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L356.0 186.0" style="animation-delay:0.07s;opacity:0.55"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L356.0 186.0" style="animation-delay:0.14s;opacity:0.32"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L356.0 186.0" style="animation-delay:0.21s;opacity:0.18"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L356.0 186.0" style="animation-delay:0.28s;opacity:0.09"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L278.0 108.1" style="animation-delay:0.42s;opacity:1"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L278.0 108.1" style="animation-delay:0.49s;opacity:0.55"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L278.0 108.1" style="animation-delay:0.56s;opacity:0.32"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L278.0 108.1" style="animation-delay:0.63s;opacity:0.18"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L278.0 108.1" style="animation-delay:0.70s;opacity:0.09"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L122.0 108.1" style="animation-delay:0.84s;opacity:1"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L122.0 108.1" style="animation-delay:0.91s;opacity:0.55"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L122.0 108.1" style="animation-delay:0.98s;opacity:0.32"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L122.0 108.1" style="animation-delay:1.05s;opacity:0.18"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L122.0 108.1" style="animation-delay:1.12s;opacity:0.09"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L44.0 186.0" style="animation-delay:1.26s;opacity:1"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L44.0 186.0" style="animation-delay:1.33s;opacity:0.55"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L44.0 186.0" style="animation-delay:1.40s;opacity:0.32"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L44.0 186.0" style="animation-delay:1.47s;opacity:0.18"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L44.0 186.0" style="animation-delay:1.54s;opacity:0.09"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L122.0 263.9" style="animation-delay:1.68s;opacity:1"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L122.0 263.9" style="animation-delay:1.75s;opacity:0.55"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L122.0 263.9" style="animation-delay:1.82s;opacity:0.32"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L122.0 263.9" style="animation-delay:1.89s;opacity:0.18"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L122.0 263.9" style="animation-delay:1.96s;opacity:0.09"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L278.0 263.9" style="animation-delay:2.10s;opacity:1"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L278.0 263.9" style="animation-delay:2.17s;opacity:0.55"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L278.0 263.9" style="animation-delay:2.24s;opacity:0.32"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L278.0 263.9" style="animation-delay:2.31s;opacity:0.18"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 186L278.0 263.9" style="animation-delay:2.38s;opacity:0.09"/>
+              </g>
+            </svg>
+          </div>
+          <h3>Private</h3>
+          <p>Search, text recognition and duplicate detection run on your Mac. No account, no Wi‑Fi needed.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section id="customize" class="section" aria-labelledby="customize-title">
+      <div class="sec-head">
+        <p class="eyebrow">Make it yours</p>
+        <h2 id="customize-title" class="h2">Color, shape and<br> name every folder.</h2>
+        <p class="lede">Vista sorts your files into folders by kind. Each folder can have its own color or gradient, shape, icon and name.</p>
+      </div>
+
+      <div class="laptop mt-10 md:mt-14">
+        <div class="laptop-lid">
+          <figure class="media aspect-[16/10]"
+                  data-src="images/customize"
+                  data-alt="Customizing a folder in Vista: renaming it and choosing its color, shape and icon"
+                  data-note="Edit Folder: rename, color, shape, icon"
+                  data-size="1840 × 1012"></figure>
+        </div>
+        <div class="laptop-base" aria-hidden="true"></div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8 md:gap-6 mt-6">
+        <!-- 24 colors: a single gradient shown large (one of 24) -->
+        <div class="flex flex-col gap-4">
+          <div class="sup-art is-4x3 cz">
+            <img class="cz-single" src="images/cz-color-single.png" width="577" height="577"
+                 alt="One of Vista’s 24 folder colors: a warm peach-to-orange gradient"
+                 loading="lazy">
+          </div>
+          <p class="stat"><b>24</b> colors and gradients</p>
+        </div>
+
+        <!-- 7 folder shapes: one folder icon -->
+        <div class="flex flex-col gap-4">
+          <div class="sup-art is-4x3 cz">
+            <img class="cz-folder is-large" src="images/folder05.png" width="928" height="695"
+                 alt="Vista’s folder icon, one of seven shapes">
+          </div>
+          <p class="stat"><b>7</b> folder shapes</p>
+        </div>
+
+        <!-- 31 icons: one icon shown large (one of 31) -->
+        <div class="flex flex-col gap-4">
+          <div class="sup-art is-4x3 cz">
+            <img class="cz-single is-icon" src="images/cz-icon-single.png" width="420" height="372"
+                 alt="One of Vista’s 31 folder icons"
+                 loading="lazy">
+          </div>
+          <p class="stat"><b>31</b> icons</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Rest of the page remains unchanged -->
+    <section id="search" class="section" aria-labelledby="search-title">
+      <div class="sec-head">
+        <p class="eyebrow">On-device search</p>
+        <h2 id="search-title" class="h2">Find the words<br> inside your files.</h2>
+        <p class="lede">Press <kbd class="key">/</kbd> and type what you remember, like “screenshots with wifi.” Vista searches filenames and the text inside screenshots and PDFs, and lists the best matches first. The search runs on your Mac.</p>
+      </div>
+
+      <div class="laptop mt-10 md:mt-14">
+        <div class="laptop-lid">
+          <figure class="media aspect-[16/10]"
+                  data-src="images/search"
+                  data-cues='[[0.25, 1.4, "/", "to search"], [4.75, 1.4, "/", "to search"]]'
+                  data-alt="Vista searching for screenshots with wifi, then videos from August"
+                  data-note="Plain-English search with filter chips and results"
+                  data-size="2880 × 1800"></figure>
+        </div>
+        <div class="laptop-base" aria-hidden="true"></div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 md:gap-6 mt-6">
+        <div class="flex flex-col gap-4">
+          <div class="sup-art">
+            <img src="images/Text%20inside%20screenshots%20and%20PDFS.png" alt="A screenshot result with the matching words highlighted inside the image" loading="lazy">
+          </div>
+          <p class="label">Text inside screenshots and PDFs</p>
+        </div>
+        <div class="flex flex-col gap-4">
+          <div class="sup-art">
+            <img src="images/Slack.png" alt="Downloaded From: files grouped by where they came from, with Slack selected" loading="lazy">
+          </div>
+          <p class="label">Downloaded From: Gmail, Slack, AirDrop</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="viewer" class="section" aria-labelledby="viewer-title">
+      <div class="sec-head">
+        <p class="eyebrow">Viewer</p>
+        <h2 id="viewer-title" class="h2">Browse like Photos.</h2>
+        <p class="lede">Photos and videos open full size. Zoom, pan, swipe to the next item, and select text inside an image with Live Text.</p>
+      </div>
+
+      <div class="laptop mt-10 md:mt-14">
+        <div class="laptop-lid">
+          <figure class="media is-video" style="aspect-ratio: 1872 / 1012">
+            <video autoplay muted loop playsinline preload="auto"
+                   aria-label="Vista’s viewer: photos and videos open full size, with zoom, pan and Live Text">
+              <source src="images/viewer.mp4" type="video/mp4">
+            </video>
+          </figure>
+        </div>
+        <div class="laptop-base" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section id="keyboard" class="section" aria-labelledby="keyboard-title">
+      <div class="sec-head">
+        <p class="eyebrow">Keyboard</p>
+        <h2 id="keyboard-title" class="h2">Move like Gmail.</h2>
+        <p class="lede">Single-key shortcuts and the arrow keys move you between categories and files, and open the viewer. You can use Vista without touching the mouse.</p>
+      </div>
+
+      <div class="laptop mt-10 md:mt-14">
+        <div class="laptop-lid">
+          <figure class="media fit"
+                  data-src="images/gmail"
+                  data-alt="Vista driven only by the keyboard: single-key shortcuts and arrow keys moving between categories and files"
+                  data-note="Keyboard only: move between categories and files"
+                  data-size="1872 × 1013"></figure>
+        </div>
+        <div class="laptop-base" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section id="cleanup" class="section" aria-labelledby="cleanup-title">
+      <div class="sec-head">
+        <p class="eyebrow">Clean Up</p>
+        <h2 id="cleanup-title" class="h2">Clean up.<br> Undo anything.</h2>
+        <p class="lede">Vista finds old downloads, leftover installers, duplicates and near-identical photos. You review each list before anything moves. Files go to the Trash, and Undo brings them back.</p>
+      </div>
+
+      <div class="laptop mt-10 md:mt-14">
+        <div class="laptop-lid">
+          <figure class="media aspect-[16/10]"
+                  data-src="images/cleanup"
+                  data-alt="Vista's Clean Up: reviewing old screenshots, moving them to the Trash, then the Undo button that brings them back"
+                  data-note="Clean Up suggestions"
+                  data-size="2880 × 1800"></figure>
+        </div>
+        <div class="laptop-base" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section id="themes" class="section" aria-labelledby="themes-title">
+      <div class="sec-head">
+        <p class="eyebrow">Themes</p>
+        <h2 id="themes-title" class="h2">Light, Dark, or Sage.</h2>
+        <p class="lede">Light and Dark look like the rest of macOS. Sage is Vista’s own theme, in soft green.</p>
+      </div>
+
+      <div class="laptop mt-10 md:mt-14">
+        <div class="laptop-lid">
+          <figure class="media" style="aspect-ratio: 2560 / 1440">
+            <img id="theme-shot" src="images/SageTheme.png"
+                 alt="Vista's Home screen in the Sage theme, in soft green"
+                 loading="lazy">
+          </figure>
+        </div>
+        <div class="laptop-base" aria-hidden="true"></div>
+      </div>
+      <div class="theme-switch" role="group" aria-label="Choose a theme preview">
+        <button type="button" class="theme-tab is-on" data-theme="sage" aria-pressed="true">Sage</button>
+        <button type="button" class="theme-tab" data-theme="dark" aria-pressed="false">Dark</button>
+        <button type="button" class="theme-tab" data-theme="light" aria-pressed="false">Light</button>
+      </div>
+    </section>
+
+    <section id="privacy" class="section" aria-labelledby="privacy-title">
+      <div class="sec-head">
+        <p class="eyebrow">Privacy</p>
+        <h2 id="privacy-title" class="h2">Works offline.<br> Stays on your Mac.</h2>
+        <p class="lede">Indexing, text recognition, and duplicate detection run entirely on your Mac — with or without Wi‑Fi.</p>
+      </div>
+
+      <div class="laptop mt-10 md:mt-14">
+        <div class="laptop-lid">
+          <figure class="media fit"
+                  data-src="images/offline"
+                  data-alt="Vista working with Wi‑Fi off: indexing, text recognition and duplicate detection all running on the Mac"
+                  data-note="Vista working completely offline, with Wi‑Fi switched off"
+                  data-size="1840 × 1012"></figure>
+        </div>
+        <div class="laptop-base" aria-hidden="true"></div>
+      </div>
+
+      <ul class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-10 md:mt-14">
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>No account</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>No cloud</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>No tracking</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>Offline license</li>
+      </ul>
+    </section>
+
+    <section id="pricing" class="section" aria-labelledby="pricing-title">
+      <div class="price-poster">
+        <div class="price-poster-head">
+          <div>
+            <p class="price-eyebrow">Pricing</p>
+            <h2 id="pricing-title" class="price-title">Pay once.<br> Keep it.</h2>
+          </div>
+          <div class="price-heading-side">
+            <p class="price-lede">Try everything free for 14 days. Then buy it once, with free updates.</p>
+            <p class="price-signs" aria-hidden="true">
+              <span class="price-sign-dot"></span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" focusable="false">
+                <circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/>
+              </svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" focusable="false">
+                <path d="M12 2.6 20 7v10l-8 4.4L4 17V7z"/>
+              </svg>
+            </p>
+          </div>
+        </div>
+
+        <div class="price-grid">
+          <div class="price-story">
+            <p class="price-kicker">What you get</p>
+            <h3 class="price-sub">Every feature.<br> Nothing to renew.</h3>
+            <p class="price-copy">Buy once and every feature is yours, with free updates — no account, no cloud, and nothing that expires.</p>
+
+            <ul class="price-features" role="list">
+              <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>Every feature</li>
+              <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>Free updates</li>
+              <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>No account</li>
+              <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>No cloud</li>
+              <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>Works offline</li>
+              <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>No tracking</li>
+            </ul>
+
+            <p class="price-local">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.5 6v6c0 4.4 3.1 7.9 7.5 9 4.4-1.1 7.5-4.6 7.5-9V6L12 3Z"/><path d="M9 12.2 11 14l4-4"/></svg>
+              Everything runs on your Mac. Nothing is uploaded, and your license works without a connection.
+            </p>
+          </div>
+
+          <div class="price-ticket">
+            <div class="price-ticket-top">
+              <p class="price-ticket-name">Vista for Mac</p>
+              <span class="price-ticket-tag">Early bird</span>
             </div>
-        </div>
-    </section>
 
-    <!-- Privacy Banner -->
-    <section class="privacy-banner container">
-        <h3>🎯 Design Without Compromise</h3>
-        <p>Beautiful. Personal. Private. Everything you organize stays on your Mac. No accounts, no cloud, no tracking—just pure design and control.</p>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="container">
-            <h2>What Vista does</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
-                    <h3>Designed by Designers, for Designers</h3>
-                    <p>Built with meticulous attention to detail. Every pixel, every interaction, every animation crafted for beauty and function together.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🛠️</div>
-                    <h3>Truly Personal Interface</h3>
-                    <p>Customize colors, layouts, and workflows to match your style. Not preset looks—infinite personalization. Your design, your rules.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔍</div>
-                    <h3>Natural Language Search</h3>
-                    <p>Find files the way you think: "PDFs from last week over 5MB" or "screenshots with WiFi." No syntax, no digging.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📂</div>
-                    <h3>Smart Organization</h3>
-                    <p>Files organized beautifully by category with live storage insights. Photos, Videos, Documents, Archives—all at a glance.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔗</div>
-                    <h3>Find & Remove Duplicates</h3>
-                    <p>Spot identical files instantly. Reclaim storage while maintaining complete visual clarity of what's being removed.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">✨</div>
-                    <h3>Privacy-First Design</h3>
-                    <p>All processing on your Mac. No accounts, no cloud, no tracking. Design and privacy, never compromised.</p>
-                </div>
+            <div class="price-ticket-band" aria-hidden="true">
+              <span class="price-ticket-dots"></span>
+              <svg class="price-ticket-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                <path d="M6 18 18 6M8 6h10v10"/>
+              </svg>
             </div>
-        </div>
-    </section>
 
-    <!-- Comparison Section -->
-    <section class="comparison" id="comparison">
-        <div class="container">
-            <h2>How Vista compares</h2>
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>Feature</th>
-                        <th style="color: var(--accent);">Vista</th>
-                        <th>Homy</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="vista-highlight">
-                        <td>Design Customization</td>
-                        <td class="check">✓ Infinite personalization</td>
-                        <td class="cross">✗ 2 fixed looks</td>
-                    </tr>
-                    <tr class="vista-highlight">
-                        <td>Interface Philosophy</td>
-                        <td class="check">✓ Design-first</td>
-                        <td class="cross">Finder-replacement</td>
-                    </tr>
-                    <tr class="vista-highlight">
-                        <td>Large File Library Support</td>
-                        <td class="check">✓ Built for creators</td>
-                        <td class="check">✓ Works well</td>
-                    </tr>
-                    <tr>
-                        <td>Natural Language Search</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                    </tr>
-                    <tr>
-                        <td>Text in Images Search</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                    </tr>
-                    <tr>
-                        <td>Download Source Tracking</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                    </tr>
-                    <tr>
-                        <td>Duplicate File Finder</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                    </tr>
-                    <tr>
-                        <td>Quick Search (⇧⌘Space)</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                    </tr>
-                    <tr class="vista-highlight">
-                        <td>Local-Only Processing</td>
-                        <td class="check">✓ No cloud</td>
-                        <td class="check">✓ No cloud</td>
-                    </tr>
-                    <tr class="vista-highlight">
-                        <td>Pricing Model</td>
-                        <td class="check">✓ One-time purchase</td>
-                        <td class="cross">✗ Annual subscription</td>
-                    </tr>
-                    <tr class="vista-highlight">
-                        <td>Menu Bar Integration</td>
-                        <td class="check">✓ Customizable</td>
-                        <td class="check">✓ Fixed design</td>
-                    </tr>
-                    <tr>
-                        <td>Saved Searches</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                    </tr>
-                    <tr>
-                        <td>Automatic Cleanup Rules</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                    </tr>
-                    <tr class="vista-highlight">
-                        <td>Target Audience</td>
-                        <td class="check">✓ Creative professionals</td>
-                        <td class="cross">General users</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="faq" id="faq">
-        <div class="container">
-            <h2>Frequently asked questions</h2>
-            <div class="faq-container">
-                <div class="faq-item">
-                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                        <span>How customizable is the interface?</span>
-                        <span class="faq-toggle">▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Completely. Colors, layouts, typography, icon styles—design it your way. Vista adapts to your aesthetic, not the other way around. No preset constraints.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                        <span>Does Vista slow down my Mac?</span>
-                        <span class="faq-toggle">▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>No. Optimized indexing runs in the background with minimal overhead. Vista is built for performance without sacrificing design.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                        <span>Can I work with large file libraries?</span>
-                        <span class="faq-toggle">▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Yes. Vista scales beautifully to thousands of files. Fast search, instant thumbnails, and responsive UI even with massive libraries. Perfect for photographers, video editors, and creators.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                        <span>Can I undo anything?</span>
-                        <span class="faq-toggle">▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Yes. Every destructive action is reversible. Files go to Trash first—undo with one click anytime, even after closing Vista.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                        <span>How do I control my data?</span>
-                        <span class="faq-toggle">▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Complete control. Choose which folders Vista scans. No cloud, no accounts, no tracking. All processing happens on your Mac—your data, your rules.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                        <span>What's the pricing?</span>
-                        <span class="faq-toggle">▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>7-day free trial, no credit card needed. After that, one-time purchase for permanent access to all features. Own it, don't rent it.</p>
-                    </div>
-                </div>
+            <div class="price-ticket-price">
+              <span class="price-ticket-num"><span class="sr-only">Early bird price: </span>$19</span>
+              <s class="price-ticket-was"><span class="sr-only">Regular price: </span>$29</s>
             </div>
+            <p class="price-ticket-note">One payment. Early bird for the first 300 licenses, then $29.</p>
+
+            <div class="price-ticket-actions">
+              <a href="#buy" class="price-ticket-buy">Buy for $19
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6.5 18.5 12 13 17.5"/></svg>
+              </a>
+              <a href="#download" class="price-ticket-trial">Download free trial</a>
+            </div>
+            <p class="price-ticket-fine">Try free for 14 days first · macOS 14 or later</p>
+          </div>
         </div>
+
+        <p class="price-mega" aria-hidden="true">$19</p>
+      </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div>&copy; 2026 Vista. All rights reserved.</div>
-                <div class="footer-links">
-                    <a href="#privacy">Privacy</a>
-                    <a href="#support">Support</a>
-                    <a href="https://x.com" target="_blank">Follow on X</a>
-                </div>
-            </div>
+    <section id="faq" class="section" aria-labelledby="faq-title">
+      <div class="grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-8 md:gap-16">
+        <div>
+          <p class="eyebrow">FAQ</p>
+          <h2 id="faq-title" class="h2 mt-4">Questions</h2>
         </div>
-    </footer>
+        <div>
+          <details>
+            <summary>Does Vista reorganize my folders?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <div class="faq-panel"><p>No. Vista changes how you see your files, not where they live. Your folders stay exactly as they are.</p></div>
+          </details>
+          <details>
+            <summary>Which folders does Vista look at?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <div class="faq-panel"><p>Desktop, Documents, Downloads, Pictures, Movies, and Music, plus any folder you add.</p></div>
+          </details>
+          <details>
+            <summary>Can Vista delete my files?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <div class="faq-panel"><p>No. Clean Up only moves files you’ve reviewed to the Trash, and Undo brings them back.</p></div>
+          </details>
+          <details>
+            <summary>Does anything leave my Mac?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <div class="faq-panel"><p>No. Search, text recognition, and duplicate detection run on your Mac. There’s no account and no cloud.</p></div>
+          </details>
+          <details>
+            <summary>Does Vista work without internet?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <div class="faq-panel"><p>Yes. Everything runs locally, and your license works without a connection.</p></div>
+          </details>
+          <details>
+            <summary>Is this a subscription?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <div class="faq-panel"><p>No. You pay once and get free updates.</p></div>
+          </details>
+          <details>
+            <summary>Why is it $19 and not $29?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <div class="faq-panel"><p>The first 300 licenses are $19 as a thank-you to early users. After that it’s $29 — still one payment, still with free updates.</p></div>
+          </details>
+          <details>
+            <summary>What do I need?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <div class="faq-panel"><p>A Mac running macOS 14 Sonoma or later.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
 
-    <script>
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
+    <section class="section pb-16 md:pb-24" aria-labelledby="close-title">
+      <div class="flex flex-col items-center text-center">
+        <span class="appicon w-16 h-16" aria-hidden="true"></span>
+        <h2 id="close-title" class="h2 mt-8">See what you have.</h2>
+        <p class="lede mt-5">14 days free. No account needed.</p>
+        <a href="#pricing" class="btn cta-arrow has-icon mt-9">
+          <span class="cta-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>
+          </span>
+          <span class="cta-label">Download for Mac</span>
+          <span class="cta-arrow-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+          </span>
+        </a>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="foot" id="foot">
+  <div class="foot-wrap">
+    <div class="foot-panels">
+      <div class="foot-panel foot-panel--brand">
+        <div class="foot-panel-head">
+          <p class="foot-eyebrow">On your Mac</p>
+          <svg class="foot-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9.25"/><path d="M12 7.5v9M7.5 12h9"/>
+          </svg>
+        </div>
+        <h2 class="foot-panel-title">Local by<br> default.</h2>
+        <span class="foot-panel-rule" aria-hidden="true"></span>
+        <p class="foot-panel-note">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false">
+            <path d="M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9"/><circle cx="12" cy="12" r="2.4"/>
+          </svg>
+          Search, text recognition, and duplicate detection run on your Mac — never on a server.
+        </p>
+      </div>
+
+      <div class="foot-panel foot-panel--pattern">
+        <div class="foot-panel-head">
+          <p class="foot-eyebrow">Ready when you are</p>
+          <svg class="foot-mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.15" aria-hidden="true" focusable="false">
+            <path d="M16 3.4 21.1 6.3v5.9L16 15.1 10.9 12.2V6.3z"/>
+            <path d="M9.9 14.1 15 17v5.9l-5.1 2.9L4.8 22.9V17z"/>
+            <path d="M22.1 14.1 27.2 17v5.9l-5.1 2.9-5.1-2.9V17z"/>
+          </svg>
+        </div>
+        <h2 class="foot-panel-title">Your files,<br> at a glance.</h2>
+        <span class="foot-panel-rule" aria-hidden="true"></span>
+        <div class="foot-panel-foot">
+          <div class="flex flex-wrap gap-3">
+            <a href="#pricing" class="btn cta-arrow cta-lg">
+              <span class="cta-label">Buy now — $19</span>
+              <span class="cta-arrow-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+              </span>
+            </a>
+            <a href="#pricing" class="btn-quiet cta-arrow has-icon cta-lg">
+              <span class="cta-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 12.54c.03 3.23 2.83 4.3 2.86 4.31-.02.08-.45 1.54-1.48 3.05-.9 1.3-1.83 2.6-3.3 2.63-1.44.03-1.91-.86-3.56-.86-1.64 0-2.16.83-3.53.89-1.42.05-2.5-1.41-3.41-2.71-1.85-2.67-3.27-7.54-1.37-10.84.94-1.64 2.63-2.68 4.46-2.71 1.39-.03 2.7.94 3.55.94.85 0 2.45-1.16 4.13-.99.71.03 2.67.29 3.94 2.16-.1.07-2.35 1.37-2.32 4.13ZM14.34 4.46c.75-.91 1.26-2.18 1.12-3.44-1.08.04-2.38.72-3.15 1.63-.69.8-1.3 2.09-1.14 3.32 1.2.09 2.42-.61 3.17-1.51Z"/></svg>
+              </span>
+              <span class="cta-label">Download</span>
+              <span class="cta-arrow-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot-band">
+    <div class="foot-wrap foot-band-inner">
+      <div class="foot-brand">
+        <a href="#top" class="foot-lockup"><span class="appicon w-7 h-7" aria-hidden="true"></span>Vista</a>
+        <p class="foot-desc">A visual file browser for macOS.<br>No account, no cloud, no tracking.</p>
+      </div>
+
+      <div class="foot-links">
+        <nav class="foot-col" aria-labelledby="foot-product">
+          <p class="foot-kicker" id="foot-product">Product</p>
+          <ul>
+            <li><a href="#customize">Features</a></li>
+            <li><a href="#search">Search inside files</a></li>
+            <li><a href="#viewer">Viewer</a></li>
+            <li><a href="#keyboard">Keyboard</a></li>
+            <li><a href="#cleanup">Clean up</a></li>
+            <li><a href="#themes">Themes</a></li>
+          </ul>
+        </nav>
+
+        <nav class="foot-col" aria-labelledby="foot-company">
+          <p class="foot-kicker" id="foot-company">Company</p>
+          <ul>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#faq">Questions</a></li>
+            <li><a href="#privacy">Privacy</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <p class="foot-mega" aria-hidden="true">Vista</p>
+  </div>
+
+  <div class="foot-bottom">
+    <div class="foot-wrap">
+      <div class="foot-bar">
+        <p class="foot-bar-left">
+          <span>© 2026 Vista</span>
+          <span>macOS 14 Sonoma or later</span>
+        </p>
+        <div class="foot-bar-right">
+          <a href="#top" class="foot-top">Back to top
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19V6M6 11.5 12 5.5l6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const PLAY = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>';
+    const PAUSE = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg>';
+    const PHOTO = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-5 4 4 2.5-2.5L20 17"/></svg>';
+    const WIFI_OFF = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/><path d="M3 3l18 18"/></svg>';
+
+    const watcher = 'IntersectionObserver' in window
+      ? new IntersectionObserver((entries) => {
+          entries.forEach(({ target: v, isIntersecting }) => {
+            if (v.dataset.userPaused === '1') return;
+            if (isIntersecting) v.play().catch(() => {}); else v.pause();
+          });
+        }, { threshold: 0.25 })
+      : null;
+
+    function decorate(fig, v) {
+      if (fig.dataset.badge) {
+        const b = document.createElement('span');
+        b.className = 'badge';
+        b.innerHTML = WIFI_OFF + fig.dataset.badge;
+        fig.appendChild(b);
+      }
+      if (!v || !fig.dataset.cues) return;
+      let cues = [];
+      try { cues = JSON.parse(fig.dataset.cues); } catch (e) { return; }
+      const el = document.createElement('span');
+      el.className = 'cue';
+      el.setAttribute('aria-hidden', 'true');
+      fig.appendChild(el);
+      let raf = 0, shown = -1;
+      const tick = () => {
+        const t = v.currentTime;
+        const i = cues.findIndex(([start, len]) => t >= start && t < start + len);
+        if (i !== shown) {
+          shown = i;
+          if (i >= 0) { el.innerHTML = `<kbd>${cues[i][2]}</kbd>${cues[i][3]}`; el.classList.add('on'); }
+          else el.classList.remove('on');
+        }
+        raf = requestAnimationFrame(tick);
+      };
+      const start = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); };
+      v.addEventListener('play', start);
+      v.addEventListener('pause', () => cancelAnimationFrame(raf));
+      if (!v.paused) start();
+    }
+
+    function placeholder(fig) {
+      if (fig.hasAttribute('data-keep')) return;
+      const name = fig.dataset.src.split('/').pop();
+      fig.innerHTML = `<div class="ph">${PHOTO}<b>${fig.dataset.src}.png</b><span>${fig.dataset.note}</span><em>${fig.dataset.size} px · or ${fig.dataset.video || name + '.mp4'}</em></div>`;
+    }
+
+    function toggle(fig, v) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'vbtn';
+      const sync = () => {
+        b.innerHTML = v.paused ? PLAY : PAUSE;
+        b.setAttribute('aria-label', v.paused ? 'Play video' : 'Pause video');
+        fig.classList.toggle('is-paused', v.paused);
+      };
+      b.addEventListener('click', () => {
+        if (v.paused) { v.dataset.userPaused = '0'; v.play().catch(() => {}); }
+        else { v.dataset.userPaused = '1'; v.pause(); }
+      });
+      v.addEventListener('play', sync);
+      v.addEventListener('pause', sync);
+      sync();
+      return b;
+    }
+
+    function wire(fig, v, autoplay) {
+      fig.appendChild(toggle(fig, v));
+      fig.classList.add('has-media', 'is-video');
+      decorate(fig, v);
+      if (!autoplay) { v.dataset.userPaused = '1'; v.pause(); return; }
+      if (watcher) watcher.observe(v); else v.play().catch(() => {});
+    }
+
+    const probe = document.createElement('video');
+    const canMp4 = !!(probe.canPlayType && probe.canPlayType('video/mp4; codecs="avc1.640033"'));
+
+    function tryVideo(fig, next, autoplay) {
+      if (!canMp4) { next(); return; }
+      let settled = false;
+      const fail = () => { if (settled) return; settled = true; clearTimeout(timer); v.removeAttribute('src'); v.load(); next(); };
+      const timer = setTimeout(fail, 6000);
+      const v = document.createElement('video');
+      v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'auto';
+      v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
+      v.setAttribute('aria-label', fig.dataset.alt);
+      v.addEventListener('loadeddata', () => {
+        if (settled) return;
+        settled = true; clearTimeout(timer);
+        fig.replaceChildren(v);
+        fig.style.aspectRatio = v.videoWidth + ' / ' + v.videoHeight;
+        wire(fig, v, autoplay);
+      }, { once: true });
+      v.addEventListener('error', fail, { once: true });
+      v.src = fig.dataset.src + '.mp4';
+    }
+
+    function tryImage(fig, next, src) {
+      const img = new Image();
+      img.decoding = 'async';
+      img.alt = fig.dataset.alt;
+      img.addEventListener('load', () => {
+        fig.replaceChildren(img);
+        if (!fig.hasAttribute('data-static')) fig.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight;
+        fig.classList.add('has-media');
+        decorate(fig, null);
+      }, { once: true });
+      img.addEventListener('error', next, { once: true });
+      img.src = src || fig.dataset.src + '.png';
+    }
+
+    document.querySelectorAll('figure.media[data-static]').forEach((fig) => {
+      const v = fig.querySelector('video');
+      if (!v) return;
+      if (reduce) { v.removeAttribute('autoplay'); v.pause(); }
+      let settled = false;
+      const ready = () => { if (settled) return; settled = true; wire(fig, v, !reduce); };
+      const fail = () => {
+        if (settled) return;
+        settled = true;
+        v.pause();
+        tryImage(fig, () => placeholder(fig), v.getAttribute('poster'));
+      };
+      const source = v.querySelector('source:last-of-type');
+      if (!canMp4 || v.dataset.failed) fail();
+      else if (v.readyState >= 2) ready();
+      else {
+        v.addEventListener('loadeddata', ready, { once: true });
+        v.addEventListener('error', fail, { once: true });
+        if (source) source.addEventListener('error', fail, { once: true });
+      }
+    });
+
+    document.querySelectorAll('figure.media[data-src]:not([data-static])').forEach((fig) => {
+      const none = () => placeholder(fig);
+      if (reduce) tryImage(fig, () => tryVideo(fig, none, false));
+      else tryVideo(fig, () => tryImage(fig, none), true);
+    });
+  })();
+</script>
+
+<script>
+  (() => {
+    const h = document.getElementById('hero-title');
+    const p = document.querySelector('.hero-lede');
+    if (!h || !p) return;
+    const fit = () => {
+      const r = document.createRange();
+      r.selectNodeContents(h);
+      const w = Math.max(0, ...Array.from(r.getClientRects(), (b) => b.width));
+      if (w > 0) p.style.setProperty('--hero-measure', Math.ceil(w) + 'px');
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  })();
+</script>
+
+
+<script>
+  (() => {
+    const shot = document.getElementById('theme-shot');
+    if (!shot) return;
+    const tabs = Array.from(document.querySelectorAll('.theme-tab'));
+    const files = {
+      sage: 'images/SageTheme.png',
+      dark: 'images/DarkTheme.png',
+      light: 'images/PureWhiteTheme.png',
+    };
+    const alts = {
+      sage: "Vista's Home screen in the Sage theme, in soft green",
+      dark: "Vista's Home screen in the Dark theme",
+      light: "Vista's Home screen in the Light (Pure White) theme",
+    };
+    // Warm the cache for the alternate shots once the Themes section gets close,
+    // so a click swaps instantly without downloading ~2 MB up front on a page
+    // that otherwise lazy-loads everything.
+    const warm = () => Object.values(files).forEach((src) => { const pre = new Image(); pre.src = src; });
+    const figure = shot.closest('figure');
+    if ('IntersectionObserver' in window && figure) {
+      const io = new IntersectionObserver((entries, obs) => {
+        if (entries.some((e) => e.isIntersecting)) { warm(); obs.disconnect(); }
+      }, { rootMargin: '600px 0px' });
+      io.observe(figure);
+    } else {
+      warm();
+    }
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const show = () => {
+      shot.style.opacity = '1';
+      shot.style.filter = reduce ? 'none' : 'blur(0)';
+    };
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const name = tab.dataset.theme;
+        if (tab.classList.contains('is-on')) return;
+        shot.style.opacity = '0';
+        shot.style.filter = reduce ? 'none' : 'blur(4px)';
+        shot.addEventListener('load', show, { once: true });
+        shot.addEventListener('error', show, { once: true });
+        shot.src = files[name];
+        shot.alt = alts[name];
+        tabs.forEach((t) => {
+          const on = t === tab;
+          t.classList.toggle('is-on', on);
+          t.setAttribute('aria-pressed', on ? 'true' : 'false');
         });
-    </script>
+      });
+    });
+  })();
+</script>
+
+<script>
+  /* The hero shot now scrolls with the page (no parallax), so nothing drifts.
+     Remaining motion: the three "Make it yours" cards settle flat as they enter. */
+  (() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const cards = document.querySelectorAll('#customize .grid > div > .sup-art');
+    if (!cards.length) return;
+    cards.forEach((el, i) => {
+      el.classList.add('iso');
+      el.style.transitionDelay = (i * 90) + 'ms';
+    });
+    if (!('IntersectionObserver' in window)) {
+      cards.forEach((el) => el.classList.add('is-flat'));
+      return;
+    }
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-flat');
+        obs.unobserve(entry.target);
+      });
+    }, { threshold: 0.3 });
+    cards.forEach((el) => io.observe(el));
+  })();
+</script>
+
+<script>
+  /* Linear-style section motion on the intro: the headline and each pillar rise
+     out of a blur (staggered), the artwork wipes up inside them, and the three
+     art panels drift at slightly different rates as they cross the viewport. */
+  (() => {
+    const section = document.getElementById('intro');
+    if (!section) return;
+    const title = section.querySelector('.intro-title');
+    const pillars = Array.from(section.querySelectorAll('.pillar'));
+    const arts = pillars.map((p) => p.querySelector('.pillar-art')).filter(Boolean);
+    if (!pillars.length) return;
+
+    const all = [title, ...pillars].filter(Boolean);
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const showAll = () => { all.forEach((el) => el.classList.add('is-in')); arts.forEach((a) => a.classList.add('is-in')); };
+
+    if (reduce) { showAll(); return; }
+
+    if (title) title.classList.add('reveal');
+    pillars.forEach((p, i) => {
+      p.classList.add('reveal');
+      p.style.setProperty('--d', (i * 110) + 'ms');
+      const art = p.querySelector('.pillar-art');
+      if (art) {
+        art.classList.add('reveal-clip');
+        art.style.setProperty('--d', (160 + i * 110) + 'ms');
+      }
+    });
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-in');
+          const art = entry.target.querySelector ? entry.target.querySelector('.pillar-art') : null;
+          if (art) art.classList.add('is-in');
+          obs.unobserve(entry.target);
+        });
+      }, { threshold: 0.18, rootMargin: '0px 0px -6% 0px' });
+      if (title) io.observe(title);
+      pillars.forEach((p) => io.observe(p));
+    } else {
+      showAll();
+    }
+
+    /* layered drift — each art panel moves at its own depth */
+    const depths = [0.05, 0.085, 0.065];
+    let queued = 0;
+    const update = () => {
+      queued = 0;
+      if (innerWidth < 768) {
+        arts.forEach((a) => { a.style.setProperty('--py', '0px'); a.style.setProperty('--s', '1'); a.style.setProperty('--brx', '0deg'); a.style.setProperty('--bry', '0deg'); });
+        return;
+      }
+      arts.forEach((a, i) => {
+        const r = a.getBoundingClientRect();
+        const off = (r.top + r.height / 2) - innerHeight / 2;
+        const py = Math.max(-36, Math.min(36, off * -depths[i % depths.length]));
+        a.style.setProperty('--py', py.toFixed(1) + 'px');
+        // scrub: the figure settles to full size as it reaches the middle of the screen
+        const p = Math.max(0, Math.min(1, (innerHeight * 0.92 - r.top) / (innerHeight * 0.55)));
+        a.style.setProperty('--s', (0.94 + 0.06 * p).toFixed(4));
+        // …and straightens out of its isometric pose as it arrives
+        a.style.setProperty('--brx', (8 * (1 - p)).toFixed(2) + 'deg');
+        a.style.setProperty('--bry', (-10 * (1 - p)).toFixed(2) + 'deg');
+      });
+    };
+    const onScroll = () => { if (!queued) queued = requestAnimationFrame(update); };
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
+    update();
+  })();
+</script>
+
+<script>
+  /* Pointer motion on the three figures: each panel leans toward the cursor and
+     eases back when it leaves. Values are lerped in one rAF so it trails smoothly
+     instead of snapping; disabled for touch and reduced-motion. */
+  (() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!matchMedia('(pointer: fine)').matches) return;
+    const arts = Array.from(document.querySelectorAll('#intro .pillar-art'));
+    if (!arts.length) return;
+
+    const cur = new Map();
+    const want = new Map();
+    arts.forEach((a) => { cur.set(a, { mx: 0, my: 0, rx: 0, ry: 0 }); want.set(a, { mx: 0, my: 0, rx: 0, ry: 0 }); });
+
+    let raf = 0;
+    const tick = () => {
+      let busy = false;
+      arts.forEach((a) => {
+        const c = cur.get(a);
+        const t = want.get(a);
+        for (const k of ['mx', 'my', 'rx', 'ry']) {
+          c[k] += (t[k] - c[k]) * 0.14;
+          if (Math.abs(t[k] - c[k]) > 0.02) busy = true;
+        }
+        a.style.setProperty('--mx', c.mx.toFixed(2) + 'px');
+        a.style.setProperty('--my', c.my.toFixed(2) + 'px');
+        a.style.setProperty('--rx', c.rx.toFixed(2) + 'deg');
+        a.style.setProperty('--ry', c.ry.toFixed(2) + 'deg');
+      });
+      raf = busy ? requestAnimationFrame(tick) : 0;
+    };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+
+    arts.forEach((a) => {
+      a.addEventListener('pointermove', (e) => {
+        const r = a.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
+        const dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
+        const t = want.get(a);
+        t.mx = -dx * 9;
+        t.my = -dy * 7;
+        t.ry = dx * 3;
+        t.rx = -dy * 2.2;
+        kick();
+      }, { passive: true });
+
+      a.addEventListener('pointerleave', () => {
+        const t = want.get(a);
+        t.mx = t.my = t.rx = t.ry = 0;
+        kick();
+      });
+    });
+  })();
+</script>
+
+<script>
+  /* Shared entrance for the sections below the hero: headers, product frames,
+     card grids, FAQ rows, pricing, and the footer rise in with a short stagger.
+     The hero and intro keep their own choreography. */
+  (() => {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) return;
+
+    const clusters = [];
+    const push = (items) => { if (items.length) clusters.push(items); };
+
+    ['customize', 'search', 'viewer', 'keyboard', 'cleanup', 'themes', 'privacy'].forEach((id) => {
+      const sec = document.getElementById(id);
+      if (!sec) return;
+      push([...sec.querySelectorAll('.sec-head > *')]);
+      push([...sec.querySelectorAll(':scope > .laptop')]);
+      push([...sec.querySelectorAll('.grid > *')]);
+      push([...sec.querySelectorAll(':scope > .theme-switch')]);
+    });
+
+    const faq = document.getElementById('faq');
+    if (faq) {
+      push([...faq.querySelectorAll('.grid > div:first-child > *')]);
+      push([...faq.querySelectorAll('details')]);
+    }
+
+    const close = document.querySelector('section[aria-labelledby="close-title"]');
+    if (close) push([...close.querySelectorAll(':scope > div > *')]);
+
+    const poster = document.querySelector('#pricing .price-poster');
+    if (poster) push([poster]);
+
+    const foot = document.querySelector('.foot');
+    if (foot) {
+      push([...foot.querySelectorAll('.foot-panels > *')]);
+      push([...foot.querySelectorAll('.foot-band-inner > *')]);
+    }
+
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-in');
+        obs.unobserve(entry.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+    clusters.forEach((items) => {
+      items.forEach((el, i) => {
+        el.classList.add('rise');
+        el.style.setProperty('--d', Math.min(i * 50, 200) + 'ms');
+        const clearBlur = (e) => {
+          if (e.target !== el || e.propertyName !== 'filter') return;
+          el.style.filter = 'none';
+          el.removeEventListener('transitionend', clearBlur);
+        };
+        el.addEventListener('transitionend', clearBlur);
+        io.observe(el);
+      });
+    });
+  })();
+</script>
+
+<script>
+  /* FAQ accordion: <details> stays the control (keyboard, screen readers and
+     find-in-page keep working), but the answer height is animated so opening a
+     question never snaps the page below it. Reduced motion falls back to the
+     native instant toggle. */
+  (() => {
+    const faq = document.getElementById('faq');
+    if (!faq) return;
+
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+    const DURATION = 320;
+    const EASING = 'cubic-bezier(.23, 1, .32, 1)';
+
+    faq.querySelectorAll('details').forEach((details) => {
+      const summary = details.querySelector('summary');
+      const panel = details.querySelector('.faq-panel');
+      if (!summary || !panel || typeof panel.animate !== 'function') return;
+
+      let anim = null;
+      let open = details.open;
+
+      // Keep in sync if the browser opens/closes the row on its own.
+      details.addEventListener('toggle', () => {
+        if (!anim) open = details.open;
+      });
+
+      summary.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        if (reduce.matches) {
+          open = !open;
+          details.open = open;
+          return;
+        }
+
+        const next = !open;
+        // Measure where the panel is right now so an interrupted animation
+        // continues from its current height instead of jumping. A closed row
+        // still reports a cached layout height, so opening always starts at 0.
+        const from = next && !details.open ? 0 : panel.getBoundingClientRect().height;
+
+        if (anim) {
+          anim.cancel();
+          anim = null;
+        }
+
+        open = next;
+        if (next) details.open = true;
+
+        const to = next ? panel.scrollHeight : 0;
+
+        anim = panel.animate(
+          [{ height: from + 'px' }, { height: to + 'px' }],
+          { duration: DURATION, easing: EASING }
+        );
+
+        anim.onfinish = () => {
+          anim = null;
+          details.open = next;
+        };
+      });
+    });
+  })();
+</script>
+
+<script>
+  /* Header: hidden on landing, slides in once past --head-show-at, and goes
+     away again at the top of the page (same threshold as atlasformac.com). */
+  (() => {
+    const head = document.getElementById('site-head');
+    if (!head) return;
+
+    const showAt = parseFloat(getComputedStyle(head).getPropertyValue('--head-show-at')) || 80;
+    let visible = null;
+
+    const update = () => {
+      const next = window.scrollY > showAt;
+      if (next === visible) return;
+      visible = next;
+      head.classList.toggle('is-visible', next);
+      head.inert = !next;
+    };
+
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('pageshow', update);
+    update();
+  })();
+</script>
 </body>
-</html>
