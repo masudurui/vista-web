@@ -428,6 +428,18 @@
   .badge svg { color: var(--accent); }
   @media (max-width: 560px) { .cue { display: none; } .badge { left: 10px; bottom: 10px; } }
 
+  /* Keyboard section: the arrow key that was just pressed lights up as the clip
+     moves down (and then back up) through the sidebar. Timings come from
+     data-steps on the figure, so the pills stay in sync with the loop. */
+  .keycue { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px 5px 5px; border-radius: 12px; color: var(--ink); background: rgba(252, 252, 251, .92); box-shadow: 0 0 0 1px var(--line), 0 10px 24px -14px rgba(5, 38, 28, .4); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); font-size: 13px; font-weight: 500; pointer-events: none; }
+  .keycue kbd { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: #FFFFFF; box-shadow: 0 0 0 1px var(--line-strong), 0 1px 0 var(--line-strong); font: 600 14px/1 var(--font); color: var(--ink); transition: background-color 120ms ease, color 120ms ease, transform 120ms var(--ease-out), box-shadow 120ms ease; }
+  .keycue kbd.is-on { background: var(--accent); color: var(--accent-ink); box-shadow: inset 0 1px 2px rgba(5, 38, 28, .3); transform: translateY(1px); }
+  .keycue-label { min-width: 176px; padding-right: 2px; white-space: nowrap; }
+  /* Phones get the caption under the laptop instead of the in-screen pill. */
+  @media (max-width: 560px) { .keycue { display: none; } }
+
+  .keys-note { margin-top: 18px; text-align: center; font-size: 14.5px; font-weight: 500; letter-spacing: -0.01em; color: var(--muted); }
+
   kbd.key { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 7px; margin: 0 2px; border-radius: 7px; background: #FFFFFF; box-shadow: 0 0 0 1px var(--line-strong), 0 1px 0 var(--line-strong); font: 600 14px/1 var(--font); color: var(--ink); vertical-align: 1px; }
 
   .sup-art { aspect-ratio: 16 / 10; border: 1px solid var(--line); border-radius: var(--r-card); overflow: hidden; }
@@ -1070,7 +1082,7 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
             </span>
           </a>
-          <a href="https://github.com/masudurui/vista-web/releases/latest/download/Vista.zip" class="btn-quiet cta-arrow has-icon">
+          <a href="https://github.com/masudurui/vista-web/releases/tag/v1.0.0" class="btn-quiet cta-arrow has-icon">
             <span class="cta-icon" aria-hidden="true">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 12.54c.03 3.23 2.83 4.3 2.86 4.31-.02.08-.45 1.54-1.48 3.05-.9 1.3-1.83 2.6-3.3 2.63-1.44.03-1.91-.86-3.56-.86-1.64 0-2.16.83-3.53.89-1.42.05-2.5-1.41-3.41-2.71-1.85-2.67-3.27-7.54-1.37-10.84.94-1.64 2.63-2.68 4.46-2.71 1.39-.03 2.7.94 3.55.94.85 0 2.45-1.16 4.13-.99.71.03 2.67.29 3.94 2.16-.1.07-2.35 1.37-2.32 4.13ZM14.34 4.46c.75-.91 1.26-2.18 1.12-3.44-1.08.04-2.38.72-3.15 1.63-.69.8-1.3 2.09-1.14 3.32 1.2.09 2.42-.61 3.17-1.51Z"/></svg>
             </span>
@@ -1327,19 +1339,22 @@
       <div class="sec-head">
         <p class="eyebrow">Keyboard</p>
         <h2 id="keyboard-title" class="h2">Move like Gmail.</h2>
-        <p class="lede">Single-key shortcuts and the arrow keys move you between categories and files, and open the viewer. You can use Vista without touching the mouse.</p>
+        <p class="lede">Single-key shortcuts and the arrow keys move you between categories and files, and open the viewer. ↓ moves down, ↑ moves up. You can use Vista without touching the mouse.</p>
       </div>
 
       <div class="laptop mt-10 md:mt-14">
         <div class="laptop-lid">
           <figure class="media fit"
                   data-src="images/gmail"
-                  data-alt="Vista driven only by the keyboard: single-key shortcuts and arrow keys moving between categories and files"
-                  data-note="Keyboard only: move between categories and files"
-                  data-size="1872 × 1013"></figure>
+                  data-alt="Vista driven only by the keyboard: the down arrow moving to the next category, then the up arrow moving back"
+                  data-note="Keyboard only: ↓ and ↑ move between categories and files"
+                  data-size="1872 × 1013"
+                  data-steps='[[0.60,"down"],[0.95,"down"],[1.30,"down"],[1.55,"down"],[1.80,"down"],[2.10,"down"],[2.45,"down"],[2.65,"down"],[2.90,"up"],[3.15,"up"],[3.50,"up"],[3.85,"up"],[4.00,"up"],[4.25,"up"],[4.65,"up"],[4.90,"up"]]'></figure>
         </div>
         <div class="laptop-base" aria-hidden="true"></div>
       </div>
+
+      <p class="keys-note"><kbd class="key">↓</kbd> <kbd class="key">↑</kbd> Move down and up between categories and files.</p>
     </section>
 
     <section id="cleanup" class="section" aria-labelledby="cleanup-title">
@@ -1476,7 +1491,7 @@
               <a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" class="price-ticket-buy" data-polar-checkout data-polar-checkout-theme="light">Buy for $19
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6.5 18.5 12 13 17.5"/></svg>
               </a>
-              <a href="https://github.com/masudurui/vista-web/releases/latest/download/Vista.zip" class="price-ticket-trial">Download free trial</a>
+              <a href="https://github.com/masudurui/vista-web/releases/tag/v1.0.0" class="price-ticket-trial">Download free trial</a>
             </div>
             <p class="price-ticket-fine">Try free for 14 days first · macOS 14 or later</p>
           </div>
@@ -1534,7 +1549,7 @@
         <span class="appicon w-16 h-16" aria-hidden="true"></span>
         <h2 id="close-title" class="h2 mt-8">See what you have.</h2>
         <p class="lede mt-5">14 days free. No account needed.</p>
-        <a href="https://github.com/masudurui/vista-web/releases/latest/download/Vista.zip" class="btn cta-arrow has-icon mt-9">
+        <a href="https://github.com/masudurui/vista-web/releases/tag/v1.0.0" class="btn cta-arrow has-icon mt-9">
           <span class="cta-icon" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>
           </span>
@@ -1587,7 +1602,7 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
               </span>
             </a>
-            <a href="https://github.com/masudurui/vista-web/releases/latest/download/Vista.zip" class="btn-quiet cta-arrow has-icon cta-lg">
+            <a href="https://github.com/masudurui/vista-web/releases/tag/v1.0.0" class="btn-quiet cta-arrow has-icon cta-lg">
               <span class="cta-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 12.54c.03 3.23 2.83 4.3 2.86 4.31-.02.08-.45 1.54-1.48 3.05-.9 1.3-1.83 2.6-3.3 2.63-1.44.03-1.91-.86-3.56-.86-1.64 0-2.16.83-3.53.89-1.42.05-2.5-1.41-3.41-2.71-1.85-2.67-3.27-7.54-1.37-10.84.94-1.64 2.63-2.68 4.46-2.71 1.39-.03 2.7.94 3.55.94.85 0 2.45-1.16 4.13-.99.71.03 2.67.29 3.94 2.16-.1.07-2.35 1.37-2.32 4.13ZM14.34 4.46c.75-.91 1.26-2.18 1.12-3.44-1.08.04-2.38.72-3.15 1.63-.69.8-1.3 2.09-1.14 3.32 1.2.09 2.42-.61 3.17-1.51Z"/></svg>
               </span>
@@ -1702,6 +1717,45 @@
       if (!v.paused) start();
     }
 
+    /* Keyboard section: a two-key pill that lights the arrow being pressed as the
+       clip moves down (then back up) through the sidebar. `data-steps` is a list
+       of [time, "up" | "down"] pairs measured from the clip itself. */
+    function keyhint(fig, v) {
+      if (!v || !fig.dataset.steps) return;
+      let steps = [];
+      try { steps = JSON.parse(fig.dataset.steps); } catch (e) { return; }
+      if (!steps.length) return;
+      const el = document.createElement('span');
+      el.className = 'keycue';
+      el.setAttribute('aria-hidden', 'true');
+      el.innerHTML = '<kbd data-dir="up">↑</kbd><kbd data-dir="down">↓</kbd><span class="keycue-label">Move between categories</span>';
+      fig.appendChild(el);
+      const up = el.querySelector('[data-dir="up"]');
+      const down = el.querySelector('[data-dir="down"]');
+      const label = el.querySelector('.keycue-label');
+      const copy = { up: 'Up to the previous category', down: 'Down to the next category' };
+      let raf = 0, shown = -1, dir = '';
+      const tick = () => {
+        const t = v.currentTime;
+        /* Light a key for 220ms around each move, then release it. */
+        const i = steps.findIndex(([at]) => t >= at && t < at + .22);
+        if (i !== shown) {
+          shown = i;
+          const next = i < 0 ? '' : steps[i][1];
+          up.classList.toggle('is-on', next === 'up');
+          down.classList.toggle('is-on', next === 'down');
+          if (next && next !== dir) { dir = next; label.textContent = copy[next]; }
+        }
+        /* Clip looped back to the start: return the pill to its neutral state. */
+        if (t < steps[0][0] && dir) { dir = ''; label.textContent = 'Move between categories'; }
+        raf = requestAnimationFrame(tick);
+      };
+      const start = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); };
+      v.addEventListener('play', start);
+      v.addEventListener('pause', () => cancelAnimationFrame(raf));
+      if (!v.paused) start();
+    }
+
     function placeholder(fig) {
       if (fig.hasAttribute('data-keep')) return;
       const name = fig.dataset.src.split('/').pop();
@@ -1731,6 +1785,7 @@
       fig.appendChild(toggle(fig, v));
       fig.classList.add('has-media', 'is-video');
       decorate(fig, v);
+      keyhint(fig, v);
       if (!autoplay) { v.dataset.userPaused = '1'; v.pause(); return; }
       if (watcher) watcher.observe(v); else v.play().catch(() => {});
     }
