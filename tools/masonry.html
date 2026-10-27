@@ -102,79 +102,16 @@ a{color:inherit}
 .art--34{aspect-ratio:3/4}
 .art--45{aspect-ratio:4/5}
 .art--54{aspect-ratio:5/4}
+.art--32{aspect-ratio:3/2}
 .art--169{aspect-ratio:16/9}
 .art .in{position:absolute;inset:0;transition:transform .7s var(--ease-out)}
 @media (prefers-reduced-motion:reduce){.tool:hover .art .in{transform:none}.tool .fig .arw{transition:none}}
 
-/* Shared hairline row used by the panel mocks */
-.row{display:flex;align-items:center;justify-content:space-between;gap:2cqw;padding:2.6cqw 3.4cqw;border-top:1px solid var(--line);font-size:clamp(9px,3.1cqw,13px)}
-.row:first-child{border-top:0}
-.row b{font-weight:600;letter-spacing:-.01em}
-.k{color:var(--muted)}
-.v{font-weight:600;letter-spacing:-.01em}
-.chips{display:flex;gap:1cqw}
-.chips i{font-style:normal;font-size:.86em;font-weight:600;padding:.7cqw 1.8cqw;border-radius:99px;background:var(--paper);color:var(--muted)}
-.chips i.on{background:var(--accent);color:#fff}
-.tgl{position:relative;flex:none;width:5.8cqw;height:3.3cqw;border-radius:99px;background:var(--accent)}
-.tgl::after{content:"";position:absolute;top:.5cqw;right:.5cqw;width:2.3cqw;height:2.3cqw;border-radius:50%;background:#fff;box-shadow:0 .2cqw .4cqw rgba(0,0,0,.16)}
-.panel-head{display:flex;align-items:center;gap:1.6cqw;padding:2.4cqw 3.4cqw;border-bottom:1px solid var(--line);background:var(--stage);font-size:clamp(8.5px,2.7cqw,11.5px);font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
-.code{padding:2.6cqw 3.4cqw;border-top:1px solid var(--line);background:var(--paper);font:clamp(8px,2.7cqw,12px)/1.4 var(--mono);color:#0B3B2A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* ---------- Art 1: Screenshot settings — a settings panel on hairlines ---------- */
-.stack{display:flex;flex-direction:column;height:100%}
-.stack .code{margin-top:auto}
+/* ---------- Tile pictures: real Vista screenshots, cropped to the frame ---------- */
+.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 42%;display:block}
+.art--top img{object-position:50% 16%}
+.art--low img{object-position:50% 72%}
 
-/* ---------- Art 2: Folder X-ray — treemap in the site's folder tints ---------- */
-.treemap{position:absolute;inset:4.4%;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);gap:1.1cqw;font-size:clamp(8px,3.15cqw,13px)}
-.tm{display:flex;flex-direction:column;justify-content:flex-end;gap:.15cqw;min-width:0;padding:1.5cqw 1.6cqw;border:1px solid var(--line);border-radius:9px;background:var(--stage);overflow:hidden}
-.tm b{font-size:.95em;font-weight:600;line-height:1.15;letter-spacing:-.01em}
-.tm span{font-size:.76em;line-height:1.1;color:var(--faint);font-variant-numeric:tabular-nums}
-.tm.t1{background:#F4F9F6}
-.tm.t2{background:#EBF4EF;border-color:#DCE8E1}
-.tm.t3{background:#D5E6DC;border-color:#C8DACE}
-.tm.t4{background:var(--accent);border-color:var(--accent);color:#fff}
-.tm.t4 span{color:rgba(255,255,255,.82)}
-.a-videos{grid-area:1/1/4/4}
-.a-photos{grid-area:1/4/3/7}
-.a-projects{grid-area:3/4/5/7}
-.a-docs{grid-area:4/1/7/3}
-.a-archives{grid-area:4/3/7/5}
-.a-other{grid-area:4/5/5/7}
-.a-shots{grid-area:5/5/7/7}
-/* ---------- Art 3: Folder structure — an indented tree ---------- */
-.tree{display:flex;flex-direction:column;height:100%;padding:5% 4.5%}
-.nest{flex:1 1 0;min-height:0;display:flex;align-items:center;gap:1.8cqw;padding:1.75cqw 1.9cqw;border-radius:9px;font-size:clamp(9px,3.1cqw,13px);font-weight:500;letter-spacing:-.012em;line-height:1.2}
-.nest + .nest{margin-top:.7cqw}
-.nest .fld{flex:none;width:2.7cqw;height:2.7cqw;color:var(--accent)}
-.nest .n{margin-left:auto;font-size:.78em;font-weight:600;color:var(--faint);font-variant-numeric:tabular-nums}
-.nest.l2{margin-left:7%}
-.nest.l3{margin-left:14%}
-.nest.root{background:var(--paper);font-weight:600}
-
-/* ---------- Art 4: File naming — the filename and its tokens ---------- */
-.name{display:flex;flex-direction:column;justify-content:space-between;gap:2.4cqw;height:100%;padding:8% 7%}
-.pat{font:500 clamp(7.5px,2.45cqw,10.5px)/1.4 var(--mono);letter-spacing:-.01em;color:var(--faint)}
-.fn{font:600 clamp(9.5px,3.55cqw,15px)/1.45 var(--mono);letter-spacing:-.02em;color:var(--ink);overflow-wrap:anywhere}
-.fn em{font-style:normal;color:var(--accent-strong)}
-.fn s{text-decoration:none;color:#B0703C}
-.toks{display:flex;flex-wrap:wrap;gap:1cqw}
-.toks span{font-size:clamp(8px,2.55cqw,11px);font-weight:500;padding:.7cqw 1.5cqw;border-radius:99px;background:var(--paper);color:var(--muted)}
-.ok{display:flex;align-items:center;gap:1.2cqw;font-size:clamp(8px,2.55cqw,11px);font-weight:600;color:var(--accent-strong)}
-.ok svg{width:2.6cqw;height:2.6cqw;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
-
-/* ---------- Art 5: Wallpaper folder colors — wash + folder swatches ---------- */
-.wash{position:absolute;inset:0;background:
-  radial-gradient(58% 52% at 22% 18%,#F3CBB2 0%,rgba(243,203,178,0) 62%),
-  radial-gradient(52% 56% at 84% 24%,#BFD6EC 0%,rgba(191,214,236,0) 64%),
-  radial-gradient(66% 58% at 58% 102%,#C4DFC9 0%,rgba(196,223,201,0) 66%),
-  linear-gradient(165deg,#FBF3EA,#EEF1F9 62%,#E8F1EA)}
-.wsw{position:absolute;left:7%;right:7%;bottom:7%;display:flex;gap:2.2cqw}
-.wsw i{position:relative;flex:1;aspect-ratio:1;border-radius:12px;box-shadow:0 1px 2px rgba(5,38,28,.10),inset 0 0 0 1px rgba(255,255,255,.55)}
-.wsw i:nth-child(1){background:#9CC7A6}
-.wsw i:nth-child(2){background:#7FB9C9}
-.wsw i:nth-child(3){background:#E1A184}
-.wsw i:nth-child(4){background:#A8A9C4}
-.wsw i.best{outline:2px solid #fff;outline-offset:3px}
-.wsw i.best::after{content:"";position:absolute;left:37%;top:40%;width:26%;height:13%;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg)}
 /* ---------- Art 6: the privacy drop zone (the hub's own motif) ---------- */
 .privacy{height:100%;display:grid;place-items:center;padding:8%;background:var(--stage)}
 .dz{width:100%;padding:9% 7%;border:1.5px dashed var(--line-strong);border-radius:16px;background:rgba(255,255,255,.72);text-align:center}
@@ -200,11 +137,6 @@ a{color:inherit}
 .vs-row:last-child{border-bottom:1px solid var(--line)}
 .vs-row em{font-style:normal;font-weight:700;color:var(--accent)}
 .vs-row s{text-decoration:none;font-weight:700;color:var(--line-strong)}
-
-/* ---------- Art 9: Vista ---------- */
-.vista-art{position:relative;height:100%;display:grid;place-items:center;overflow:hidden;background:linear-gradient(155deg,#0B8C37,#066B27);color:#fff}
-.vista-art::after{content:"";position:absolute;top:-24%;right:-18%;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.2),rgba(255,255,255,0) 66%)}
-.vista-art .ia{position:relative;z-index:1;width:22%;border-radius:22%;box-shadow:0 10px 24px -10px rgba(0,0,0,.5)}
 
 /* ---------- Preview controls (this file only) ---------- */
 .play{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-top:clamp(28px,4vw,44px);padding-top:16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--faint)}
@@ -287,89 +219,42 @@ a{color:inherit}
     <div class="tools">
       <a class="tool" href="./screenshot-settings/">
         <p class="fig"><span>01</span><span class="rule"></span><svg class="arw" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></p>
-        <div class="art">
-          <div class="in stack">
-            <div class="panel-head">Screenshots</div>
-            <div class="row"><span class="k">Save to</span><span class="v">Desktop</span></div>
-            <div class="row"><span class="k">Format</span><span class="chips"><i class="on">PNG</i><i>JPG</i><i>PDF</i></span></div>
-            <div class="row"><span class="k">Name</span><span class="v">Screen shot</span></div>
-            <div class="row"><span class="k">Shadow</span><span class="tgl"></span></div>
-            <div class="row"><span class="k">Delay</span><span class="v">None</span></div>
-            <div class="code">defaults write com.apple.screencapture type png</div>
-          </div>
-        </div>
+        <div class="art"><div class="in"><img src="img/shot.jpg" width="1000" height="649" alt="A screenshot open in Vista with the words you searched for highlighted inside the image" loading="lazy" decoding="async"></div></div>
         <h3>Screenshot settings</h3>
         <p>Pick the save folder, format, name and shadow. Copy one command.</p>
       </a>
 
       <a class="tool" href="./folder-xray/">
         <p class="fig"><span>02</span><span class="rule"></span><svg class="arw" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></p>
-        <div class="art art--11">
-          <div class="in">
-            <div class="treemap">
-              <div class="tm t3 a-videos"><b>Videos</b><span>12.4 GB</span></div>
-              <div class="tm t1 a-photos"><b>Photos</b><span>8.1 GB</span></div>
-              <div class="tm t2 a-projects"><b>Projects</b><span>4.6 GB</span></div>
-              <div class="tm t1 a-docs"><b>Documents</b><span>2.3 GB</span></div>
-              <div class="tm t2 a-archives"><b>Archives</b><span>1.1 GB</span></div>
-              <div class="tm t1 a-other"><b>Other</b><span>960 MB</span></div>
-              <div class="tm t4 a-shots"><b>Shots</b><span>640 MB</span></div>
-            </div>
-          </div>
-        </div>
+        <div class="art art--32"><div class="in"><img src="img/xray.jpg" width="1000" height="627" alt="Vista's cleanup view, listing the largest files in a folder with their sizes" loading="lazy" decoding="async"></div></div>
         <h3>Folder X-ray</h3>
         <p>Drop a folder to see what is taking space. Nothing is uploaded.</p>
       </a>
 
       <a class="tool" href="./folder-structure/">
         <p class="fig"><span>03</span><span class="rule"></span><svg class="arw" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></p>
-        <div class="art art--11">
-          <div class="in">
-            <div class="tree">
-              <div class="nest root"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>Client project</span></div>
-              <div class="nest l2"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>01 Brief</span><span class="n">4</span></div>
-              <div class="nest l2"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>02 Assets</span><span class="n">128</span></div>
-              <div class="nest l3"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>Photography</span></div>
-              <div class="nest l3"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>Illustration</span></div>
-              <div class="nest l2"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>03 Exports</span><span class="n">36</span></div>
-              <div class="nest l2"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>04 Archive</span><span class="n">12</span></div>
-            </div>
-          </div>
-        </div>
+        <div class="art art--11 art--top"><div class="in"><img src="img/structure.jpg" width="1000" height="624" alt="Vista showing a folder of subfolders as large previews in a grid" loading="lazy" decoding="async"></div></div>
         <h3>Folder structure</h3>
         <p>Pick your kind of work. Download a ready-made set of folders.</p>
       </a>
+
       <a class="tool" href="./file-naming/">
         <p class="fig"><span>04</span><span class="rule"></span><svg class="arw" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></p>
-        <div class="art">
-          <div class="in">
-            <div class="name">
-              <span class="pat">{date}_{client}_{project}_{version}</span>
-              <span class="fn"><em>2026-10-26</em>_acme_brand-refresh_<s>v03</s>.png</span>
-              <div class="toks"><span>date</span><span>client</span><span>project</span><span>version</span></div>
-              <span class="ok"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>Matches the pattern</span>
-            </div>
-          </div>
-        </div>
+        <div class="art"><div class="in"><img src="img/naming.jpg" width="1000" height="649" alt="Vista grouping downloaded files by where they came from, with each file name beside its thumbnail" loading="lazy" decoding="async"></div></div>
         <h3>File naming</h3>
         <p>Build a naming format. Check any file name against it.</p>
       </a>
 
       <a class="tool" href="./wallpaper-folder-colors/">
         <p class="fig"><span>05</span><span class="rule"></span><svg class="arw" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></p>
-        <div class="art art--45">
-          <div class="in">
-            <div class="wash"></div>
-            <div class="wsw"><i class="best"></i><i></i><i></i><i></i></div>
-          </div>
-        </div>
+        <div class="art art--54"><div class="in"><img src="img/colors.jpg" width="1000" height="872" alt="Vista's folder color picker with a palette of folder colors to choose from" loading="lazy" decoding="async"></div></div>
         <h3>Wallpaper folder colors</h3>
         <p>Drop in a wallpaper. See which folder colors match it.</p>
       </a>
 
       <div class="tool">
         <p class="fig"><span>06</span><span class="rule"></span></p>
-        <div class="art art--11">
+        <div class="art">
           <div class="in">
             <div class="privacy">
               <div class="dz">
@@ -384,6 +269,7 @@ a{color:inherit}
         <p>Everything runs in your browser. Files and images you drop in stay on your device.</p>
         <p class="meta">No uploads · No account · No tracking</p>
       </div>
+
       <div class="tool">
         <p class="fig"><span>07</span><span class="rule"></span></p>
         <div class="art art--11">
@@ -417,20 +303,14 @@ a{color:inherit}
 
       <a class="tool" href="https://vistaformac.com/?utm_source=vista-tools&amp;utm_medium=free-tool&amp;utm_campaign=hub&amp;utm_content=masonry">
         <p class="fig"><span>09</span><span class="rule"></span><svg class="arw" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></p>
-        <div class="art">
-          <div class="in">
-            <div class="vista-art">
-              <svg class="ia" aria-hidden="true" focusable="false"><use href="#vista-icon"/></svg>
-            </div>
-          </div>
-        </div>
+        <div class="art art--32"><div class="in"><img src="img/vista.jpg" width="1000" height="562" alt="Vista in the Light theme, showing folders as large previews" loading="lazy" decoding="async"></div></div>
         <h3>See your files, not filenames.</h3>
         <p>A Mac app that shows folders as previews, with colors and icons you choose.</p>
         <p class="meta">One-time purchase · No account · macOS 14 or later</p>
       </a>
-
     </div>
   </section>
+
 </main>
 
 <footer class="foot">
