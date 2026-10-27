@@ -14,21 +14,21 @@
   --ink:#05261C; --muted:#42554C; --faint:#52645C;
   --line:#E4EBE7; --line-strong:#CFDCD5;
   --accent:#13803B; --accent-hover:#0F6B31; --accent-ink:#FFFFFF;
-  --accent-soft:#D3E8DA; --accent-strong:#0F6B31;
+  --accent-soft:#D3E8DA; --accent-soft-hover:#C5E0CD; --accent-strong:#0F6B31;
   --ring:inset 0 0 0 1px rgba(19,128,59,.10);
   --r-card:18px;
   --ease-out:cubic-bezier(.23,1,.32,1);
   --ease-hero:cubic-bezier(.16,1,.3,1);
   --shadow-card:0 1px 2px rgba(5,38,28,.04),0 24px 48px -36px rgba(5,38,28,.24);
-  --shadow-hover:0 2px 6px rgba(5,38,28,.05),0 34px 60px -34px rgba(5,38,28,.30);
   --font:"Inter",-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif;
   --display:"Fraunces","Iowan Old Style","Palatino Linotype",Georgia,serif;
   --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
-  /* Full-bleed rhythm: the page has no max-width, only edge padding. */
-  --pad:clamp(14px,1.9vw,30px);
-  --gap:14px;
-  --colw:clamp(290px,23vw,460px);
+  /* The site's grid: 1200px of content, centred, 16px body gutters (see index.html). */
+  --maxw:1200px;
+  --gutter:16px;
+  --gap:32px;          /* .pillars gap at >=768 */
 }
+@media (min-width:1024px){:root{--gap:48px}}   /* .pillars gap at >=1024 */
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-padding-top:84px}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
@@ -40,172 +40,174 @@ a{color:inherit}
 .skip{position:absolute;left:16px;top:-64px;z-index:90;background:var(--surface);color:var(--ink);padding:12px 16px;border-radius:12px;border:1px solid var(--line-strong);text-decoration:none;font-weight:500;transition:top .2s var(--ease-out)}
 .skip:focus{top:8px}
 
-/* ---------- Header: same frosted bar as the site ---------- */
+/* ---------- Container: same 1200px measure as the site ---------- */
+.wrap{width:min(100% - (var(--gutter) * 2), var(--maxw));margin-inline:auto}
+
+/* ---------- Header: same frosted bar as the hub ---------- */
 .nav{position:sticky;top:0;z-index:70}
 .nav::before{content:"";position:absolute;inset:0;z-index:-1;background:rgb(var(--bg-rgb) / .86);-webkit-backdrop-filter:blur(14px) saturate(1.04);backdrop-filter:blur(14px) saturate(1.04);box-shadow:0 1px 0 var(--line)}
-.nav-in{height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 var(--pad)}
+.nav-in{height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .brand{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-weight:600;font-size:16px;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
 .appicon{width:28px;height:28px;flex:none;border-radius:23%}
-.nav-links{display:flex;align-items:center;gap:6px}
+.nav-links{display:flex;align-items:center;gap:8px}
 .nav-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;font-size:14px;color:var(--muted);text-decoration:none;transition:color .15s ease}
 .nav-links a:hover{color:var(--ink)}
-.nav-cta{min-height:34px;padding:0 15px;border-radius:10px;background:var(--accent-soft);color:var(--accent-strong)!important;font-weight:600;font-size:13.5px;box-shadow:var(--ring)}
-.nav-cta:hover{background:#C5E0CD}
+.nav-cta{min-height:34px;padding:0 14px;border-radius:10px;background:var(--accent-soft);color:var(--accent-strong)!important;font-weight:600;font-size:13.5px;box-shadow:var(--ring)}
+.nav-cta:hover{background:var(--accent-soft-hover)}
 
-/* ---------- Hero: full-bleed, no container ---------- */
-.hero{position:relative;padding:clamp(28px,4.6vw,60px) var(--pad) clamp(16px,2.2vw,26px);overflow:hidden;isolation:isolate}
-.hero::before{content:"";position:absolute;inset:-40% -10% 0;z-index:-1;pointer-events:none;background:
-  radial-gradient(46% 62% at 10% 30%,rgba(99,217,210,.22),transparent 70%),
-  radial-gradient(42% 58% at 88% 12%,rgba(231,160,125,.20),transparent 72%),
-  radial-gradient(40% 52% at 62% 92%,rgba(138,214,160,.18),transparent 74%)}
-.hero-in{display:grid;gap:clamp(10px,1.2vw,16px);justify-items:start}
-.hero-in .lede{max-width:44ch}
-@media (max-width:600px){.hero-in .lede{font-size:16.5px}}
-@media (min-width:860px){
-  .hero-in{grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:clamp(24px,4vw,64px)}
+/* ---------- Hero: tools-page type scale, site measure ---------- */
+.hero{padding:clamp(40px,6vw,72px) 0 0}
+.hero .eyebrow{margin:0;font-size:15px;font-weight:500;color:var(--accent-strong)}
+.hero h1{margin-top:18px;font-family:var(--display);font-weight:400;font-size:clamp(42px,7.2vw,72px);line-height:1;letter-spacing:-.032em}
+.hero .lede{margin-top:20px;font-size:clamp(18px,2vw,21px);line-height:1.42;letter-spacing:-.012em;color:var(--muted);max-width:34em}
+/* At-a-glance numbers, right-aligned on wide screens like the site's sec-head pairing. */
+@media (min-width:768px){
+  .hero-in{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:clamp(24px,4vw,56px)}
+  .hero .lede{margin-top:20px}
 }
-.hero-meta{display:flex;gap:clamp(16px,2.4vw,36px);margin:0;padding:0 0 .35em;list-style:none}
+.hero-meta{display:flex;gap:clamp(18px,2.4vw,34px);margin:24px 0 0;padding:0;list-style:none}
+@media (min-width:768px){.hero-meta{margin:0;padding-bottom:.5em}}
 .hero-meta li{display:grid;gap:2px}
-.hero-meta b{font-family:var(--display);font-size:clamp(24px,2.1vw,32px);font-weight:400;line-height:1;letter-spacing:-.035em}
-.hero-meta span{font-size:12px;letter-spacing:.01em;color:var(--faint);white-space:nowrap}
-.eyebrow{margin:0;font-size:14px;font-weight:500;letter-spacing:.01em;color:var(--accent-strong)}
-h1{font-family:var(--display);font-weight:400;font-size:clamp(40px,6.4vw,92px);line-height:.98;letter-spacing:-.035em}
-.lede{font-size:clamp(17px,1.5vw,20px);line-height:1.4;letter-spacing:-.011em;color:var(--muted);max-width:36ch}
-/* ---------- Masonry gallery: full width, any viewport ---------- */
-.gallery{padding:0 var(--pad) var(--pad);column-gap:var(--gap);column-fill:balance;column-width:var(--colw)}
-/* Phones: one clean column, edge to edge. */
-@media (max-width:560px){.gallery{column-width:auto!important;column-count:1!important}}
-.gallery > *{break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid;margin:0 0 var(--gap)}
-/* ---------- Tile shell ---------- */
-.tile{display:block;text-decoration:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden;box-shadow:var(--shadow-card);transition:transform .45s var(--ease-out),box-shadow .45s var(--ease-out),border-color .3s ease}
-.tile-art{position:relative;container-type:inline-size;overflow:hidden;background:linear-gradient(158deg,var(--c1,#E9F3EE),var(--c2,#F5F8F6))}
-.tile-art::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(118% 84% at 86% -14%,rgba(255,255,255,.52),transparent 62%)}
-/* Photo-like art keeps its own light; no white sheen on top. */
-.tile-art--photo::after{display:none}
-.art{position:absolute;inset:0;transition:transform .7s var(--ease-out)}
-.ar-45{aspect-ratio:4/5}
-.ar-11{aspect-ratio:1/1}
-.ar-43{aspect-ratio:4/3}
-.ar-1610{aspect-ratio:16/10}
-.ar-54{aspect-ratio:5/4}
-.ar-32{aspect-ratio:3/2}
-.tile-body{padding:clamp(14px,1.15vw,18px) clamp(15px,1.2vw,19px) clamp(16px,1.3vw,20px)}
-.tile-title{font-family:var(--display);font-weight:500;font-size:clamp(19px,1.35vw,23px);line-height:1.12;letter-spacing:-.022em}
-.tile-copy{margin-top:7px;font-size:14.5px;line-height:1.45;color:var(--muted)}
-.tile-go{display:inline-flex;align-items:center;gap:6px;margin-top:13px;font-size:13.5px;font-weight:600;color:var(--accent-strong)}
-.tile-go svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s var(--ease-out)}
+.hero-meta b{font-family:var(--display);font-size:26px;font-weight:400;line-height:1;letter-spacing:-.035em}
+.hero-meta span{font-size:12px;color:var(--faint);white-space:nowrap}
+/* ---------- Masonry on the site's 3-column .pillars tracks ----------
+   A real CSS grid (not columns) so the numbered figures read 01 → 09 left to
+   right, and every tile sits on the site's 32px/48px track rhythm. Row spans are
+   packed by 24 lines of JS (see bottom of file); without it the tiles simply
+   stack in grid order. */
+@media (max-width:767px){:root{--gap:56px}}   /* .pillars mobile gap */
+/* No-JS fallback: a plain 3-up grid. JS adds .is-packed and places each tile in
+   the shortest column, which is what turns it into masonry. */
+.tools{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--gap);align-items:start;margin-top:clamp(48px,6vw,80px)}
+@media (min-width:768px){.tools{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.tools > *{min-width:0;align-self:start}
+.tools.is-packed{grid-auto-rows:8px}
+
+/* ---------- Tile: .pillar anatomy — numbered fig + hairline, art, h3, copy ---------- */
+.tool{display:block;text-decoration:none;color:inherit}
+.tool .fig{display:flex;align-items:center;gap:12px;margin:0 0 14px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.tool .fig .rule{flex:1;height:1px;background:var(--line)}
+.tool .fig .arw{flex:none;width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s var(--ease-out)}
+.tool h3{margin-top:24px;font-size:19px;font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+.tool p{margin-top:12px;font-size:16px;line-height:1.55;color:var(--muted)}
+.tool .meta{margin-top:10px;font-size:13px;color:var(--faint)}
 @media (hover:hover) and (pointer:fine){
-  .tile:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);border-color:var(--line-strong)}
-  .tile:hover .art{transform:scale(1.028)}
-  .tile:hover .tile-go svg{transform:translateX(3px)}
-}
-@media (prefers-reduced-motion:reduce){
-  .tile,.art,.tile-go svg{transition:none!important}
-  .tile:hover{transform:none}
-  .tile:hover .art{transform:none}
+  .tool:hover .fig .arw{transform:translateX(3px)}
+  .tool:hover .art .in{transform:scale(1.015)}
 }
 
-/* ---------- Art 1: Screenshot settings — a mini Save panel ---------- */
-.shot{position:absolute;inset:8% 7%;display:flex;flex-direction:column;background:#fff;border-radius:2.6cqw;overflow:hidden;font-size:clamp(8.5px,3.4cqw,13px);box-shadow:0 2cqw 4.4cqw -2.2cqw rgba(5,38,28,.38),0 0 0 .25cqw rgba(5,38,28,.07)}
-.shot-bar{display:flex;align-items:center;gap:1.3cqw;padding:2.1cqw 2.6cqw;background:#FAFCFB;border-bottom:.25cqw solid var(--line)}
-.shot-bar i{width:1.45cqw;height:1.45cqw;border-radius:50%;background:#D9E5DF}
-.shot-bar i:nth-child(2){background:#C9DBD3}
-.shot-bar i:nth-child(3){background:#B8CFC6}
-.shot-bar span{margin-left:auto;font-size:.9em;font-weight:500;color:var(--faint)}
-.shot-row{display:flex;align-items:center;justify-content:space-between;gap:2cqw;padding:1.7cqw 2.6cqw}
-.shot-row + .shot-row{border-top:.25cqw solid var(--line)}
-.shot-k{font-size:.95em;color:var(--muted)}
-.shot-v{font-size:.95em;font-weight:600;letter-spacing:-.01em}
-.chips{display:flex;gap:.9cqw}
-.chips b{font-size:.82em;font-weight:600;padding:.55cqw 1.5cqw;border-radius:99px;background:var(--paper);color:var(--muted)}
-.chips b.on{background:var(--accent);color:#fff}
-.tgl{position:relative;flex:none;width:5.6cqw;height:3.2cqw;border-radius:99px;background:var(--accent)}
-.tgl::after{content:"";position:absolute;top:.45cqw;right:.45cqw;width:2.3cqw;height:2.3cqw;border-radius:50%;background:#fff;box-shadow:0 .2cqw .4cqw rgba(0,0,0,.16)}
-.shot-code{margin-top:auto;padding:1.9cqw 2.5cqw;background:var(--paper);font:.82em/1.35 var(--mono);color:#0B3B2A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ---------- Art frame: white panel with the site's hairline + radius tokens ---------- */
+.art{position:relative;aspect-ratio:4/3;border:1px solid var(--line);border-radius:var(--r-card);background:var(--surface);box-shadow:var(--shadow-card);overflow:hidden;container-type:inline-size;isolation:isolate}
+.art--11{aspect-ratio:1/1}
+.art--34{aspect-ratio:3/4}
+.art--45{aspect-ratio:4/5}
+.art--54{aspect-ratio:5/4}
+.art--169{aspect-ratio:16/9}
+.art .in{position:absolute;inset:0;transition:transform .7s var(--ease-out)}
+@media (prefers-reduced-motion:reduce){.tool:hover .art .in{transform:none}.tool .fig .arw{transition:none}}
 
-/* ---------- Art 2: Folder X-ray — a size treemap ---------- */
-.xray{position:absolute;inset:7%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:.9cqw;font-size:clamp(9px,3.4cqw,13px)}
-.cell{display:flex;flex-direction:column;justify-content:flex-end;gap:.15cqw;padding:1.5cqw 1.7cqw;border-radius:1.7cqw;background:rgba(255,255,255,.86);box-shadow:inset 0 0 0 .25cqw rgba(5,38,28,.05);overflow:hidden}
-.cell b{font-size:.92em;font-weight:600;letter-spacing:-.01em;line-height:1.1}
-.cell span{font-size:.76em;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.1}
-.cell.big{background:linear-gradient(150deg,#F6CFA8,#FBE4CD);justify-content:flex-end}
-.cell.mid{background:rgba(255,255,255,.72)}
-.c-videos{grid-area:1/1/3/3}
-.c-photos{grid-area:1/3/2/4}
-.c-projects{grid-area:2/3/3/4}
-.c-docs{grid-area:3/1/5/2}
-.c-other{grid-area:3/2/4/4}
-.c-rest{grid-area:4/2/5/4}
-/* ---------- Art 3: Folder structure — a folder tree ---------- */
-.tree{position:absolute;inset:7% 6.5%;display:flex;flex-direction:column;gap:1cqw;font-size:clamp(8.5px,3.2cqw,13px)}
-.trow{flex:1 1 0;min-height:0;display:flex;align-items:center;gap:1.6cqw;padding:1.5cqw 1.7cqw;border-radius:1.6cqw;background:rgba(255,255,255,.88);box-shadow:inset 0 0 0 .25cqw rgba(5,38,28,.05);font-weight:500;letter-spacing:-.012em;line-height:1.15}
-.trow svg{width:3.2cqw;height:3.2cqw;flex:none;color:#8B83D6}
-.trow span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.trow .n{flex:none;margin-left:auto;font-size:.74em;font-weight:600;color:var(--faint);background:var(--paper);border-radius:99px;padding:.3cqw 1.2cqw}
-.trow.root{background:#fff;font-weight:600;box-shadow:0 1.2cqw 2.6cqw -1.6cqw rgba(5,38,28,.3),inset 0 0 0 .25cqw rgba(5,38,28,.06)}
-.trow.l2{margin-left:7%}
-.trow.l3{margin-left:14%}
+/* Shared hairline row used by the panel mocks */
+.row{display:flex;align-items:center;justify-content:space-between;gap:2cqw;padding:2.6cqw 3.4cqw;border-top:1px solid var(--line);font-size:clamp(9px,3.1cqw,13px)}
+.row:first-child{border-top:0}
+.row b{font-weight:600;letter-spacing:-.01em}
+.k{color:var(--muted)}
+.v{font-weight:600;letter-spacing:-.01em}
+.chips{display:flex;gap:1cqw}
+.chips i{font-style:normal;font-size:.86em;font-weight:600;padding:.7cqw 1.8cqw;border-radius:99px;background:var(--paper);color:var(--muted)}
+.chips i.on{background:var(--accent);color:#fff}
+.tgl{position:relative;flex:none;width:5.8cqw;height:3.3cqw;border-radius:99px;background:var(--accent)}
+.tgl::after{content:"";position:absolute;top:.5cqw;right:.5cqw;width:2.3cqw;height:2.3cqw;border-radius:50%;background:#fff;box-shadow:0 .2cqw .4cqw rgba(0,0,0,.16)}
+.panel-head{display:flex;align-items:center;gap:1.6cqw;padding:2.4cqw 3.4cqw;border-bottom:1px solid var(--line);background:var(--stage);font-size:clamp(8.5px,2.7cqw,11.5px);font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
+.code{padding:2.6cqw 3.4cqw;border-top:1px solid var(--line);background:var(--paper);font:clamp(8px,2.7cqw,12px)/1.4 var(--mono);color:#0B3B2A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ---------- Art 1: Screenshot settings — a settings panel on hairlines ---------- */
+.stack{display:flex;flex-direction:column;height:100%}
+.stack .code{margin-top:auto}
 
-/* ---------- Art 4: File naming — a live filename with tokens ---------- */
-.namer{position:absolute;inset:9% 7%;display:flex;flex-direction:column;justify-content:center;gap:2.2cqw}
-.file{display:block;padding:2.2cqw 2.6cqw;border-radius:2cqw;background:#fff;box-shadow:0 1.4cqw 3cqw -1.8cqw rgba(5,38,28,.34),0 0 0 .25cqw rgba(5,38,28,.06);font:600 clamp(10px,4cqw,16.5px)/1.4 var(--mono);letter-spacing:-.02em;overflow-wrap:anywhere}
-.file em{font-style:normal;color:var(--accent-strong)}
-.file s{text-decoration:none;color:#B0703C}
-.toks{display:flex;flex-wrap:wrap;gap:1.1cqw}
-.toks span{font-size:clamp(8px,2.6cqw,11px);font-weight:500;padding:.8cqw 1.5cqw;border-radius:99px;background:rgba(255,255,255,.78);box-shadow:inset 0 0 0 .25cqw rgba(5,38,28,.07);color:var(--muted)}
+/* ---------- Art 2: Folder X-ray — treemap in the site's folder tints ---------- */
+.treemap{position:absolute;inset:4.4%;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);gap:1.1cqw;font-size:clamp(8px,3.15cqw,13px)}
+.tm{display:flex;flex-direction:column;justify-content:flex-end;gap:.15cqw;min-width:0;padding:1.5cqw 1.6cqw;border:1px solid var(--line);border-radius:9px;background:var(--stage);overflow:hidden}
+.tm b{font-size:.95em;font-weight:600;line-height:1.15;letter-spacing:-.01em}
+.tm span{font-size:.76em;line-height:1.1;color:var(--faint);font-variant-numeric:tabular-nums}
+.tm.t1{background:#F4F9F6}
+.tm.t2{background:#EBF4EF;border-color:#DCE8E1}
+.tm.t3{background:#D5E6DC;border-color:#C8DACE}
+.tm.t4{background:var(--accent);border-color:var(--accent);color:#fff}
+.tm.t4 span{color:rgba(255,255,255,.82)}
+.a-videos{grid-area:1/1/4/4}
+.a-photos{grid-area:1/4/3/7}
+.a-projects{grid-area:3/4/5/7}
+.a-docs{grid-area:4/1/7/3}
+.a-archives{grid-area:4/3/7/5}
+.a-other{grid-area:4/5/5/7}
+.a-shots{grid-area:5/5/7/7}
+/* ---------- Art 3: Folder structure — an indented tree ---------- */
+.tree{display:flex;flex-direction:column;height:100%;padding:5% 4.5%}
+.nest{flex:1 1 0;min-height:0;display:flex;align-items:center;gap:1.8cqw;padding:1.75cqw 1.9cqw;border-radius:9px;font-size:clamp(9px,3.1cqw,13px);font-weight:500;letter-spacing:-.012em;line-height:1.2}
+.nest + .nest{margin-top:.7cqw}
+.nest .fld{flex:none;width:2.7cqw;height:2.7cqw;color:var(--accent)}
+.nest .n{margin-left:auto;font-size:.78em;font-weight:600;color:var(--faint);font-variant-numeric:tabular-nums}
+.nest.l2{margin-left:7%}
+.nest.l3{margin-left:14%}
+.nest.root{background:var(--paper);font-weight:600}
 
-/* ---------- Art 5: Wallpaper folder colors — wallpaper + swatches ---------- */
-.wall{position:absolute;inset:0;background:
-  radial-gradient(34% 30% at 24% 20%,rgba(255,249,238,.96),rgba(255,249,238,0) 64%),
-  radial-gradient(64% 54% at 50% 118%,#68B486 0%,rgba(104,180,134,0) 64%),
-  radial-gradient(46% 40% at 84% 30%,rgba(255,214,190,.55),rgba(255,214,190,0) 70%),
-  linear-gradient(168deg,#F6CFB0 0%,#EFBFA9 30%,#C7A8C8 62%,#88A5D8 100%)}
-.wall::after{content:"";position:absolute;inset:0;background:radial-gradient(130% 80% at 50% 118%,rgba(5,38,28,.22),rgba(5,38,28,0) 62%)}
-.sw{position:absolute;left:6%;right:6%;bottom:6%;display:flex;gap:1.6cqw;padding:2cqw;border-radius:2.2cqw;background:rgba(255,255,255,.44);-webkit-backdrop-filter:blur(8px) saturate(1.1);backdrop-filter:blur(8px) saturate(1.1);box-shadow:0 2cqw 4.4cqw -2cqw rgba(5,38,28,.45),inset 0 0 0 .25cqw rgba(255,255,255,.62)}
-.sw i{position:relative;flex:1;aspect-ratio:1;border-radius:1.5cqw;box-shadow:0 1cqw 2.2cqw -1.2cqw rgba(5,38,28,.5),inset 0 0 0 .3cqw rgba(255,255,255,.55)}
-.sw i:nth-child(1){background:#9CC7A6}
-.sw i:nth-child(2){background:#7FB9C9}
-.sw i:nth-child(3){background:#E1A184}
-.sw i:nth-child(4){background:#A8A9C4}
-.sw i.best{outline:.35cqw solid rgba(255,255,255,.9);outline-offset:.5cqw}
-.sw i.best::after{content:"";position:absolute;left:37%;top:40%;width:26%;height:13%;border-left:.55cqw solid #fff;border-bottom:.55cqw solid #fff;transform:rotate(-45deg)}
-/* ---------- Tile: Vista promo ---------- */
-.t-vista{position:relative;isolation:isolate;overflow:hidden;border:0;background:linear-gradient(155deg,#0B8C37,#066B27);color:#fff}
-.t-vista::before{content:"";position:absolute;z-index:-1;top:-28%;right:-22%;width:76%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.20),rgba(255,255,255,0) 66%)}
-.t-vista .tile-body{padding:clamp(20px,1.7vw,28px)}
-.t-vista .appicon{width:38px;height:38px;border-radius:11px;box-shadow:0 8px 20px -8px rgba(0,0,0,.55)}
-.t-vista .kicker{margin-top:16px;font-size:10.5px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.72)}
-.t-vista .tile-title{color:#fff;margin-top:8px;font-size:clamp(22px,1.6vw,26px);letter-spacing:-.025em}
-.t-vista .tile-copy{color:rgba(255,255,255,.84);margin-top:8px}
-.t-vista .cta{display:inline-flex;align-items:center;gap:8px;margin-top:16px;height:40px;padding:0 17px;border-radius:11px;background:#fff;color:#0B3B2A;font-size:13.5px;font-weight:600;text-decoration:none}
-.t-vista .meta{margin-top:12px;font-size:12.5px;line-height:1.4;color:rgba(255,255,255,.66)}
+/* ---------- Art 4: File naming — the filename and its tokens ---------- */
+.name{display:flex;flex-direction:column;justify-content:space-between;gap:2.4cqw;height:100%;padding:8% 7%}
+.pat{font:500 clamp(7.5px,2.45cqw,10.5px)/1.4 var(--mono);letter-spacing:-.01em;color:var(--faint)}
+.fn{font:600 clamp(9.5px,3.55cqw,15px)/1.45 var(--mono);letter-spacing:-.02em;color:var(--ink);overflow-wrap:anywhere}
+.fn em{font-style:normal;color:var(--accent-strong)}
+.fn s{text-decoration:none;color:#B0703C}
+.toks{display:flex;flex-wrap:wrap;gap:1cqw}
+.toks span{font-size:clamp(8px,2.55cqw,11px);font-weight:500;padding:.7cqw 1.5cqw;border-radius:99px;background:var(--paper);color:var(--muted)}
+.ok{display:flex;align-items:center;gap:1.2cqw;font-size:clamp(8px,2.55cqw,11px);font-weight:600;color:var(--accent-strong)}
+.ok svg{width:2.6cqw;height:2.6cqw;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 
-/* ---------- Tile: the "nothing is uploaded" note ---------- */
-.t-note{background:var(--paper);border-color:#D8E6DD}
-.t-note .tile-body{padding:clamp(20px,1.7vw,26px)}
-.lock{display:grid;place-items:center;width:42px;height:42px;margin-bottom:14px;border-radius:13px;background:#fff;box-shadow:var(--ring);color:var(--accent-strong)}
-.lock svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.t-note ul{list-style:none;margin:13px 0 0;padding:0;display:grid;gap:7px}
-.t-note li{display:flex;gap:9px;font-size:14px;line-height:1.4;color:var(--muted)}
-.t-note li::before{content:"";flex:none;width:6px;height:6px;margin-top:7px;border-radius:50%;background:var(--accent)}
-.note-chip{margin-top:15px;padding:9px 12px;border:1px dashed var(--line-strong);border-radius:10px;background:rgba(255,255,255,.6);font-size:12.5px;line-height:1.35;color:var(--faint)}
+/* ---------- Art 5: Wallpaper folder colors — wash + folder swatches ---------- */
+.wash{position:absolute;inset:0;background:
+  radial-gradient(58% 52% at 22% 18%,#F3CBB2 0%,rgba(243,203,178,0) 62%),
+  radial-gradient(52% 56% at 84% 24%,#BFD6EC 0%,rgba(191,214,236,0) 64%),
+  radial-gradient(66% 58% at 58% 102%,#C4DFC9 0%,rgba(196,223,201,0) 66%),
+  linear-gradient(165deg,#FBF3EA,#EEF1F9 62%,#E8F1EA)}
+.wsw{position:absolute;left:7%;right:7%;bottom:7%;display:flex;gap:2.2cqw}
+.wsw i{position:relative;flex:1;aspect-ratio:1;border-radius:12px;box-shadow:0 1px 2px rgba(5,38,28,.10),inset 0 0 0 1px rgba(255,255,255,.55)}
+.wsw i:nth-child(1){background:#9CC7A6}
+.wsw i:nth-child(2){background:#7FB9C9}
+.wsw i:nth-child(3){background:#E1A184}
+.wsw i:nth-child(4){background:#A8A9C4}
+.wsw i.best{outline:2px solid #fff;outline-offset:3px}
+.wsw i.best::after{content:"";position:absolute;left:37%;top:40%;width:26%;height:13%;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg)}
+/* ---------- Art 6: the privacy drop zone (the hub's own motif) ---------- */
+.privacy{height:100%;display:grid;place-items:center;padding:8%;background:var(--stage)}
+.dz{width:100%;padding:9% 7%;border:1.5px dashed var(--line-strong);border-radius:16px;background:rgba(255,255,255,.72);text-align:center}
+.dz .lock{display:grid;place-items:center;width:16%;aspect-ratio:1;margin:0 auto 6%;border-radius:11px;background:var(--paper);color:var(--accent-strong)}
+.dz .lock svg{width:52%;height:52%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dz b{display:block;font-size:clamp(9px,3.15cqw,13.5px);font-weight:600;letter-spacing:-.015em}
+.dz span{display:block;margin-top:4px;font-size:clamp(8px,2.65cqw,11.5px);line-height:1.35;color:var(--faint)}
 
-/* ---------- Tile: Vista vs Finder ---------- */
-.t-compare .tile-body{padding:clamp(18px,1.6vw,24px)}
-.vs{display:flex;gap:6px;margin-bottom:13px}
-.vs span{font-size:11.5px;font-weight:600;letter-spacing:-.01em;padding:4px 10px;border-radius:99px}
-.vs-a{background:var(--accent-soft);color:var(--accent-strong)}
-.vs-b{background:var(--stage);color:var(--faint);box-shadow:inset 0 0 0 1px var(--line)}
+/* ---------- Art 7: three steps ---------- */
+.steps-art{display:flex;flex-direction:column;height:100%;padding:6% 6.5%}
+.step{flex:1 1 0;min-height:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:3cqw;align-items:center}
+.step + .step{border-top:1px solid var(--line)}
+.step i{display:grid;place-items:center;width:8cqw;height:8cqw;border-radius:50%;background:var(--paper);color:var(--accent-strong);font:600 clamp(9px,3.2cqw,13px)/1 var(--font);font-style:normal}
+.step b{display:block;font-size:clamp(10px,3.45cqw,14.5px);font-weight:600;letter-spacing:-.012em;line-height:1.2}
+.step span{display:block;margin-top:3px;font-size:clamp(8.5px,2.85cqw,12px);line-height:1.35;color:var(--faint)}
 
-/* ---------- Tile: how they work ---------- */
-.t-steps .tile-body{padding:clamp(20px,1.7vw,26px)}
-.steps{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:13px;counter-reset:s}
-.steps li{position:relative;padding-left:34px;font-size:14px;line-height:1.42;color:var(--muted);counter-increment:s}
-.steps li::before{content:counter(s);position:absolute;left:0;top:0;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent-strong);font-size:12.5px;font-weight:600}
-.steps b{display:block;margin-bottom:1px;font-size:14.5px;font-weight:600;color:var(--ink)}
+/* ---------- Art 8: Vista vs Finder ---------- */
+.vs-art{height:100%;display:flex;flex-direction:column;justify-content:space-between;gap:2.4cqw;padding:10% 7%}
+.vs-head{display:flex;gap:1.6cqw;font-size:clamp(8.5px,2.85cqw,12px);font-weight:600}
+.vs-head span{padding:.8cqw 2cqw;border-radius:99px;background:var(--paper);color:var(--muted)}
+.vs-head span:first-child{background:var(--accent);color:#fff}
+.vs-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:2.6cqw;padding:1.6cqw 0;border-top:1px solid var(--line);font-size:clamp(8.5px,2.8cqw,11.5px);color:var(--muted)}
+.vs-row:last-child{border-bottom:1px solid var(--line)}
+.vs-row em{font-style:normal;font-weight:700;color:var(--accent)}
+.vs-row s{text-decoration:none;font-weight:700;color:var(--line-strong)}
 
-/* ---------- Preview controls (this file only — not part of the page) ---------- */
-.play{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-top:clamp(16px,2.4vw,26px);padding-top:15px;border-top:1px solid var(--line);font-size:12.5px;color:var(--faint)}
+/* ---------- Art 9: Vista ---------- */
+.vista-art{position:relative;height:100%;display:grid;place-items:center;overflow:hidden;background:linear-gradient(155deg,#0B8C37,#066B27);color:#fff}
+.vista-art::after{content:"";position:absolute;top:-24%;right:-18%;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.2),rgba(255,255,255,0) 66%)}
+.vista-art .ia{position:relative;z-index:1;width:22%;border-radius:22%;box-shadow:0 10px 24px -10px rgba(0,0,0,.5)}
+
+/* ---------- Preview controls (this file only) ---------- */
+.play{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-top:clamp(28px,4vw,44px);padding-top:16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--faint)}
 .play-label{font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
 .seg{display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:var(--accent-soft);box-shadow:var(--ring)}
 .seg button{appearance:none;height:26px;padding:0 11px;border:0;border-radius:999px;background:transparent;color:var(--accent-strong);font:600 12.5px/1 var(--font);cursor:pointer}
@@ -216,10 +218,10 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(40px,6.4vw,92px);l
 @media print{.play{display:none}}
 
 /* ---------- Footer ---------- */
-.foot{margin-top:clamp(20px,2.4vw,34px);border-top:1px solid var(--line);background:var(--stage);padding:clamp(24px,2.8vw,40px) var(--pad) clamp(30px,3.6vw,54px);font-size:13.5px;color:var(--muted)}
+.foot{margin-top:clamp(64px,9vw,104px);border-top:1px solid var(--line);background:var(--stage);padding:32px 0 48px;font-size:13.5px;color:var(--muted)}
 .foot-in{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:20px 40px}
 .foot-lockup{display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:16px;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
-.foot p{margin-top:10px;line-height:1.55;max-width:46ch}
+.foot p{margin-top:10px;line-height:1.55;max-width:44ch}
 .foot a{color:var(--muted);text-decoration:none}
 .foot a:hover{color:var(--ink)}
 
@@ -245,7 +247,7 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(40px,6.4vw,92px);l
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="nav">
-  <div class="nav-in">
+  <div class="wrap nav-in">
     <a class="brand" href="https://vistaformac.com/?utm_source=vista-tools&amp;utm_medium=free-tool&amp;utm_campaign=hub&amp;utm_content=brand"><svg class="appicon" aria-hidden="true" focusable="false"><use href="#vista-icon"/></svg>Vista</a>
     <nav class="nav-links" aria-label="Main">
       <a href="./">Free tools</a>
@@ -255,7 +257,7 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(40px,6.4vw,92px);l
 </header>
 
 <main id="main">
-  <section class="hero">
+  <section class="hero wrap">
     <div class="hero-in">
       <div>
         <p class="eyebrow">Free tools for Mac</p>
@@ -275,149 +277,164 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(40px,6.4vw,92px);l
         <button type="button" data-cols="2" aria-pressed="false">2</button>
         <button type="button" data-cols="3" aria-pressed="false">3</button>
         <button type="button" data-cols="4" aria-pressed="false">4</button>
-        <button type="button" data-cols="5" aria-pressed="false">5</button>
-        <button type="button" data-cols="6" aria-pressed="false">6</button>
       </div>
-      <label for="gap">Gap <input id="gap" type="range" min="0" max="32" step="2" value="14"></label>
-      <span class="play-note">Preview only — this bar is not part of the published page.</span>
+      <label for="gap">Gap <input id="gap" type="range" min="16" max="56" step="4" value="32"></label>
+      <span class="play-note">Preview only — not part of the published page.</span>
     </div>
   </section>
 
-  <section class="gallery" aria-label="Free tools">
-    <a class="tile" href="./screenshot-settings/">
-      <div class="tile-art ar-43" style="--c1:#D2E9F7;--c2:#EEF6FC" aria-hidden="true">
+  <section class="wrap" aria-label="Free tools">
+    <div class="tools">
+      <a class="tool" href="./screenshot-settings/">
+        <p class="fig"><span>01</span><span class="rule"></span><svg class="arw" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></p>
         <div class="art">
-          <div class="shot">
-            <div class="shot-bar"><i></i><i></i><i></i><span>Save screenshot</span></div>
-            <div class="shot-row"><span class="shot-k">Save to</span><span class="shot-v">Desktop</span></div>
-            <div class="shot-row"><span class="shot-k">Format</span><span class="chips"><b class="on">PNG</b><b>JPG</b><b>PDF</b></span></div>
-            <div class="shot-row"><span class="shot-k">Shadow</span><span class="tgl"></span></div>
-            <div class="shot-code">defaults write com.apple.screencapture type png</div>
+          <div class="in stack">
+            <div class="panel-head">Screenshots</div>
+            <div class="row"><span class="k">Save to</span><span class="v">Desktop</span></div>
+            <div class="row"><span class="k">Format</span><span class="chips"><i class="on">PNG</i><i>JPG</i><i>PDF</i></span></div>
+            <div class="row"><span class="k">Name</span><span class="v">Screen shot</span></div>
+            <div class="row"><span class="k">Shadow</span><span class="tgl"></span></div>
+            <div class="row"><span class="k">Delay</span><span class="v">None</span></div>
+            <div class="code">defaults write com.apple.screencapture type png</div>
           </div>
         </div>
-      </div>
-      <div class="tile-body">
-        <h2 class="tile-title">Screenshot settings</h2>
-        <p class="tile-copy">Pick the save folder, format, name and shadow. Copy one command.</p>
-        <span class="tile-go">Open tool <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span>
-      </div>
-    </a>
+        <h3>Screenshot settings</h3>
+        <p>Pick the save folder, format, name and shadow. Copy one command.</p>
+      </a>
 
-    <a class="tile" href="./folder-xray/">
-      <div class="tile-art ar-11" style="--c1:#F8E1C7;--c2:#FDF2E5" aria-hidden="true">
-        <div class="art">
-          <div class="xray">
-            <div class="cell big c-videos"><b>Videos</b><span>12.4 GB</span></div>
-            <div class="cell c-photos"><b>Photos</b><span>8.1 GB</span></div>
-            <div class="cell c-projects"><b>Projects</b><span>4.6 GB</span></div>
-            <div class="cell c-docs"><b>Documents</b><span>2.3 GB</span></div>
-            <div class="cell mid c-other"><b>Archives</b><span>1.1 GB</span></div>
-            <div class="cell c-rest"><b>Screenshots</b><span>640 MB</span></div>
+      <a class="tool" href="./folder-xray/">
+        <p class="fig"><span>02</span><span class="rule"></span><svg class="arw" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></p>
+        <div class="art art--11">
+          <div class="in">
+            <div class="treemap">
+              <div class="tm t3 a-videos"><b>Videos</b><span>12.4 GB</span></div>
+              <div class="tm t1 a-photos"><b>Photos</b><span>8.1 GB</span></div>
+              <div class="tm t2 a-projects"><b>Projects</b><span>4.6 GB</span></div>
+              <div class="tm t1 a-docs"><b>Documents</b><span>2.3 GB</span></div>
+              <div class="tm t2 a-archives"><b>Archives</b><span>1.1 GB</span></div>
+              <div class="tm t1 a-other"><b>Other</b><span>960 MB</span></div>
+              <div class="tm t4 a-shots"><b>Shots</b><span>640 MB</span></div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="tile-body">
-        <h2 class="tile-title">Folder X-ray</h2>
-        <p class="tile-copy">Drop a folder to see what is taking space. Nothing is uploaded.</p>
-        <span class="tile-go">Open tool <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span>
-      </div>
-    </a>
+        <h3>Folder X-ray</h3>
+        <p>Drop a folder to see what is taking space. Nothing is uploaded.</p>
+      </a>
 
-    <a class="tile" href="./folder-structure/">
-      <div class="tile-art ar-45" style="--c1:#DEDAF4;--c2:#F0EEFA" aria-hidden="true">
-        <div class="art">
-          <div class="tree">
-            <div class="trow root"><svg aria-hidden="true"><use href="#fld"/></svg><span>Client project</span></div>
-            <div class="trow l2"><svg aria-hidden="true"><use href="#fld"/></svg><span>01 Brief</span><span class="n">4</span></div>
-            <div class="trow l2"><svg aria-hidden="true"><use href="#fld"/></svg><span>02 Assets</span><span class="n">128</span></div>
-            <div class="trow l3"><svg aria-hidden="true"><use href="#fld"/></svg><span>Photography</span></div>
-            <div class="trow l3"><svg aria-hidden="true"><use href="#fld"/></svg><span>Illustration</span></div>
-            <div class="trow l2"><svg aria-hidden="true"><use href="#fld"/></svg><span>03 Exports</span><span class="n">36</span></div>
-            <div class="trow l2"><svg aria-hidden="true"><use href="#fld"/></svg><span>04 Archive</span><span class="n">12</span></div>
+      <a class="tool" href="./folder-structure/">
+        <p class="fig"><span>03</span><span class="rule"></span><svg class="arw" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></p>
+        <div class="art art--11">
+          <div class="in">
+            <div class="tree">
+              <div class="nest root"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>Client project</span></div>
+              <div class="nest l2"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>01 Brief</span><span class="n">4</span></div>
+              <div class="nest l2"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>02 Assets</span><span class="n">128</span></div>
+              <div class="nest l3"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>Photography</span></div>
+              <div class="nest l3"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>Illustration</span></div>
+              <div class="nest l2"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>03 Exports</span><span class="n">36</span></div>
+              <div class="nest l2"><svg class="fld" aria-hidden="true"><use href="#fld"/></svg><span>04 Archive</span><span class="n">12</span></div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="tile-body">
-        <h2 class="tile-title">Folder structure</h2>
-        <p class="tile-copy">Pick your kind of work. Download a ready-made set of folders.</p>
-        <span class="tile-go">Open tool <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span>
-      </div>
-    </a>
-    <a class="tile" href="./file-naming/">
-      <div class="tile-art ar-1610" style="--c1:#F9DCD0;--c2:#FDF0E9" aria-hidden="true">
+        <h3>Folder structure</h3>
+        <p>Pick your kind of work. Download a ready-made set of folders.</p>
+      </a>
+      <a class="tool" href="./file-naming/">
+        <p class="fig"><span>04</span><span class="rule"></span><svg class="arw" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></p>
         <div class="art">
-          <div class="namer">
-            <span class="file"><em>2026-10-26</em>_acme_brand-refresh_<s>v03</s>.png</span>
-            <div class="toks"><span>date</span><span>client</span><span>project</span><span>version</span></div>
+          <div class="in">
+            <div class="name">
+              <span class="pat">{date}_{client}_{project}_{version}</span>
+              <span class="fn"><em>2026-10-26</em>_acme_brand-refresh_<s>v03</s>.png</span>
+              <div class="toks"><span>date</span><span>client</span><span>project</span><span>version</span></div>
+              <span class="ok"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>Matches the pattern</span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="tile-body">
-        <h2 class="tile-title">File naming</h2>
-        <p class="tile-copy">Build a naming format. Check any file name against it.</p>
-        <span class="tile-go">Open tool <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span>
-      </div>
-    </a>
+        <h3>File naming</h3>
+        <p>Build a naming format. Check any file name against it.</p>
+      </a>
 
-    <a class="tile" href="./wallpaper-folder-colors/">
-      <div class="tile-art tile-art--photo ar-45" style="--c1:#F6EDE6;--c2:#EAF1F7" aria-hidden="true">
-        <div class="art">
-          <div class="wall"></div>
-          <div class="sw"><i class="best"></i><i></i><i></i><i></i></div>
+      <a class="tool" href="./wallpaper-folder-colors/">
+        <p class="fig"><span>05</span><span class="rule"></span><svg class="arw" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></p>
+        <div class="art art--45">
+          <div class="in">
+            <div class="wash"></div>
+            <div class="wsw"><i class="best"></i><i></i><i></i><i></i></div>
+          </div>
         </div>
+        <h3>Wallpaper folder colors</h3>
+        <p>Drop in a wallpaper. See which folder colors match it.</p>
+      </a>
+
+      <div class="tool">
+        <p class="fig"><span>06</span><span class="rule"></span></p>
+        <div class="art art--11">
+          <div class="in">
+            <div class="privacy">
+              <div class="dz">
+                <span class="lock" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4.6" y="10.4" width="14.8" height="9.9" rx="2.3"/><path d="M8.3 10.4V7.9a3.7 3.7 0 0 1 7.4 0v2.5"/></svg></span>
+                <b>Drop files here</b>
+                <span>They stay on your Mac</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3>Nothing leaves your Mac</h3>
+        <p>Everything runs in your browser. Files and images you drop in stay on your device.</p>
+        <p class="meta">No uploads · No account · No tracking</p>
       </div>
-      <div class="tile-body">
-        <h2 class="tile-title">Wallpaper folder colors</h2>
-        <p class="tile-copy">Drop in a wallpaper. See which folder colors match it.</p>
-        <span class="tile-go">Open tool <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span>
+      <div class="tool">
+        <p class="fig"><span>07</span><span class="rule"></span></p>
+        <div class="art art--11">
+          <div class="in">
+            <div class="steps-art">
+              <div class="step"><i>1</i><div><b>Pick a tool</b><span>Each one opens on its own page.</span></div></div>
+              <div class="step"><i>2</i><div><b>Set it up</b><span>Folder, format, name, color — your call.</span></div></div>
+              <div class="step"><i>3</i><div><b>Take the result</b><span>Copy a command or download the folder set.</span></div></div>
+            </div>
+          </div>
+        </div>
+        <h3>Three steps, no setup</h3>
+        <p>Nothing to install and nothing to configure before you start.</p>
       </div>
-    </a>
-    <div class="tile t-note">
-      <div class="tile-body">
-        <span class="lock" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4.6" y="10.4" width="14.8" height="9.9" rx="2.3"/><path d="M8.3 10.4V7.9a3.7 3.7 0 0 1 7.4 0v2.5"/></svg></span>
-        <h2 class="tile-title">Nothing leaves your Mac</h2>
-        <p class="tile-copy">Everything runs in your browser. Files and images you drop in stay on your device.</p>
-        <ul><li>No uploads</li><li>No account</li><li>No tracking</li><li>No cookies</li></ul>
-        <p class="note-chip">Close the tab and nothing is kept.</p>
-      </div>
+
+      <a class="tool" href="https://vistaformac.com/compare/?utm_source=vista-tools&amp;utm_medium=free-tool&amp;utm_campaign=hub&amp;utm_content=masonry">
+        <p class="fig"><span>08</span><span class="rule"></span><svg class="arw" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></p>
+        <div class="art">
+          <div class="in">
+            <div class="vs-art">
+              <div class="vs-head"><span>Vista</span><span>Finder</span></div>
+              <div class="vs-row"><span>Thumbnails</span><em>✓</em><s>—</s></div>
+              <div class="vs-row"><span>Folder colors</span><em>✓</em><s>—</s></div>
+              <div class="vs-row"><span>Search in images</span><em>✓</em><s>—</s></div>
+            </div>
+          </div>
+        </div>
+        <h3>Vista vs Finder</h3>
+        <p>Same Mac, two ways to find your files. An honest look at where each one fits.</p>
+      </a>
+
+      <a class="tool" href="https://vistaformac.com/?utm_source=vista-tools&amp;utm_medium=free-tool&amp;utm_campaign=hub&amp;utm_content=masonry">
+        <p class="fig"><span>09</span><span class="rule"></span><svg class="arw" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></p>
+        <div class="art">
+          <div class="in">
+            <div class="vista-art">
+              <svg class="ia" aria-hidden="true" focusable="false"><use href="#vista-icon"/></svg>
+            </div>
+          </div>
+        </div>
+        <h3>See your files, not filenames.</h3>
+        <p>A Mac app that shows folders as previews, with colors and icons you choose.</p>
+        <p class="meta">One-time purchase · No account · macOS 14 or later</p>
+      </a>
+
     </div>
-
-    <div class="tile t-steps">
-      <div class="tile-body">
-        <h2 class="tile-title">Three steps, no setup</h2>
-        <ol class="steps">
-          <li><b>Pick a tool</b>Each one opens on its own page.</li>
-          <li><b>Set it up</b>Folder, format, name, color — your call.</li>
-          <li><b>Take the result</b>Copy a command or download the folder set.</li>
-        </ol>
-      </div>
-    </div>
-
-    <a class="tile t-compare" href="https://vistaformac.com/compare/?utm_source=vista-tools&amp;utm_medium=free-tool&amp;utm_campaign=hub&amp;utm_content=masonry">
-      <div class="tile-body">
-        <div class="vs" aria-hidden="true"><span class="vs-a">Vista</span><span class="vs-b">Finder</span></div>
-        <h2 class="tile-title">Vista vs Finder</h2>
-        <p class="tile-copy">Same Mac, two ways to find your files. An honest look at where each one fits.</p>
-        <span class="tile-go">Read the comparison <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span>
-      </div>
-    </a>
-
-    <a class="tile t-vista" href="https://vistaformac.com/?utm_source=vista-tools&amp;utm_medium=free-tool&amp;utm_campaign=hub&amp;utm_content=masonry">
-      <div class="tile-body">
-        <svg class="appicon" aria-hidden="true" focusable="false"><use href="#vista-icon"/></svg>
-        <p class="kicker">Vista for Mac</p>
-        <h2 class="tile-title">See your files, not filenames.</h2>
-        <p class="tile-copy">A Mac app that shows folders as previews, with colors and icons you choose.</p>
-        <span class="cta">Try Vista free for 14 days <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></span>
-        <p class="meta">One-time purchase. No account. macOS 14 or later.</p>
-      </div>
-    </a>
-
   </section>
 </main>
 
 <footer class="foot">
-  <div class="foot-in">
+  <div class="wrap foot-in">
     <div>
       <a class="foot-lockup" href="https://vistaformac.com/"><svg class="appicon" aria-hidden="true" focusable="false"><use href="#vista-icon"/></svg>Vista</a>
       <p>A visual file browser for macOS. These tools run in your browser, and what you type or drop in is never uploaded.</p>
@@ -428,32 +445,84 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(40px,6.4vw,92px);l
 
 <script>
 (function () {
-  var gallery = document.querySelector('.gallery');
+  var grid = document.querySelector('.tools');
+  var items = Array.prototype.slice.call(grid.children);
   var buttons = Array.prototype.slice.call(document.querySelectorAll('.seg [data-cols]'));
   var gap = document.getElementById('gap');
   var KEY = 'vista-masonry-preview';
-  var state = { cols: 'auto', gap: 14 };
+  var state = { cols: 'auto', gap: null };  // gap null = follow the site's 32/48 step
   try {
     var saved = JSON.parse(localStorage.getItem(KEY) || '{}');
     if (saved.cols) state.cols = saved.cols;
     if (saved.gap !== undefined && saved.gap !== null) state.gap = saved.gap;
   } catch (e) {}
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  /* Masonry packing: measure each tile, then drop it into whichever of the site's
+     three tracks is currently shortest — the way a masonry library would, but
+     snapping to whole 8px rows so the tracks stay on the grid. */
+  function pack() {
+    grid.classList.add('is-packed');
+    var cs = getComputedStyle(grid);
+    var rowH = parseFloat(cs.gridAutoRows) || 8;
+    var rowGap = parseFloat(cs.rowGap) || 0;
+    var cols = Math.max(1, cs.gridTemplateColumns.trim().split(/\s+/).length);
+
+    items.forEach(function (el) {
+      el.style.gridColumn = '';
+      el.style.gridRow = '';
+    });
+
+    var spans = items.map(function (el) {
+      var h = el.getBoundingClientRect().height;
+      return Math.max(1, Math.ceil((h + rowGap) / (rowH + rowGap)));
+    });
+
+    var cursor = [];
+    for (var c = 0; c < cols; c++) cursor.push(1);
+
+    items.forEach(function (el, i) {
+      var pick = 0;
+      for (var k = 1; k < cols; k++) if (cursor[k] < cursor[pick]) pick = k;
+      el.style.gridColumn = String(pick + 1);
+      el.style.gridRow = cursor[pick] + ' / span ' + spans[i];
+      cursor[pick] += spans[i];
+    });
+  }
+
+  function siteGap() {
+    var v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gap'));
+    return Math.round(v || 32);
+  }
+  /* Only override --gap when the slider has actually been used, so the page keeps
+     the site's own 32px → 48px step at >=1024 by default. */
+  function applyGap() {
+    if (state.gap === null) document.documentElement.style.removeProperty('--gap');
+    else document.documentElement.style.setProperty('--gap', state.gap + 'px');
+    if (gap) gap.value = state.gap === null ? siteGap() : state.gap;
+  }
+
   function paint() {
     buttons.forEach(function (b) {
       var on = b.dataset.cols === String(state.cols);
       b.classList.toggle('on', on);
       b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-    if (state.cols === 'auto') { gallery.style.columnWidth = ''; gallery.style.columnCount = ''; }
-    else { gallery.style.columnWidth = 'auto'; gallery.style.columnCount = state.cols; }
-    document.documentElement.style.setProperty('--gap', state.gap + 'px');
-    if (gap) gap.value = state.gap;
+    grid.style.gridTemplateColumns = state.cols === 'auto' ? '' : 'repeat(' + state.cols + ', minmax(0, 1fr))';
+    applyGap();
+    requestAnimationFrame(pack);
   }
   buttons.forEach(function (b) {
     b.addEventListener('click', function () { state.cols = b.dataset.cols; save(); paint(); });
   });
   if (gap) gap.addEventListener('input', function () { state.gap = Number(gap.value); save(); paint(); });
+
+  var t;
+  window.addEventListener('resize', function () {
+    clearTimeout(t);
+    t = setTimeout(function () { applyGap(); pack(); }, 120);
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(pack);
+  window.addEventListener('load', pack);
   paint();
 })();
 </script>
