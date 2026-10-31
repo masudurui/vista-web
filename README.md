@@ -33,6 +33,20 @@ git push origin main
 
 Then access at: `https://masudurui.github.io/vista-web`
 
+## Download links
+
+Every "Download" CTA points at the GitHub release **asset**, not the release page, so one click starts the download immediately:
+
+```
+https://github.com/masudurui/vista-web/releases/latest/download/Vista.zip
+```
+
+- `latest` resolves to the newest published release, so new versions need no site changes.
+- The asset must be named exactly `Vista.zip` on every release (GitHub serves it with
+  `Content-Disposition: attachment`, so the browser downloads instead of navigating to GitHub).
+- If the asset is renamed (e.g. `Vista.dmg`), update the four `href` values in `index.html`
+  (hero CTA, pricing card trial link, closing CTA, footer panel CTA).
+
 ## Customization
 
 Edit these sections in `index.html`:
