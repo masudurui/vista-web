@@ -35,17 +35,22 @@ Then access at: `https://masudurui.github.io/vista-web`
 
 ## Download links
 
-Every "Download" CTA points at the GitHub release **asset**, not the release page, so one click starts the download immediately:
+The app is hosted **on this site**, not on GitHub. `Vista.zip` sits in the repo root and is served at:
 
 ```
-https://github.com/masudurui/vista-web/releases/latest/download/Vista.zip
+https://vistaformac.com/Vista.zip
 ```
 
-- `latest` resolves to the newest published release, so new versions need no site changes.
-- The asset must be named exactly `Vista.zip` on every release (GitHub serves it with
-  `Content-Disposition: attachment`, so the browser downloads instead of navigating to GitHub).
-- If the asset is renamed (e.g. `Vista.dmg`), update the four `href` values in `index.html`
-  (hero CTA, pricing card trial link, closing CTA, footer panel CTA).
+All four download CTAs in `index.html` (hero, pricing card trial link, closing CTA, footer panel CTA) use:
+
+```html
+<a href="./Vista.zip" download="Vista.zip" class="…">Download</a>
+```
+
+- Because the file is on the same domain, the `download` attribute is honoured: one click saves the app and the visitor never leaves the page (no GitHub tab, no release page).
+- **Shipping a new version:** rebuild the app, replace `Vista.zip` in this folder with the new build (keep the exact filename), then `git add Vista.zip index.html && git commit && git push`. No code changes needed.
+- If you ever rename the file (e.g. `Vista-1.1.0.zip`), update the four `href` values in `index.html`.
+- Keep the zip under GitHub Pages' 100 MB per-file limit; a versioned filename also avoids CDN cache staleness (Pages caches files for ~10 minutes).
 
 ## Customization
 

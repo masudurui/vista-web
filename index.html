@@ -1082,7 +1082,7 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
             </span>
           </a>
-          <a href="https://github.com/masudurui/vista-web/releases/latest/download/Vista.zip" download="Vista.zip" class="btn-quiet cta-arrow has-icon">
+          <a href="./Vista.zip" download="Vista.zip" class="btn-quiet cta-arrow has-icon">
             <span class="cta-icon" aria-hidden="true">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>
             </span>
@@ -1491,7 +1491,7 @@
               <a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" class="price-ticket-buy" data-polar-checkout data-polar-checkout-theme="light">Buy for $19
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6.5 18.5 12 13 17.5"/></svg>
               </a>
-              <a href="https://github.com/masudurui/vista-web/releases/latest/download/Vista.zip" download="Vista.zip" class="price-ticket-trial">Download free trial</a>
+              <a href="./Vista.zip" download="Vista.zip" class="price-ticket-trial">Download free trial</a>
             </div>
             <p class="price-ticket-fine">Try free for 14 days first · macOS 14 or later</p>
           </div>
@@ -1549,7 +1549,7 @@
         <span class="appicon w-16 h-16" aria-hidden="true"></span>
         <h2 id="close-title" class="h2 mt-8">See what you have.</h2>
         <p class="lede mt-5">14 days free. No account needed.</p>
-        <a href="https://github.com/masudurui/vista-web/releases/latest/download/Vista.zip" download="Vista.zip" class="btn cta-arrow has-icon mt-9">
+        <a href="./Vista.zip" download="Vista.zip" class="btn cta-arrow has-icon mt-9">
           <span class="cta-icon" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>
           </span>
@@ -1602,7 +1602,7 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
               </span>
             </a>
-            <a href="https://github.com/masudurui/vista-web/releases/latest/download/Vista.zip" download="Vista.zip" class="btn-quiet cta-arrow has-icon cta-lg">
+            <a href="./Vista.zip" download="Vista.zip" class="btn-quiet cta-arrow has-icon cta-lg">
               <span class="cta-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>
               </span>
@@ -2231,6 +2231,39 @@
     window.addEventListener('scroll', update, { passive: true });
     window.addEventListener('pageshow', update);
     update();
+  })();
+</script>
+
+<script>
+  /* Downloads: Vista.zip is shipped with the site (./Vista.zip), so the native
+     <a download> attribute saves the file without leaving the page. Browsers
+     without download-attribute support would navigate to the zip instead;
+     fetch it as a blob and save it in place. */
+  (() => {
+    if ('download' in document.createElement('a')) return;
+
+    const links = document.querySelectorAll('a[download][href$=".zip"]');
+    links.forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        fetch(link.getAttribute('href'))
+          .then((res) => {
+            if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+            return res.blob();
+          })
+          .then((blob) => {
+            const url = URL.createObjectURL(blob);
+            const temp = document.createElement('a');
+            temp.href = url;
+            temp.download = link.getAttribute('download') || 'Vista.zip';
+            document.body.appendChild(temp);
+            temp.click();
+            temp.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+          })
+          .catch(() => { window.location.href = link.getAttribute('href'); });
+      });
+    });
   })();
 </script>
 
