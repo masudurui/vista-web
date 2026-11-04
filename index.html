@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Vista — A visual file browser for macOS</title>
-<meta name="description" content="Vista is a file browser for macOS that shows your files as thumbnails, sorted by kind. Color and shape each folder, and search the text inside screenshots and PDFs. Everything runs on your Mac.">
+<meta name="description" content="Vista is a file browser for macOS that shows your files as thumbnails, sorted by kind. Style every folder, search photos by what’s in them with an on-device AI model, and find the text inside screenshots and PDFs. Everything runs on your Mac.">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="canonical" href="https://vistaformac.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vista">
 <meta property="og:url" content="https://vistaformac.com/">
 <meta property="og:title" content="Vista — See your files, not filenames.">
-<meta property="og:description" content="A visual file browser for macOS. Thumbnails sorted by kind, folders with their own color and shape, and search inside screenshots and PDFs. Everything runs on your Mac.">
+<meta property="og:description" content="A visual file browser for macOS. Thumbnails sorted by kind, rounder folders in Sage Soft, White or Dark, Visual Search for photos and videos, and search inside screenshots and PDFs. Everything runs on your Mac.">
 <meta property="og:image" content="https://vistaformac.com/images/og-image.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
 <meta property="og:image:alt" content="Vista — See your files, not filenames.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Vista — See your files, not filenames.">
-<meta name="twitter:description" content="A visual file browser for macOS: thumbnails sorted by kind, folder colors and shapes, and search inside screenshots and PDFs. Everything runs on your Mac.">
+<meta name="twitter:description" content="A visual file browser for macOS: thumbnails sorted by kind, folder colors and styles, photo search by what’s in them, and search inside screenshots and PDFs. Everything runs on your Mac.">
 <meta name="twitter:image" content="https://vistaformac.com/images/og-image.png">
 <meta name="twitter:image:alt" content="Vista — See your files, not filenames.">
 <link rel="icon" href="favicon.ico" sizes="48x48">
@@ -465,6 +465,13 @@
 
   .fact { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--r-card); background: var(--surface); font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink); }
   .fact svg { color: var(--accent); flex: none; }
+
+  /* Hand-drawn mocks for the newer features (Visual Search, the menu bar icon):
+     the same card language as .sup-art, but the art scales to the column width
+     instead of being cropped. */
+  .mock-art { overflow: hidden; border: 1px solid var(--line); border-radius: var(--r-card); background: var(--stage); box-shadow: 0 1px 2px rgba(20, 32, 24, .04), 0 32px 64px -44px rgba(20, 32, 24, .3); }
+  .mock-art > svg { display: block; width: 100%; height: auto; }
+  .mock-art svg text { font-family: var(--font); }
 
   .theme-switch { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-top: 20px; }
   .theme-tab { height: 34px; padding: 0 16px; border-radius: 999px; font-size: 13.5px; font-weight: 500; background: var(--accent-soft); color: var(--accent-strong); box-shadow: inset 0 0 0 1px rgba(19, 128, 59, .10); transition: background-color .15s ease, transform 140ms var(--ease-out); }
@@ -1027,7 +1034,20 @@
   "name": "Vista",
   "url": "https://vistaformac.com/",
   "image": "https://vistaformac.com/images/og-image.png",
-  "description": "A visual file browser for macOS that shows files as thumbnails sorted by kind, lets you give each folder its own color and shape, and searches the text inside screenshots and PDFs. Everything runs on your Mac.",
+  "description": "A visual file browser for macOS that shows files as thumbnails sorted by kind, lets you style every folder, and finds photos and videos by what’s in them with an AI model that runs on your Mac. Everything stays on the device.",
+  "featureList": [
+    "Visual Search: describe a photo or video and find it by what’s in it",
+    "On-device AI model for Visual Search, downloaded once and then fully offline",
+    "Thumbnails sorted by kind",
+    "24 folder colors, 7 rounder folder styles and 31 icons",
+    "Apply one folder style to all folders at once",
+    "Sage Soft, White and Dark themes",
+    "Menu bar icon",
+    "Search filenames and the text inside screenshots and PDFs",
+    "Duplicate and near-identical photo detection",
+    "Keyboard-first navigation",
+    "Works offline, with no account and no cloud"
+  ],
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "macOS 14+",
   "offers": {
@@ -1073,7 +1093,7 @@
     <section class="pt-20 md:pt-32" aria-labelledby="hero-title">
       <p class="eyebrow hero-eyebrow">A visual file browser for macOS</p>
       <h1 id="hero-title" class="h1 hero-h1 mt-6">See your files, not filenames.</h1>
-      <p class="hero-lede mt-8 md:mt-10"><span class="hl">Vista shows your files as thumbnails, sorted by kind.</span> Give each folder its own color and shape, and search the words inside screenshots and PDFs.</p>
+      <p class="hero-lede mt-8 md:mt-10"><span class="hl">Vista shows your files as thumbnails, sorted by kind.</span> Give folders their own color and shape, find photos by what’s in them, and search the words inside screenshots and PDFs.</p>
       <div class="hero-cta mt-10 md:mt-12 flex flex-wrap items-center gap-x-5 gap-y-4">
         <div class="flex flex-wrap gap-3">
           <a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" class="btn cta-arrow" data-polar-checkout data-polar-checkout-theme="light">
@@ -1099,7 +1119,7 @@
         <div class="laptop-lid">
           <figure class="media hero-media" style="aspect-ratio: 2880 / 1798" data-static
                   data-src="images/home" data-video="teaser.mp4"
-                  data-alt="Vista's Home screen in the Sage theme: files grouped into colorful folders by kind, with a storage bar across the top"
+                  data-alt="Vista's Home screen in the Sage Soft theme: files grouped into colorful folders by kind, with a storage bar across the top"
                   data-note="Product teaser: Home, browsing by kind, shaping a folder, searching"
                   data-size="2880 × 1800">
             <video autoplay muted loop playsinline preload="auto" poster="images/home.png"
@@ -1113,7 +1133,7 @@
     </section>
 
     <section id="intro" class="section" aria-labelledby="intro-title">
-      <h2 id="intro-title" class="intro-title"><span class="hl">Vista shows thumbnails you can recognize at a glance, not long lists of filenames.</span> It sorts your folders by kind, and it never sends a file off your Mac.</h2>
+      <h2 id="intro-title" class="intro-title"><span class="hl">Vista shows thumbnails you can recognize at a glance, not long lists of filenames.</span> It sorts your folders by kind, finds photos by what’s in them, and never sends a file off your Mac.</h2>
 
       <ul class="pillars" role="list">
         <li class="pillar">
@@ -1138,7 +1158,7 @@
             </svg>
           </div>
           <h3>Visual</h3>
-          <p>Large thumbnails instead of filenames, sorted into photos, screenshots, documents and videos.</p>
+          <p>Large thumbnails instead of filenames, sorted into photos, screenshots, documents and videos — plus Visual Search, which finds a photo or video by what’s in it.</p>
         </li>
 
         <li class="pillar">
@@ -1155,7 +1175,7 @@
             </svg>
           </div>
           <h3>Yours</h3>
-          <p>24 colors, 7 folder shapes and 31 icons, in a Light, Dark or Sage theme.</p>
+          <p>24 colors, 7 rounder folder styles and 31 icons — apply one style to every folder at once, in Sage Soft, White or Dark.</p>
         </li>
 
         <li class="pillar">
@@ -1224,7 +1244,7 @@
             </svg>
           </div>
           <h3>Private</h3>
-          <p>Search, text recognition and duplicate detection run on your Mac. No account, no Wi‑Fi needed.</p>
+          <p>Search, text recognition, duplicate detection and Visual Search run on your Mac. No account, no Wi‑Fi needed.</p>
         </li>
       </ul>
     </section>
@@ -1233,7 +1253,7 @@
       <div class="sec-head">
         <p class="eyebrow">Make it yours</p>
         <h2 id="customize-title" class="h2">Color, shape and<br> name every folder.</h2>
-        <p class="lede">Vista sorts your files into folders by kind. Each folder can have its own color or gradient, shape, icon and name.</p>
+        <p class="lede">Vista sorts your files into folders by kind. Give each one its own color, style, icon and name — the styles are rounder and more Apple-like now, and one click applies a style to all your folders at once.</p>
       </div>
 
       <div class="laptop mt-10 md:mt-14">
@@ -1262,9 +1282,9 @@
         <div class="flex flex-col gap-4">
           <div class="sup-art is-4x3 cz">
             <img class="cz-folder is-large" src="images/folder05.png" width="928" height="695"
-                 alt="Vista’s folder icon, one of seven shapes">
+                 alt="Vista’s folder icon, one of seven rounder, more Apple-like styles">
           </div>
-          <p class="stat"><b>7</b> folder shapes</p>
+          <p class="stat"><b>7</b> rounder folder styles</p>
         </div>
 
         <!-- 31 icons: one icon shown large (one of 31) -->
@@ -1277,6 +1297,11 @@
           <p class="stat"><b>31</b> icons</p>
         </div>
       </div>
+
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mt-6">
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="7.5" width="12" height="12" rx="3.2"/><path d="M8.5 4.5h8.2A3.8 3.8 0 0 1 20.5 8.3v8.2"/></svg>Apply one style to every folder at once</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7.6A2.6 2.6 0 0 1 6.6 5h2.7l2 2.2h6.1A2.6 2.6 0 0 1 20 9.8v7.6A2.6 2.6 0 0 1 17.4 20H6.6A2.6 2.6 0 0 1 4 17.4z"/></svg>Rounder, more Apple-like shapes</li>
+      </ul>
     </section>
 
     <!-- Rest of the page remains unchanged -->
@@ -1313,6 +1338,98 @@
           <p class="label">Downloaded From: Gmail, Slack, AirDrop</p>
         </div>
       </div>
+    </section>
+
+    <section id="visual-search" class="section" aria-labelledby="visual-search-title">
+      <div class="sec-head">
+        <p class="eyebrow">Visual Search</p>
+        <h2 id="visual-search-title" class="h2">Find photos by<br> what’s in them.</h2>
+        <p class="lede">Type what you see — “horse”, “mountain”, “red car” — and Vista finds the photos and videos that match, even when the filename says nothing. It runs on an AI model that lives on your Mac: one download, then every search is offline.</p>
+      </div>
+
+      <div class="mock-art mt-10 md:mt-14">
+        <svg viewBox="0 0 1200 620" role="img" aria-labelledby="vs-art-title">
+          <title id="vs-art-title">Visual Search in Vista: typing “horse” returns matching photos and videos, and a note says the model runs on this Mac, even offline</title>
+          <defs>
+            <linearGradient id="vs-sky" x1="0" y1="0" x2=".4" y2="1"><stop offset="0" stop-color="#E1EFF6"/><stop offset="1" stop-color="#B6D6E6"/></linearGradient>
+            <linearGradient id="vs-sage" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#EDF5EA"/><stop offset="1" stop-color="#C3DCC7"/></linearGradient>
+            <linearGradient id="vs-peach" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#FCEFE3"/><stop offset="1" stop-color="#EFC49F"/></linearGradient>
+            <linearGradient id="vs-lilac" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#F3EFFA"/><stop offset="1" stop-color="#CBBEEC"/></linearGradient>
+          </defs>
+
+          <rect width="1200" height="620" fill="#F7FBF9"/>
+
+          <rect x="64" y="56" width="1072" height="88" rx="22" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
+          <g fill="none" stroke="#52645C" stroke-width="2.6" stroke-linecap="round">
+            <circle cx="118" cy="99" r="11"/>
+            <path d="M126.5 107.5 134.5 115.5"/>
+          </g>
+          <text x="152" y="110" font-size="31" font-weight="500" fill="#05261C">horse</text>
+          <rect x="944" y="76" width="168" height="48" rx="24" fill="#E3EEE8"/>
+          <path d="M970 90 973.6 96.6 980.2 100 973.6 103.4 970 110 966.4 103.4 959.8 100 966.4 96.6Z" fill="#0F6B31"/>
+          <text x="990" y="106" font-size="18" font-weight="600" fill="#0F6B31">Visual search</text>
+
+          <g font-size="18" fill="#42554C">
+            <rect x="64" y="176" width="158" height="44" rx="22" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
+            <text x="86" y="204">mountain</text>
+            <rect x="234" y="176" width="132" height="44" rx="22" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
+            <text x="256" y="204">sunset</text>
+            <rect x="378" y="176" width="140" height="44" rx="22" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
+            <text x="400" y="204">red car</text>
+            <rect x="530" y="176" width="212" height="44" rx="22" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
+            <text x="552" y="204">birthday cake</text>
+          </g>
+
+          <defs>
+            <clipPath id="vs-c1"><rect x="64" y="260" width="240" height="240" rx="18"/></clipPath>
+            <clipPath id="vs-c2"><rect x="341" y="260" width="240" height="240" rx="18"/></clipPath>
+            <clipPath id="vs-c3"><rect x="618" y="260" width="240" height="240" rx="18"/></clipPath>
+            <clipPath id="vs-c4"><rect x="895" y="260" width="240" height="240" rx="18"/></clipPath>
+          </defs>
+
+          <g clip-path="url(#vs-c1)">
+            <rect x="64" y="260" width="240" height="240" fill="url(#vs-sky)"/>
+            <circle cx="240" cy="316" r="18" fill="#FBEFD6"/>
+            <path d="M64 500v-88l70-70 62 62 34-28 74 72v52z" fill="#AFCCBC"/>
+            <path d="M64 500v-52l58-54 54 54 40-34 88 80v6z" fill="#87AC98"/>
+          </g>
+
+          <g clip-path="url(#vs-c2)">
+            <rect x="341" y="260" width="240" height="240" fill="url(#vs-sage)"/>
+            <circle cx="512" cy="320" r="16" fill="#FCF3DE"/>
+            <path d="M341 500v-58c44-32 82-32 120 0s76 32 120 0v58z" fill="#AECDB4"/>
+            <path d="M341 500v-30c46-24 82-24 120 0s74 24 120 0v30z" fill="#92BC9B"/>
+          </g>
+
+          <g clip-path="url(#vs-c3)">
+            <rect x="618" y="260" width="240" height="240" fill="url(#vs-peach)"/>
+            <circle cx="738" cy="362" r="34" fill="#F7CBA4"/>
+            <path d="M618 500v-54l66-48 74 58 44-28 56 42v30z" fill="#D9A680"/>
+          </g>
+          <circle cx="822" cy="292" r="17" fill="#FFFFFF" fill-opacity=".92"/>
+          <path d="M817.5 285.5 828 292l-10.5 6.5z" fill="#05261C"/>
+
+          <g clip-path="url(#vs-c4)">
+            <rect x="895" y="260" width="240" height="240" fill="url(#vs-lilac)"/>
+            <circle cx="1082" cy="314" r="14" fill="#F4EFFC"/>
+            <path d="M895 500v-66l56-44 62 50 58-46 64 54v52z" fill="#BBABE4"/>
+          </g>
+
+          <text x="64" y="560" font-size="20" fill="#42554C">12 photos and 3 videos, matched by what’s in them</text>
+          <rect x="852" y="528" width="284" height="52" rx="26" fill="#E3EEE8"/>
+          <g transform="translate(876 542)" fill="none" stroke="#0F6B31" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3 4.8 5.9v5.6c0 4.2 3 7.5 7.2 8.5 4.2-1 7.2-4.3 7.2-8.5V5.9z"/>
+            <path d="M9.2 11.9 11.2 14l3.8-3.8"/>
+          </g>
+          <text x="912" y="561" font-size="18" font-weight="600" fill="#0F6B31">On this Mac, even offline</text>
+        </svg>
+      </div>
+
+      <ul class="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mt-6">
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4.8 17.2 9.6 12l3.9 3.9 2.6-2.2 3.1 3.5"/></svg>Finds photos and videos</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v9.5M8.5 10 12 13.5 15.5 10M5 19.5h14"/></svg>One-time model download</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.8 5.9v5.6c0 4.2 3 7.5 7.2 8.5 4.2-1 7.2-4.3 7.2-8.5V5.9z"/><path d="M9.2 11.9 11.2 14l3.8-3.8"/></svg>Searches stay offline</li>
+      </ul>
     </section>
 
     <section id="viewer" class="section" aria-labelledby="viewer-title">
@@ -1357,6 +1474,53 @@
       <p class="keys-note"><kbd class="key">↓</kbd> <kbd class="key">↑</kbd> Move down and up between categories and files.</p>
     </section>
 
+    <section id="menu-bar" class="section" aria-labelledby="menu-bar-title">
+      <div class="sec-head">
+        <p class="eyebrow">Menu bar</p>
+        <h2 id="menu-bar-title" class="h2">One click away,<br> in your menu bar.</h2>
+        <p class="lede">Vista now has a menu bar icon. Open it from anywhere — while you work in another app, with the Dock hidden, without hunting for a window.</p>
+      </div>
+
+      <div class="mock-art mt-10 md:mt-14">
+        <svg viewBox="0 0 1200 260" role="img" aria-labelledby="mb-art-title">
+          <title id="mb-art-title">The macOS menu bar with the Vista icon next to the clock, labelled as one click from any app</title>
+          <rect width="1200" height="260" fill="#F7FBF9"/>
+
+          <rect x="48" y="48" width="1104" height="64" rx="16" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
+          <g font-size="15" fill="#42554C">
+            <text x="88" y="85" font-weight="600" fill="#05261C">Finder</text>
+            <text x="176" y="85">File</text>
+            <text x="216" y="85">Edit</text>
+            <text x="256" y="85">View</text>
+            <text x="308" y="85">Go</text>
+            <text x="340" y="85">Window</text>
+            <text x="402" y="85">Help</text>
+          </g>
+
+          <rect x="946" y="56" width="48" height="48" rx="14" fill="none" stroke="#13803B" stroke-width="2"/>
+          <image href="images/vista-icon.svg" x="952" y="62" width="36" height="36"/>
+
+          <g fill="none" stroke="#42554C" stroke-width="2" stroke-linecap="round">
+            <path d="M1013 82a15 15 0 0 1 22 0"/>
+            <path d="M1018 88a8 8 0 0 1 12 0"/>
+          </g>
+          <circle cx="1024" cy="94" r="1.8" fill="#42554C"/>
+          <rect x="1052" y="74" width="26" height="14" rx="4" fill="none" stroke="#42554C" stroke-width="1.6"/>
+          <rect x="1055.5" y="77.5" width="16" height="7" rx="2" fill="#42554C"/>
+          <path d="M1080 79v4" stroke="#42554C" stroke-width="2" stroke-linecap="round"/>
+          <text x="1132" y="85" text-anchor="end" font-size="15" fill="#42554C">9:41</text>
+
+          <path d="M970 118v32" stroke="#9DB3A8" stroke-width="1.6" stroke-dasharray="3 4"/>
+          <circle cx="970" cy="154" r="3" fill="#9DB3A8"/>
+          <rect x="760" y="170" width="420" height="62" rx="18" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
+          <text x="786" y="199" font-size="17" font-weight="600" fill="#05261C">Menu bar icon</text>
+          <text x="786" y="219" font-size="15" fill="#42554C">Open Vista from any app, without the Dock.</text>
+        </svg>
+      </div>
+
+      <p class="keys-note">Vista in the menu bar — always there, never in the way.</p>
+    </section>
+
     <section id="cleanup" class="section" aria-labelledby="cleanup-title">
       <div class="sec-head">
         <p class="eyebrow">Clean Up</p>
@@ -1379,24 +1543,24 @@
     <section id="themes" class="section" aria-labelledby="themes-title">
       <div class="sec-head">
         <p class="eyebrow">Themes</p>
-        <h2 id="themes-title" class="h2">Light, Dark, or Sage.</h2>
-        <p class="lede">Light and Dark look like the rest of macOS. Sage is Vista’s own theme, in soft green.</p>
+        <h2 id="themes-title" class="h2">Sage Soft, White,<br> or Dark.</h2>
+        <p class="lede">Sage Soft is the default — Vista’s own calm, soft green. White is clean and bright for the daytime, and Dark keeps everything quiet when the light goes down.</p>
       </div>
 
       <div class="laptop mt-10 md:mt-14">
         <div class="laptop-lid">
           <figure class="media" style="aspect-ratio: 2560 / 1440">
             <img id="theme-shot" src="images/SageTheme.png"
-                 alt="Vista's Home screen in the Sage theme, in soft green"
+                 alt="Vista's Home screen in the Sage Soft theme, in soft green"
                  loading="lazy">
           </figure>
         </div>
         <div class="laptop-base" aria-hidden="true"></div>
       </div>
       <div class="theme-switch" role="group" aria-label="Choose a theme preview">
-        <button type="button" class="theme-tab is-on" data-theme="sage" aria-pressed="true">Sage</button>
+        <button type="button" class="theme-tab is-on" data-theme="sage" aria-pressed="true">Sage Soft</button>
+        <button type="button" class="theme-tab" data-theme="white" aria-pressed="false">White</button>
         <button type="button" class="theme-tab" data-theme="dark" aria-pressed="false">Dark</button>
-        <button type="button" class="theme-tab" data-theme="light" aria-pressed="false">Light</button>
       </div>
     </section>
 
@@ -1404,24 +1568,26 @@
       <div class="sec-head">
         <p class="eyebrow">Privacy</p>
         <h2 id="privacy-title" class="h2">Works offline.<br> Stays on your Mac.</h2>
-        <p class="lede">Indexing, text recognition, and duplicate detection run entirely on your Mac — with or without Wi‑Fi.</p>
+        <p class="lede">Indexing, text recognition, duplicate detection and Visual Search run entirely on your Mac — with or without Wi‑Fi. The AI model is downloaded once; after that, nothing leaves the device.</p>
       </div>
 
       <div class="laptop mt-10 md:mt-14">
         <div class="laptop-lid">
           <figure class="media fit"
                   data-src="images/offline"
-                  data-alt="Vista working with Wi‑Fi off: indexing, text recognition and duplicate detection all running on the Mac"
+                  data-alt="Vista working with Wi‑Fi off: indexing, text recognition, duplicate detection and Visual Search all running on the Mac"
                   data-note="Vista working completely offline, with Wi‑Fi switched off"
                   data-size="1840 × 1012"></figure>
         </div>
         <div class="laptop-base" aria-hidden="true"></div>
       </div>
 
-      <ul class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-10 md:mt-14">
+      <ul class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mt-10 md:mt-14">
         <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>No account</li>
         <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>No cloud</li>
         <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>No tracking</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.8 5.9v5.6c0 4.2 3 7.5 7.2 8.5 4.2-1 7.2-4.3 7.2-8.5V5.9z"/><path d="M9.2 11.9 11.2 14l3.8-3.8"/></svg>On-device AI</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>Works without Wi‑Fi</li>
         <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>Offline license</li>
       </ul>
     </section>
@@ -1522,11 +1688,23 @@
           </details>
           <details>
             <summary>Does anything leave my Mac?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
-            <div class="faq-panel"><p>No. Search, text recognition, and duplicate detection run on your Mac. There’s no account and no cloud.</p></div>
+            <div class="faq-panel"><p>No. Search, text recognition, duplicate detection and Visual Search run on your Mac. There’s no account and no cloud.</p></div>
+          </details>
+          <details>
+            <summary>How does Visual Search work?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <div class="faq-panel"><p>Vista uses an AI model that runs on your Mac. You describe what you are looking for — “horse”, “mountain”, “red car” — and it matches photos and videos by what’s in them, not by filename. The model is downloaded once when you set it up; after that, every search works with no internet.</p></div>
+          </details>
+          <details>
+            <summary>Which themes does Vista have?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <div class="faq-panel"><p>Sage Soft, White and Dark. Sage Soft is the default — Vista’s own soft green theme — and you can switch at any time.</p></div>
+          </details>
+          <details>
+            <summary>Can I style all my folders at once?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
+            <div class="faq-panel"><p>Yes. Pick a color, one of the seven rounder folder styles and an icon, then apply that style to every folder in one click — or keep individual folders different.</p></div>
           </details>
           <details>
             <summary>Does Vista work without internet?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
-            <div class="faq-panel"><p>Yes. Everything runs locally, and your license works without a connection.</p></div>
+            <div class="faq-panel"><p>Yes. Visual Search needs its model downloaded once; after that everything runs locally, and your license works without a connection.</p></div>
           </details>
           <details>
             <summary>Is this a subscription?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
@@ -1629,9 +1807,11 @@
           <p class="foot-kicker" id="foot-product">Product</p>
           <ul>
             <li><a href="#customize">Features</a></li>
+            <li><a href="#visual-search">Visual search</a></li>
             <li><a href="#search">Search inside files</a></li>
             <li><a href="#viewer">Viewer</a></li>
             <li><a href="#keyboard">Keyboard</a></li>
+            <li><a href="#menu-bar">Menu bar</a></li>
             <li><a href="#cleanup">Clean up</a></li>
             <li><a href="#themes">Themes</a></li>
           </ul>
@@ -1882,13 +2062,13 @@
     const tabs = Array.from(document.querySelectorAll('.theme-tab'));
     const files = {
       sage: 'images/SageTheme.png',
+      white: 'images/PureWhiteTheme.png',
       dark: 'images/DarkTheme.png',
-      light: 'images/PureWhiteTheme.png',
     };
     const alts = {
-      sage: "Vista's Home screen in the Sage theme, in soft green",
+      sage: "Vista's Home screen in the Sage Soft theme, in soft green",
+      white: "Vista's Home screen in the White theme",
       dark: "Vista's Home screen in the Dark theme",
-      light: "Vista's Home screen in the Light (Pure White) theme",
     };
     // Warm the cache for the alternate shots once the Themes section gets close,
     // so a click swaps instantly without downloading ~2 MB up front on a page
@@ -2094,11 +2274,13 @@
     const clusters = [];
     const push = (items) => { if (items.length) clusters.push(items); };
 
-    ['customize', 'search', 'viewer', 'keyboard', 'cleanup', 'themes', 'privacy'].forEach((id) => {
+    ['customize', 'search', 'visual-search', 'viewer', 'keyboard', 'menu-bar', 'cleanup', 'themes', 'privacy'].forEach((id) => {
       const sec = document.getElementById(id);
       if (!sec) return;
       push([...sec.querySelectorAll('.sec-head > *')]);
       push([...sec.querySelectorAll(':scope > .laptop')]);
+      push([...sec.querySelectorAll(':scope > .mock-art')]);
+      push([...sec.querySelectorAll(':scope > .keys-note')]);
       push([...sec.querySelectorAll('.grid > *')]);
       push([...sec.querySelectorAll(':scope > .theme-switch')]);
     });

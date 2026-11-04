@@ -4,8 +4,12 @@ A beautiful landing page for Vista, a Mac app that automatically organizes your 
 
 ## Features
 
+- **Visual Search** — Find photos and videos by what’s in them (“horse”, “mountain”) using an AI model that runs on your Mac
 - **Search in Plain English** — Natural language search to find files your way
 - **Auto-Organized** — Files categorized by type with live storage counts
+- **Folder Styles** — 24 colors, 7 rounder Apple-style styles and 31 icons, with apply-to-all
+- **Themes** — Sage Soft (default), White and Dark
+- **Menu Bar** — Open Vista from the menu bar in any app
 - **Find Duplicates** — Spot and remove duplicate files instantly
 - **Smart Cleanup** — Intelligent suggestions for freeing up space
 - **Live Text Search** — Search inside screenshots and images
