@@ -13,7 +13,7 @@ import { useEffect, type ReactNode } from "react";
  * post-purchase licence email keeps working.
  */
 const CHECKOUT_URL =
-  "https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH";
+  "https://buy.polar.sh/polar_cl_7UyQ6ez6Rg33eeY8r3EyC1KVhw6HkaqtusPx81HRmRo";
 
 /** Overlay theme passed to Polar. */
 const THEME = "dark";
