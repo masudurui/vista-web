@@ -29,12 +29,17 @@ The goal here was fidelity, not a redesign, so the page *is* the live page:
 | `src/components/HeroGallery.tsx` | Hero tour: wallpaper panel, sliding 16:10 window, caption, ten-thumbnail strip with edge fade, prev/next, arrow-key tablist. |
 | `src/components/VideoFigure.tsx` | The five clips the live page loads through its media loader: figure marked `is-video`, poster frame, keystroke cue, hover play/pause button, playback only while on screen. |
 | `src/components/Reveal.tsx` | The live scroll-in motion (`.rise` + `is-in`, 50 ms stagger, threshold 0.12). Classes are added client-side so server-rendered HTML stays visible. |
+| `src/components/FreeTools.tsx` | Free tools section: the five tools from `tools/index.html` (names, hints, destinations), laid out in the landing page's own card style. |
 | `src/components/FaqAccordion.tsx` | Native `<details>` rows with the animated height the live page uses. |
 | `src/lib/media.ts` | Hero screenshots, feature clips and links in one place. |
 
 Sections, in the live order: hero → intro (three pillars) → Visual Search → folder
 customization → search inside files → viewer → keyboard → Clean Up → themes → privacy →
-pricing → FAQ → closing call to action → footer.
+**Free tools** → pricing → FAQ → closing call to action → footer.
+
+The Free tools section is the one addition: it is not on the live landing page, but the
+tools it lists are (they're served from `/tools/`), so the section was ported from
+`tools/index.html` with the same five tools, labels, hints and destinations.
 
 ## Parity checks
 

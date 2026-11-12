@@ -28,6 +28,7 @@ export function Reveal() {
       "cleanup",
       "themes",
       "privacy",
+      "free-tools",
     ].forEach((id) => {
       const section = document.getElementById(id);
       if (!section) return;
