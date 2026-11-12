@@ -1,15 +1,13 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 /**
  * Free tools section, ported from the tools hub (tools/index.html): same five
  * tools, same labels, same one-line hints, same destinations.
  *
- * The tools themselves are still served by the static site, so these are
- * absolute URLs and therefore plain <a> elements. If the /tools pages are ever
- * ported into this app, swap them for <Link href="/tools/<slug>/">.
+ * The tools themselves are served by this app from public/tools (see the
+ * rewrites in next.config.ts), so these are internal routes and use <Link>.
  */
-const TOOLS_BASE = "https://vistaformac.com/tools/";
-
 type Tool = {
   slug: string;
   label: string;
@@ -94,9 +92,8 @@ export function FreeTools() {
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mt-10 md:mt-14">
         {tools.map((tool) => (
           <li key={tool.slug}>
-            <a
-              href={`${TOOLS_BASE}${tool.slug}/`}
-              rel="noopener noreferrer"
+            <Link
+              href={`/tools/${tool.slug}/`}
               className="group flex h-full min-h-[80px] items-start gap-3.5 rounded-[18px] border border-line bg-surface p-5 transition-colors hover:border-line-strong"
             >
               <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-accent-soft text-accent-strong">
@@ -123,7 +120,7 @@ export function FreeTools() {
                   {tool.hint}
                 </span>
               </span>
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

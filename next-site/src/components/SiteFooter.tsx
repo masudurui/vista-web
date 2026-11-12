@@ -82,7 +82,7 @@ export function SiteFooter() {
             <li><a href="https://vistaformac.com/compare/">Compare with Finder</a></li>
             <li><a href="#faq">Questions</a></li>
             <li><a href="https://vistaformac.com/privacy/">Privacy</a></li>
-            <li><a href="https://vistaformac.com/tools/">Free tools</a></li>
+            <li><a href="/tools/">Free tools</a></li>
           </ul>
         </nav>
       </div>

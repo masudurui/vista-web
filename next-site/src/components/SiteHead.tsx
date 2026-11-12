@@ -60,12 +60,6 @@ export function SiteHead() {
             <a href="#faq" className="hover:text-ink transition-colors">
               FAQ
             </a>
-            <a
-              href="https://vistaformac.com/tools/"
-              className="hover:text-ink transition-colors"
-            >
-              Free tools
-            </a>
           </nav>
           <div className="flex items-center gap-2">
             <a

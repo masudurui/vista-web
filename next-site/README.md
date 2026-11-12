@@ -29,7 +29,8 @@ The goal here was fidelity, not a redesign, so the page *is* the live page:
 | `src/components/HeroGallery.tsx` | Hero tour: wallpaper panel, sliding 16:10 window, caption, ten-thumbnail strip with edge fade, prev/next, arrow-key tablist. |
 | `src/components/VideoFigure.tsx` | The five clips the live page loads through its media loader: figure marked `is-video`, poster frame, keystroke cue, hover play/pause button, playback only while on screen. |
 | `src/components/Reveal.tsx` | The live scroll-in motion (`.rise` + `is-in`, 50 ms stagger, threshold 0.12). Classes are added client-side so server-rendered HTML stays visible. |
-| `src/components/FreeTools.tsx` | Free tools section: the five tools from `tools/index.html` (names, hints, destinations), laid out in the landing page's own card style. |
+| `src/components/FreeTools.tsx` | Free tools section: the five tools, laid out in the landing page's card style, linking to the routes below. |
+| `public/tools/` | The free tools themselves: the hub (`index.html`) plus one folder per tool, copied from the repo's `tools/` directory, with their screenshots (`img/`) and OG images (`og/`). |
 | `src/components/FaqAccordion.tsx` | Native `<details>` rows with the animated height the live page uses. |
 | `src/lib/media.ts` | Hero screenshots, feature clips and links in one place. |
 
@@ -40,6 +41,35 @@ customization → search inside files → viewer → keyboard → Clean Up → t
 The Free tools section is the one addition: it is not on the live landing page, but the
 tools it lists are (they're served from `/tools/`), so the section was ported from
 `tools/index.html` with the same five tools, labels, hints and destinations.
+
+## Free tools (and how to add more)
+
+The tools run **inside this app**, at the same URLs as the live site:
+
+| Route | Source |
+| --- | --- |
+| `/tools/` | `public/tools/index.html` (hub) |
+| `/tools/screenshot-settings/` | `public/tools/screenshot-settings/index.html` |
+| `/tools/folder-xray/` | `public/tools/folder-xray/index.html` |
+| `/tools/folder-structure/` | `public/tools/folder-structure/index.html` |
+| `/tools/file-naming/` | `public/tools/file-naming/index.html` |
+| `/tools/wallpaper-folder-colors/` | `public/tools/wallpaper-folder-colors/index.html` |
+
+They stay as the original self-contained HTML (inline CSS/JS, no bundler step), which keeps
+their behaviour byte-for-byte identical to the shipped tools. Two config lines make the
+pretty URLs work under `next start`:
+
+- `trailingSlash: true` — so `/tools/<tool>/` keeps its slash and the tools' relative links
+  (`../`, `../<other-tool>/`) resolve correctly;
+- `rewrites()` — `/tools` → `/tools/index.html`, `/tools/:slug` → `/tools/:slug/index.html`.
+
+To add a tool: drop its folder into `public/tools/<slug>/` (plus any images), add the route
+to the table above if you want it documented, and add a card to `tools` in
+`src/components/FreeTools.tsx`. The card links are internal `<Link href="/tools/<slug>/">`.
+
+The tools' own `og:image` tags point at `https://vistaformac.com/tools/og/*.png`, so those
+files are included in `public/tools/og/` — they resolve locally too if this app takes over
+the domain.
 
 ## Parity checks
 

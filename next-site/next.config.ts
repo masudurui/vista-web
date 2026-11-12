@@ -68,6 +68,19 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   /* The repo root has no package.json, so tell Turbopack where the app lives. */
   turbopack: { root: process.cwd() },
+
+  /* The free tools ship as static HTML in public/tools (hub + one folder per
+     tool). Trailing slashes keep their relative links (`../`, `../<tool>/`)
+     resolving, and the rewrites serve the folder index files at pretty URLs. */
+  trailingSlash: true,
+
+  async rewrites() {
+    return [
+      { source: "/tools", destination: "/tools/index.html" },
+      { source: "/tools/:slug", destination: "/tools/:slug/index.html" },
+    ];
+  },
+
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
