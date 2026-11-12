@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" aria-hidden="true" focusable="false"><rect width="400" height="300" fill="#0B100D"/>
+              <g>
+                <g transform="matrix(.866 .5 -.866 .5 124 94)">
+                  <rect x="0" y="0" width="80" height="80" rx="8" fill="#111813" stroke="#CBD8D1"/>
+                </g>
+              </g>
+              <g>
+                <g transform="matrix(.866 .5 -.866 .5 124 110)">
+                  <rect x="0" y="0" width="80" height="80" rx="8" fill="#141C17" stroke="#CBD8D1"/>
+                  <g fill="#8FA79A">
+                    <rect x="10" y="18" width="46" height="6" rx="3"/>
+                    <rect x="10" y="32" width="34" height="6" rx="3"/>
+                    <rect x="10" y="46" width="42" height="6" rx="3"/>
+                  </g>
+                </g>
+              </g>
+              <g>
+                <circle cx="168" cy="92" r="11" fill="#0C110E" stroke="#63E39B"/>
+                <path d="M163 92 166 95 173 87" fill="none" stroke="#63E39B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <g>
+                <path d="M232.3 117 286 148 286 222 232.3 191Z" fill="#141C17" stroke="#CBD8D1"/>
+                <path d="M286 148 339.7 117 339.7 191 286 222Z" fill="#111813" stroke="#CBD8D1"/>
+                <path d="M232.3 117 286 86 339.7 117 286 148Z" fill="#1C2A22" stroke="#CBD8D1"/>
+                <g stroke="#A8BAAF" stroke-linecap="round">
+                  <path d="M304 138v74"/>
+                  <path d="M322 129v74"/>
+                </g>
+              </g>
+              <g>
+                <path d="M200 158 230 142" fill="none" stroke="#CBD8D1" stroke-dasharray="3 4"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 158 230 142" fill="none" stroke="#63E39B"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 158 230 142" fill="none" stroke="#63E39B" style="animation-delay:.14s;opacity:.45"/>
+                <path d="M230 142 222.8 149.8" fill="none" stroke="#63E39B" stroke-linejoin="round"/>
+                <path d="M230 142 219.6 143.6" fill="none" stroke="#63E39B" stroke-linejoin="round"/>
+              </g>
+              <g>
+                <path d="M238 200C222 224 196 226 184 210" fill="none" stroke="#63E39B" stroke-dasharray="3 4" stroke-opacity=".5"/>
+                <path d="M184 210 194 210" fill="none" stroke="#63E39B" stroke-linejoin="round" stroke-opacity=".5"/>
+                <path d="M184 210 188 220" fill="none" stroke="#63E39B" stroke-linejoin="round" stroke-opacity=".5"/>
+              </g>
+            </svg>

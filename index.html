@@ -3,25 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Vista — A visual file browser for macOS</title>
+<title>Vista: a visual file browser for macOS</title>
 <meta name="description" content="Vista is a file browser for macOS that shows your files as thumbnails, sorted by kind. Style every folder, search photos by what’s in them with an on-device AI model, and find the text inside screenshots and PDFs. Everything runs on your Mac.">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="canonical" href="https://vistaformac.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vista">
 <meta property="og:url" content="https://vistaformac.com/">
-<meta property="og:title" content="Vista — See your files, not filenames.">
+<meta property="og:title" content="Vista: See your files, not filenames.">
 <meta property="og:description" content="A visual file browser for macOS. Thumbnails sorted by kind, rounder folders in Sage Soft, White or Dark, Visual Search for photos and videos, and search inside screenshots and PDFs. Everything runs on your Mac.">
 <meta property="og:image" content="https://vistaformac.com/images/og-image.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Vista — See your files, not filenames.">
+<meta property="og:image:alt" content="Vista: See your files, not filenames.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Vista — See your files, not filenames.">
+<meta name="twitter:title" content="Vista: See your files, not filenames.">
 <meta name="twitter:description" content="A visual file browser for macOS: thumbnails sorted by kind, folder colors and styles, photo search by what’s in them, and search inside screenshots and PDFs. Everything runs on your Mac.">
 <meta name="twitter:image" content="https://vistaformac.com/images/og-image.png">
-<meta name="twitter:image:alt" content="Vista — See your files, not filenames.">
+<meta name="twitter:image:alt" content="Vista: See your files, not filenames.">
 <link rel="icon" href="favicon.ico" sizes="48x48">
 <link rel="icon" type="image/svg+xml" href="images/vista-icon.svg" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
@@ -32,6 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="preload" as="image" href="images/hero-backdrop.webp" fetchpriority="high">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <script>
   tailwind.config = {
@@ -134,24 +135,26 @@
   .label { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink); }
   .label-sub { margin-left: 6px; font-weight: 400; color: var(--faint); }
 
+  /* Hero, left-aligned copy above a product tour: one big screenshot on the
+     wallpaper, a caption under it, and a strip of thumbnails that swaps the
+     shot. The strip scrolls sideways, so adding more screens never squeezes
+     them down. */
+  .hero-copy { max-width: none; }
   .hero-eyebrow { font-size: 15px; }
   .hero-h1 { font-size: clamp(46px, 6.4vw, 84px); }
   @media (min-width: 768px) { .hero-h1 { white-space: nowrap; text-wrap: nowrap; } }
-  .hero-lede { font-size: clamp(19px, 2vw, 24px); line-height: 1.42; letter-spacing: -0.012em; color: var(--muted); max-width: var(--hero-measure, 34em); text-wrap: pretty; }
+  .hero-lede { font-size: clamp(19px, 2vw, 23px); line-height: 1.45; letter-spacing: -0.012em; color: var(--muted); max-width: 42em; text-wrap: pretty; }
   .hero-lede .hl { color: var(--ink); }
-  @media (max-width: 640px) { .hero-lede { max-width: none; } }
 
-  /* Hero entrance — Linear-style: the copy rises in with a short blur, then the
-     product shot lifts in behind it. `backwards` fill means the delayed start is
-     already hidden, and once each run ends the element falls back to its base
-     state so the scroll parallax below can take over the transform. */
+  /* Hero entrance, Linear-style: the copy rises in with a short blur, then
+     each desktop window settles onto the wallpaper, back to front. */
   @keyframes hero-copy-in {
     from { opacity: 0; transform: translate3d(0, 16px, 0); filter: blur(8px); }
     to   { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
   }
-  @keyframes hero-shot-in {
-    from { opacity: 0; filter: blur(14px); }
-    to   { opacity: 1; filter: blur(0); }
+  @keyframes hero-frame-in {
+    from { opacity: 0; transform: scale(.97); filter: blur(10px); }
+    to   { opacity: 1; transform: scale(1); filter: blur(0); }
   }
   .hero-eyebrow, .hero-h1, .hero-lede, .hero-cta, .hero-meta {
     animation: hero-copy-in .95s cubic-bezier(.16, 1, .3, 1) backwards;
@@ -161,9 +164,165 @@
   .hero-lede { animation-delay: .22s; }
   .hero-cta { animation-delay: .31s; }
   .hero-meta { animation-delay: .39s; }
-  .media.hero-media {
-    animation: hero-shot-in 1.15s cubic-bezier(.16, 1, .3, 1) .44s backwards;
+
+  .hero-showcase { position: relative; isolation: isolate; margin-top: clamp(44px, 7vw, 84px); }
+  /* Soft blue bloom under the panel so the wallpaper sits on the white page
+     instead of looking pasted on. */
+  .hero-showcase::before {
+    content: "";
+    position: absolute;
+    inset: 10% 0 10%;
+    z-index: -1;
+    background: radial-gradient(58% 62% at 50% 46%, rgba(74, 152, 224, .26), rgba(74, 152, 224, 0) 72%);
+    filter: blur(24px);
+    pointer-events: none;
   }
+  .hero-panel {
+    position: relative;
+    isolation: isolate;
+    /* Resurf proportion: 960 x 605 on their site, same ratio here so the shot
+       and the panels around it keep the same silhouette at any width. */
+    aspect-ratio: 2632 / 1658;
+    border-radius: clamp(10px, .9vw, 12px);
+    overflow: hidden;
+    /* macOS 26 Tahoe light wallpaper behind the shot, cropped to the panel's
+       2632 x 1658 box so the showcase reads as the Mac desktop the app sits on. */
+    background: #668DC3 url("images/hero-backdrop.webp") center / cover no-repeat;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35),
+                0 1px 2px rgba(8, 24, 44, .12),
+                0 42px 90px -54px rgba(8, 24, 44, .6);
+  }
+  /* The active screenshot sits centred on the wallpaper like an open Mac
+     window. The frame keeps a 16:10 box so swapping shots never shifts the
+     layout, and cropping for the odd 16:9 shot is only a few pixels. */
+  .hero-slides {
+    position: absolute;
+    inset: 0;
+    animation: hero-frame-in 1s cubic-bezier(.16, 1, .3, 1) .42s backwards;
+  }
+  .hero-frame {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 84%;
+    aspect-ratio: 2632 / 1658;
+    margin: 0;
+    /* --slide moves the window across the backdrop. */
+    transform: translate(calc(-50% + var(--slide, 112%)), -50%);
+    border-radius: clamp(6px, .8vw, 10px);
+    overflow: hidden;
+    background: #FFFFFF;
+    box-shadow: 0 2px 6px rgba(8, 24, 44, .18), 0 40px 80px -34px rgba(8, 24, 44, .6);
+    transition: transform .7s cubic-bezier(.32, .72, 0, 1);
+  }
+  #hero-frame-a { --slide: 0%; }
+  #hero-frame-video { --slide: 0%; }
+  .hero-frame img,
+  .hero-frame video {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .hero-frame video { background: #000000; }
+
+  /* Prev/next over the panel, Resurf-style glass circles. */
+  .hero-nav {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 999px;
+    color: var(--ink);
+    background: rgba(255, 255, 255, .88);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 1px 2px rgba(8, 24, 44, .14), 0 10px 22px -10px rgba(8, 24, 44, .45);
+    cursor: pointer;
+    transition: background-color .2s ease, scale .15s var(--ease-out);
+  }
+  .hero-nav--prev { left: 16px; }
+  .hero-nav--next { right: 16px; }
+  .hero-nav:hover { background: #FFFFFF; }
+  .hero-nav:active { scale: .94; }
+  @media (max-width: 640px) { .hero-nav { display: none; } }
+
+  /* Caption under the panel: names the active screen and says what it does. */
+  .hero-caption { max-width: 40rem; margin: 24px auto 0; text-align: center; font-size: 16px; line-height: 1.55; color: var(--muted); text-wrap: balance; }
+  .hero-caption b { font-weight: 500; color: var(--ink); }
+
+  /* Screenshot slider: five large cards on desktop, four on laptops, three on
+     tablets and one big card plus a peek on phones. It scrolls and snaps,
+     arrows sit outside the track, and the sides fade where more screens wait. */
+  .hero-thumbs-wrap { display: flex; align-items: center; margin-top: 8px; }
+
+  /* Resurf's strip: small, fixed-size cards left aligned under the panel with
+     20px gutters, so six or seven screens read at once instead of five
+     oversized ones. */
+  .hero-thumbs {
+    --gap: 20px;
+    display: flex;
+    gap: var(--gap);
+    padding: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--fade-start, 0px), #000 calc(100% - var(--fade-end, 0px)), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 var(--fade-start, 0px), #000 calc(100% - var(--fade-end, 0px)), transparent);
+  }
+  @media (prefers-reduced-motion: reduce) { .hero-thumbs { scroll-behavior: auto; } }
+  .hero-thumbs::-webkit-scrollbar { display: none; }
+  .hero-thumb {
+    flex: 0 0 170px;
+    aspect-ratio: 16 / 10;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #FFFFFF;
+    cursor: pointer;
+    scroll-snap-align: start;
+    outline: 2px solid transparent;
+    outline-offset: 4px;
+    box-shadow: 0 1px 2px rgba(8, 24, 44, .10), 0 14px 28px -18px rgba(8, 24, 44, .5);
+    transition: outline-color .2s ease, transform .45s var(--ease-out), box-shadow .3s ease;
+  }
+  .hero-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .hero-thumb[aria-selected="true"] { outline-color: var(--accent); }
+  .hero-thumb:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(8, 24, 44, .12), 0 16px 26px -16px rgba(8, 24, 44, .5); }
+  .hero-thumb:focus-visible { outline-color: var(--accent); }
+  .hero-thumb[aria-selected="true"]:hover { transform: translateY(-2px); }
+
+  @media (max-width: 1100px) { .hero-thumbs { --gap: 16px; } .hero-thumb { flex-basis: 154px; } }
+  @media (max-width: 900px) { .hero-thumb { flex-basis: 140px; } }
+
+
+  /* Phones: shorter panel, and the slider runs edge to edge with one big card
+     and a peek of the next. Arrows give way to swiping. */
+  @media (max-width: 760px) {
+    .hero-panel { border-radius: 10px; }
+    .hero-frame { width: 86%; border-radius: 8px; }
+    .hero-caption { margin-top: 16px; font-size: 14px; }
+    .hero-thumbs-wrap { margin-top: 4px; }
+    .hero-thumbs {
+      --gap: 12px;
+      margin-inline: -16px;
+      padding: 12px 16px;
+    }
+    .hero-thumb { flex-basis: 132px; }
+  }
+
   /* MacBook-style frame around the hero shot: dark bezel = display surround,
      silver base with a hinge notch underneath. */
   .laptop {
@@ -211,7 +370,7 @@
   .laptop .laptop-lid > .media {
     border: 0;
     box-shadow: none;
-    /* Fallback only — data-src media carry their own source aspect inline, so a
+    /* Fallback only, data-src media carry their own source aspect inline, so a
        1.82:1 video isn't forced into a 16:10 box and cropped. */
     aspect-ratio: 16 / 10;
     /* Rounded where it meets the lid at the top; the screen/video bottom edge is
@@ -285,7 +444,7 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Section header: grid on desktop — eyebrow spans full width, title left,
+  /* Section header: grid on desktop, eyebrow spans full width, title left,
      paragraph beside it. Paragraph stays left-aligned at every breakpoint. */
   .sec-head { display: grid; row-gap: 40px; column-gap: 56px; align-items: center; }
   .sec-head > .lede { max-width: 44ch; margin-top: 12px; }
@@ -301,7 +460,7 @@
   @media (min-width: 768px) { .pillars { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; } }
   @media (min-width: 1024px) { .pillars { gap: 48px; } }
   .pillar-art { aspect-ratio: 4 / 3; position: relative; transform: perspective(1000px) translate3d(var(--mx, 0px), calc(var(--py, 0px) + var(--my, 0px)), 0) scale(var(--s, 1)) rotateX(calc(var(--brx, 0deg) + var(--rx, 0deg))) rotateY(calc(var(--bry, 0deg) + var(--ry, 0deg))); transform-origin: 50% 62%; will-change: transform; }
-  /* Private card: signals leaving the lock — stacks of dashes sliding along each
+  /* Private card: signals leaving the lock, stacks of dashes sliding along each
      rail (a comet), plus a slow radar ping from the centre. */
   .pulse { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
   .pulse-meteor { stroke-dasharray: 6 100; animation: pulse-meteor 3.4s linear infinite; }
@@ -311,7 +470,7 @@
   /* Linear-style figure caption: tiny label, then a hairline running to the edge. */
   .pillar .fig { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
   .pillar .fig::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-  /* Section motion — Linear-style: content rises out of a soft blur, the artwork
+  /* Section motion, Linear-style: content rises out of a soft blur, the artwork
      wipes up inside it, and each card drifts at a slightly different rate. */
   .reveal { opacity: 0; transform: translate3d(0, 26px, 0); filter: blur(8px); }
   .reveal.is-in {
@@ -331,7 +490,7 @@
   }
   .pillar-art svg { display: block; width: 100%; height: 100%; overflow: visible; }
   .pillar-art svg * { vector-effect: non-scaling-stroke; }
-  /* Visual card: the stacked planes lift apart on hover, staggered per layer —
+  /* Visual card: the stacked planes lift apart on hover, staggered per layer , 
      the same idea as Linear's purposeLift, using --l and --d on each group. */
   .pillar-art .lift { transition: transform .5s cubic-bezier(.16, 1, .3, 1); transition-delay: var(--d, 0ms); }
   .pillar-art:hover .lift { transform: translateY(var(--l, 0px)); }
@@ -355,7 +514,7 @@
     .btn-quiet:hover { background: var(--accent-soft-hover); }
   }
 
-  /* Hero CTAs — Atlas-style hover: the label slides left while an arrow wipes
+  /* Hero CTAs, Atlas-style hover: the label slides left while an arrow wipes
      in from the right (blur + scale), and a leading icon fades out. */
   .cta-arrow { position: relative; overflow: hidden; }
   .cta-arrow .cta-label { display: inline-block; --cta-shift: -14px; transition: transform 300ms cubic-bezier(.4, 0, .2, 1); }
@@ -401,7 +560,6 @@
   /* Clips whose own ratio is slightly off get a common 16:10 frame. */
   .media.fit { aspect-ratio: 16 / 10; }
   .fade { -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent); mask-image: linear-gradient(to bottom, #000 82%, transparent); }
-  .media.hero-media { box-shadow: 0 1px 2px rgba(20, 32, 24, .04), 0 48px 96px -56px rgba(20, 32, 24, .4); }
 
   .ph { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 24px; text-align: center; }
   .ph::before { content: ""; position: absolute; inset: 12px; border: 1px dashed var(--line-strong); border-radius: 10px; pointer-events: none; }
@@ -448,7 +606,7 @@
   .sup-art svg text { font-family: var(--font); }
   .sup-art.is-4x3 { aspect-ratio: 4 / 3; }
 
-  /* Make it yours — crops of the real product art (folder05.png, Colors.png, Icons.png).
+  /* Make it yours, crops of the real product art (folder05.png, Colors.png, Icons.png).
      Swatches are clipped to circles; icons sit on a white screenshot, so multiply
      drops the white and leaves the glyph, with no panel behind either. */
   .cz { display: grid; place-items: center; padding: 16px; }
@@ -466,22 +624,6 @@
   .fact { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--r-card); background: var(--surface); font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink); }
   .fact svg { color: var(--accent); flex: none; }
 
-  /* Hand-drawn mocks for the newer features (Visual Search, the menu bar icon):
-     the same card language as .sup-art, but the art scales to the column width
-     instead of being cropped. */
-  .mock-art { overflow: hidden; border: 1px solid var(--line); border-radius: var(--r-card); background: var(--stage); box-shadow: 0 1px 2px rgba(20, 32, 24, .04), 0 32px 64px -44px rgba(20, 32, 24, .3); }
-  .mock-art > svg { display: block; width: 100%; height: auto; }
-  .mock-art svg text { font-family: var(--font); }
-
-  .theme-switch { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-top: 20px; }
-  .theme-tab { height: 34px; padding: 0 16px; border-radius: 999px; font-size: 13.5px; font-weight: 500; background: var(--accent-soft); color: var(--accent-strong); box-shadow: inset 0 0 0 1px rgba(19, 128, 59, .10); transition: background-color .15s ease, transform 140ms var(--ease-out); }
-  .theme-tab:active { transform: scale(.97); }
-  @media (hover: hover) and (pointer: fine) {
-    .theme-tab:hover { background: var(--accent-soft-hover); }
-  }
-  .theme-tab.is-on { background: var(--accent); color: var(--accent-ink); box-shadow: none; }
-  #theme-shot { transition: opacity 250ms var(--ease-out), filter 250ms var(--ease-out); }
-
   /* FAQ rows: a hairline under every question, and a real height transition
      so opening an answer never snaps the content below it. */
   #faq details { border-bottom: 1px solid var(--line); }
@@ -498,7 +640,7 @@
   details p { padding: 10px 0 26px; color: var(--muted); font-size: 16px; line-height: 1.55; max-width: 60ch; }
   .faq-panel { overflow: hidden; }
   details[open] .faq-panel > p { animation: faq-in 240ms var(--ease-out) both; }
-  /* Pricing — a poster, not a table. The field keeps the dot pattern, the accent
+  /* Pricing, a poster, not a table. The field keeps the dot pattern, the accent
      ticket is the only solid block, and a cropped $19 anchors the composition. */
   .price-poster {
     position: relative;
@@ -754,7 +896,7 @@
     user-select: none;
   }
 
-  /* Footer — the page closes like a printed spread rather than a utility strip.
+  /* Footer, the page closes like a printed spread rather than a utility strip.
      Two light panels carry the last message; underneath, a full-bleed band sets
      the sitemap over a dot field and an oversized wordmark cropped by the band edge. */
   .foot {
@@ -1007,7 +1149,7 @@
     }
     .pulse-meteor, .pulse-ping, .iso { animation: none !important; }
     .iso, .rise, .reveal, .pillar-art.reveal-clip,
-    .btn:active, .btn-quiet:active, .btn-sm:active, .theme-tab:active,
+    .btn:active, .btn-quiet:active, .btn-sm:active,
     .price-ticket-buy:active, .price-ticket-trial:active, .foot-pill:active,
     .foot-panel-cta:active, .foot-top:active, button.vbtn, button.vbtn:active {
       transform: none !important;
@@ -1017,9 +1159,9 @@
       filter: none !important;
       clip-path: none !important;
     }
-    .btn, .btn-quiet, .btn-sm, .theme-tab, .price-ticket-buy,
+    .btn, .btn-quiet, .btn-sm, .price-ticket-buy,
     .price-ticket-trial, .foot-pill, .foot-col a, .foot-top,
-    #theme-shot, details > summary {
+    details > summary {
       transition-duration: .15s !important;
     }
   }
@@ -1076,7 +1218,7 @@
       </nav>
       <div class="flex items-center gap-2">
         <a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" class="btn cta-arrow" data-polar-checkout data-polar-checkout-theme="light">
-          <span class="cta-label">Buy now — $19</span>
+          <span class="cta-label">Buy now for $19</span>
           <span class="cta-arrow-icon" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
           </span>
@@ -1091,44 +1233,122 @@
   <main id="top">
 
     <section class="pt-20 md:pt-32" aria-labelledby="hero-title">
-      <p class="eyebrow hero-eyebrow">A visual file browser for macOS</p>
-      <h1 id="hero-title" class="h1 hero-h1 mt-6">See your files, not filenames.</h1>
-      <p class="hero-lede mt-8 md:mt-10"><span class="hl">Vista shows your files as thumbnails, sorted by kind.</span> Give folders their own color and shape, find photos by what’s in them, and search the words inside screenshots and PDFs.</p>
-      <div class="hero-cta mt-10 md:mt-12 flex flex-wrap items-center gap-x-5 gap-y-4">
-        <div class="flex flex-wrap gap-3">
-          <a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" class="btn cta-arrow" data-polar-checkout data-polar-checkout-theme="light">
-            <span class="cta-label">Buy now — $19</span>
-            <span class="cta-arrow-icon" aria-hidden="true">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
-            </span>
-          </a>
-          <a href="./Vista.zip" download="Vista.zip" class="btn-quiet cta-arrow has-icon">
-            <span class="cta-icon" aria-hidden="true">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>
-            </span>
-            <span class="cta-label">Download</span>
-            <span class="cta-arrow-icon" aria-hidden="true">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
-            </span>
-          </a>
+      <div class="hero-copy">
+        <p class="eyebrow hero-eyebrow">A visual file browser for macOS</p>
+        <h1 id="hero-title" class="h1 hero-h1 mt-6">See your files, not filenames.</h1>
+        <p class="hero-lede mt-8 md:mt-10"><span class="hl">Vista shows your files as thumbnails, sorted by kind.</span> Give folders their own color and shape, find photos by what’s in them, and search the words inside screenshots and PDFs.</p>
+        <div class="hero-cta mt-10 md:mt-12 flex flex-wrap items-center gap-x-5 gap-y-4">
+          <div class="flex flex-wrap gap-3">
+            <a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" class="btn cta-arrow" data-polar-checkout data-polar-checkout-theme="light">
+              <span class="cta-label">Buy now for $19</span>
+              <span class="cta-arrow-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+              </span>
+            </a>
+            <a href="./Vista.zip" download="Vista.zip" class="btn-quiet cta-arrow has-icon">
+              <span class="cta-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>
+              </span>
+              <span class="cta-label">Download</span>
+              <span class="cta-arrow-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+              </span>
+            </a>
+          </div>
+          <p class="hero-meta text-[13px] text-faint">14-day free trial · One-time purchase · macOS 14+</p>
         </div>
-        <p class="hero-meta text-[13px] text-faint">14-day free trial · One-time purchase · macOS 14+</p>
       </div>
 
-      <div class="laptop mt-16 md:mt-28">
-        <div class="laptop-lid">
-          <figure class="media hero-media" style="aspect-ratio: 2880 / 1798" data-static
-                  data-src="images/home" data-video="teaser.mp4"
-                  data-alt="Vista's Home screen in the Sage Soft theme: files grouped into colorful folders by kind, with a storage bar across the top"
-                  data-note="Product teaser: Home, browsing by kind, shaping a folder, searching"
-                  data-size="2880 × 1800">
-            <video autoplay muted loop playsinline preload="auto" poster="images/home.png"
-                   aria-label="A short tour of Vista: files grouped into folders by kind, a folder being customized, and a search">
-              <source src="images/teaser.mp4" type="video/mp4" onerror="this.parentNode.dataset.failed = '1'">
-            </video>
-          </figure>
+      <div class="hero-showcase" data-hero-gallery>
+        <div class="hero-panel" id="hero-panel" role="tabpanel" aria-labelledby="hero-tab-0">
+          <div class="hero-slides">
+            <figure class="hero-frame" id="hero-frame-a">
+              <img id="hero-shot" src="images/hero/home.webp" width="1900" height="1193" fetchpriority="high" decoding="async"
+                   alt="Vista's Home screen: folders by kind, with a storage bar across the top">
+            </figure>
+            <figure class="hero-frame" id="hero-frame-b" aria-hidden="true">
+              <img id="hero-shot-next" alt="" decoding="async">
+            </figure>
+            <figure class="hero-frame" id="hero-frame-video" hidden>
+              <video id="hero-shot-video" muted loop playsinline preload="none" aria-label=""></video>
+            </figure>
+          </div>
+          <button type="button" class="hero-nav hero-nav--prev" data-gallery-prev aria-label="Previous screenshot">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <button type="button" class="hero-nav hero-nav--next" data-gallery-next aria-label="Next screenshot">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
         </div>
-        <div class="laptop-base" aria-hidden="true"></div>
+
+        <p class="hero-caption" aria-live="polite">
+          <b data-caption-name>Home</b> <span data-caption-text>Good Afternoon: folders by kind, with storage at a glance.</span>
+        </p>
+
+        <div class="hero-thumbs-wrap">
+          <div class="hero-thumbs" role="tablist" aria-label="Vista screenshots">
+          <button type="button" class="hero-thumb" id="hero-tab-0" role="tab" aria-selected="true" aria-controls="hero-panel" aria-label="Home"
+                  data-src="images/hero/home.webp" data-w="1900" data-h="1193"
+                  data-name="Home" data-text="Good Afternoon: folders by kind, with storage at a glance."
+                  data-alt="Vista's Home screen: folders by kind, with a storage bar across the top">
+            <img src="images/hero/thumbs/home.webp" width="480" height="300" alt="" decoding="async">
+          </button>
+          <button type="button" class="hero-thumb" id="hero-tab-1" role="tab" aria-selected="false" aria-controls="hero-panel" aria-label="Search" tabindex="-1"
+                  data-src="images/hero/search.webp" data-w="1900" data-h="1193"
+                  data-name="Search" data-text="Search in plain English, with visual matches inside your files."
+                  data-alt="Vista's Search results with a visual match for a screenshot">
+            <img src="images/hero/thumbs/search.webp" width="480" height="300" alt="" decoding="async">
+          </button>
+          <button type="button" class="hero-thumb" id="hero-tab-2" role="tab" aria-selected="false" aria-controls="hero-panel" aria-label="Customize" tabindex="-1"
+                  data-src="images/hero/customize.webp" data-w="1900" data-h="1193"
+                  data-name="Customize" data-text="Edit Folder: rename it, then pick a color and a shape."
+                  data-alt="Vista's Edit Folder sheet with color and shape options">
+            <img src="images/hero/thumbs/customize.webp" width="480" height="300" alt="" decoding="async">
+          </button>
+          <button type="button" class="hero-thumb" id="hero-tab-3" role="tab" aria-selected="false" aria-controls="hero-panel" aria-label="Quick look" tabindex="-1"
+                  data-src="images/hero/viewer.webp" data-w="1900" data-h="1193"
+                  data-name="Quick look" data-text="Preview code, text and PDFs without leaving the grid."
+                  data-alt="Vista's file preview showing a code file">
+            <img src="images/hero/thumbs/viewer.webp" width="480" height="300" alt="" decoding="async">
+          </button>
+          <button type="button" class="hero-thumb" id="hero-tab-4" role="tab" aria-selected="false" aria-controls="hero-panel" aria-label="Clean up" tabindex="-1"
+                  data-src="images/hero/cleanup.webp" data-w="1900" data-h="1193"
+                  data-name="Clean up" data-text="Suggestions for the biggest leftovers, ready to review."
+                  data-alt="Vista's Clean Up suggestions for large files">
+            <img src="images/hero/thumbs/cleanup.webp" width="480" height="300" alt="" decoding="async">
+          </button>
+          <button type="button" class="hero-thumb" id="hero-tab-5" role="tab" aria-selected="false" aria-controls="hero-panel" aria-label="Categories" tabindex="-1"
+                  data-src="images/hero/categories.webp" data-w="1900" data-h="1193"
+                  data-name="Categories" data-text="Every category in the sidebar, with counts and sizes."
+                  data-alt="Vista's sidebar showing category counts and sizes">
+            <img src="images/hero/thumbs/categories.webp" width="480" height="300" alt="" decoding="async">
+          </button>
+          <button type="button" class="hero-thumb" id="hero-tab-6" role="tab" aria-selected="false" aria-controls="hero-panel" aria-label="Folder icons" tabindex="-1"
+                  data-src="images/hero/icons.webp" data-w="1900" data-h="1193"
+                  data-name="Folder icons" data-text="31 folder icons, or let a folder show its name."
+                  data-alt="Vista's folder icon picker with the Apple folder style">
+            <img src="images/hero/thumbs/icons.webp" width="480" height="300" alt="" decoding="async">
+          </button>
+          <button type="button" class="hero-thumb" id="hero-tab-7" role="tab" aria-selected="false" aria-controls="hero-panel" aria-label="Folder view" tabindex="-1"
+                  data-src="images/hero/folders.webp" data-w="1900" data-h="1193"
+                  data-name="Folder view" data-text="Open any source, like Slack, Arc or AirDrop, and see what's inside."
+                  data-alt="Vista showing the contents of the Slack folder">
+            <img src="images/hero/thumbs/folders.webp" width="480" height="300" alt="" decoding="async">
+          </button>
+          <button type="button" class="hero-thumb" id="hero-tab-8" role="tab" aria-selected="false" aria-controls="hero-panel" aria-label="Large files" tabindex="-1"
+                  data-src="images/hero/large.webp" data-w="1900" data-h="1193"
+                  data-name="Large files" data-text="Sort a folder by size and spot the heavy files first."
+                  data-alt="Vista's Large Files view inside AirDrop">
+            <img src="images/hero/thumbs/large.webp" width="480" height="300" alt="" decoding="async">
+          </button>
+          <button type="button" class="hero-thumb" id="hero-tab-9" role="tab" aria-selected="false" aria-controls="hero-panel" aria-label="Move like Gmail" tabindex="-1"
+                  data-src="images/hero/gmail.webp" data-w="1900" data-h="1197"
+                  data-name="Move like Gmail" data-text="Arrow keys and single keys file things away, Gmail-style."
+                  data-alt="Vista's GitHub folder: 15 font files, each shown as its own type specimen, with downloads grouped by source in the sidebar">
+            <img src="images/hero/thumbs/gmail.webp" width="480" height="300" alt="" decoding="async">
+          </button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1157,12 +1377,119 @@
               </g></g>
             </svg>
           </div>
-          <h3>Visual</h3>
-          <p>Large thumbnails instead of filenames, sorted into photos, screenshots, documents and videos — plus Visual Search, which finds a photo or video by what’s in it.</p>
+          <h3>Thumbnails first</h3>
+          <p>Files and folders as large thumbnails, sorted into photos, screenshots, documents, and videos, no matter which folder they’re in.</p>
         </li>
 
         <li class="pillar">
           <p class="fig">02</p>
+                                                  <div class="pillar-art">
+            <svg viewBox="0 0 400 300" aria-hidden="true" focusable="false">
+              <g class="lift" style="--l:-4px;--d:0ms">
+                <g transform="matrix(.866 .5 -.866 .5 200 118)">
+                  <rect x="0" y="0" width="140" height="140" rx="9" fill="#F4F9F6" stroke="#9DB3A8"/>
+                  <g fill="#E4EBE7" fill-opacity=".8">
+                    <rect x="18" y="34" width="84" height="8" rx="4"/>
+                    <rect x="18" y="52" width="56" height="8" rx="4"/>
+                  </g>
+                </g>
+              </g>
+              <g class="lift" style="--l:-9px;--d:70ms">
+                <g transform="matrix(.866 .5 -.866 .5 200 106)">
+                  <rect x="0" y="0" width="140" height="140" rx="9" fill="#FCFCFB" stroke="#9DB3A8"/>
+                  <g fill="#E4EBE7">
+                    <rect x="18" y="26" width="100" height="8" rx="4"/>
+                    <rect x="18" y="44" width="70" height="8" rx="4"/>
+                  </g>
+                </g>
+              </g>
+              <g class="lift" style="--l:-15px;--d:140ms">
+                <g transform="matrix(.866 .5 -.866 .5 200 94)">
+                  <rect x="0" y="0" width="140" height="140" rx="9" fill="#FCFCFB" stroke="#9DB3A8"/>
+                  <g fill="#CFDCD5">
+                    <rect x="18" y="20" width="92" height="8" rx="4"/>
+                    <rect x="18" y="38" width="110" height="8" rx="4"/>
+                  </g>
+                  <rect x="18" y="56" width="76" height="8" rx="4" fill="#D3E8DA" stroke="#13803B" stroke-width=".8"/>
+                  <g fill="#E4EBE7">
+                    <rect x="18" y="74" width="100" height="8" rx="4"/>
+                    <rect x="18" y="92" width="58" height="8" rx="4"/>
+                  </g>
+                </g>
+              </g>
+              <g class="lift" style="--l:-22px;--d:200ms">
+                <path d="M244 120 214 138" fill="none" stroke="#13803B" stroke-dasharray="2 4" stroke-opacity=".65"/>
+                <circle cx="258" cy="100" r="26" fill="#FFFFFF" fill-opacity=".6" stroke="#13803B" stroke-width="1.4"/>
+                <circle cx="258" cy="100" r="16" fill="none" stroke="#B4CABF"/>
+                <path d="M277 119 291 133" fill="none" stroke="#13803B" stroke-width="3" stroke-linecap="round"/>
+              </g>
+            </svg>
+          </div>
+          <h3>Search inside files</h3>
+          <p>Press / and type what you remember. Vista reads filenames and the words inside screenshots and PDFs, with matching lines shown under each result.</p>
+        </li>
+
+        <li class="pillar">
+          <p class="fig">03</p>
+                                                  <div class="pillar-art">
+            <svg viewBox="0 0 400 300" aria-hidden="true" focusable="false">
+              <g fill="none" stroke="#9DB3A8">
+                <circle cx="200" cy="150" r="76" stroke-dasharray="3 5"/>
+                <circle cx="200" cy="150" r="98" stroke-dasharray="3 5" stroke-opacity=".6"/>
+              </g>
+              <g class="lift" style="--l:-4px;--d:0ms">
+                <g transform="matrix(.866 .5 -.866 .5 200 118)">
+                  <rect x="0" y="0" width="96" height="96" rx="9" fill="#F4F9F6" stroke="#9DB3A8"/>
+                </g>
+              </g>
+              <g fill="none" stroke="#9DB3A8" stroke-dasharray="2 4" stroke-opacity=".7">
+                <path d="M200 140 312 107"/>
+                <path d="M200 140 84 211"/>
+                <path d="M200 140 306 225"/>
+                <path d="M200 140 120 111"/>
+              </g>
+              <g class="lift" style="--l:-12px;--d:40ms">
+                <g transform="matrix(.866 .5 -.866 .5 200 92)">
+                  <rect x="0" y="0" width="96" height="96" rx="9" fill="#FCFCFB" stroke="#9DB3A8"/>
+                  <circle cx="27" cy="31" r="5" fill="none" stroke="#B4CABF"/>
+                  <path d="M14 72 33 48 44 61 50 53 80 72 Z" fill="#E3EEE8" stroke="#B4CABF" stroke-linejoin="round"/>
+                </g>
+              </g>
+              <g class="lift" style="--l:-6px;--d:80ms">
+                <g transform="matrix(.866 .5 -.866 .5 312 92)">
+                  <rect x="0" y="0" width="30" height="30" rx="5" fill="#FCFCFB" stroke="#9DB3A8"/>
+                  <path d="M4 23 11 14 15 19 18 16 26 23 Z" fill="none" stroke="#B4CABF" stroke-linejoin="round"/>
+                </g>
+              </g>
+              <g class="lift" style="--l:-6px;--d:110ms">
+                <g transform="matrix(.866 .5 -.866 .5 84 196)">
+                  <rect x="0" y="0" width="30" height="30" rx="5" fill="#FCFCFB" stroke="#9DB3A8"/>
+                  <path d="M4 23 11 14 15 19 18 16 26 23 Z" fill="none" stroke="#B4CABF" stroke-linejoin="round"/>
+                </g>
+              </g>
+              <g class="lift" style="--l:-6px;--d:140ms">
+                <g transform="matrix(.866 .5 -.866 .5 120 96)">
+                  <rect x="0" y="0" width="30" height="30" rx="5" fill="#FCFCFB" stroke="#9DB3A8"/>
+                  <path d="M4 23 11 14 15 19 18 16 26 23 Z" fill="none" stroke="#B4CABF" stroke-linejoin="round"/>
+                </g>
+              </g>
+              <g class="lift" style="--l:-16px;--d:180ms">
+                <g transform="matrix(.866 .5 -.866 .5 306 210)">
+                  <rect x="0" y="0" width="32" height="32" rx="6" fill="#FFFFFF" stroke="#13803B" stroke-width="1.4"/>
+                  <path d="M5 25 12 15 17 20 20 17 28 25 Z" fill="none" stroke="#13803B" stroke-linejoin="round"/>
+                </g>
+              </g>
+            </svg>
+            <svg class="pulse" viewBox="0 0 400 300" aria-hidden="true" focusable="false">
+              <circle class="pulse-ping" cx="306" cy="226" r="28" fill="none" stroke="#13803B" stroke-width="1"/>
+            </svg>
+          </div>
+          <h3>Visual Search</h3>
+          <p>Describe a photo or video (“horse on the mountain”) and Vista finds it. On-device model, one-time download, then fully offline. Results show as “Visual match.”</p>
+        </li>
+
+        <li class="pillar">
+          <p class="fig">04</p>
           <div class="pillar-art pillar-art--fan">
             <svg viewBox="0 0 400 300" aria-hidden="true" focusable="false">
               <g stroke="#9DB3A8" stroke-width="1">
@@ -1174,12 +1501,62 @@
               </g>
             </svg>
           </div>
-          <h3>Yours</h3>
-          <p>24 colors, 7 rounder folder styles and 31 icons — apply one style to every folder at once, in Sage Soft, White or Dark.</p>
+          <h3>Make it yours</h3>
+          <p>24 colors, 7 rounder folder shapes, and 31 icons. Apply one style (or varied colors) to every folder at once. Themes: Sage Soft (default), White, and Dark.</p>
         </li>
 
         <li class="pillar">
-          <p class="fig">03</p>
+          <p class="fig">05</p>
+                                                            <div class="pillar-art">
+            <svg viewBox="0 0 400 300" aria-hidden="true" focusable="false">
+              <g class="lift" style="--l:-4px;--d:0ms">
+                <g transform="matrix(.866 .5 -.866 .5 124 94)">
+                  <rect x="0" y="0" width="80" height="80" rx="8" fill="#F4F9F6" stroke="#9DB3A8"/>
+                </g>
+              </g>
+              <g class="lift" style="--l:-9px;--d:70ms">
+                <g transform="matrix(.866 .5 -.866 .5 124 110)">
+                  <rect x="0" y="0" width="80" height="80" rx="8" fill="#FCFCFB" stroke="#9DB3A8"/>
+                  <g fill="#CFDCD5">
+                    <rect x="10" y="18" width="46" height="6" rx="3"/>
+                    <rect x="10" y="32" width="34" height="6" rx="3"/>
+                    <rect x="10" y="46" width="42" height="6" rx="3"/>
+                  </g>
+                </g>
+              </g>
+              <g class="lift" style="--l:-16px;--d:150ms">
+                <circle cx="168" cy="92" r="11" fill="#FFFFFF" stroke="#13803B"/>
+                <path d="M163 92 166 95 173 87" fill="none" stroke="#13803B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <g class="lift" style="--l:-11px;--d:110ms">
+                <path d="M232.3 117 286 148 286 222 232.3 191Z" fill="#FCFCFB" stroke="#9DB3A8"/>
+                <path d="M286 148 339.7 117 339.7 191 286 222Z" fill="#F4F9F6" stroke="#9DB3A8"/>
+                <path d="M232.3 117 286 86 339.7 117 286 148Z" fill="#E3EEE8" stroke="#9DB3A8"/>
+                <g stroke="#B4CABF" stroke-linecap="round">
+                  <path d="M304 138v74"/>
+                  <path d="M322 129v74"/>
+                </g>
+              </g>
+              <g class="lift" style="--l:-18px;--d:200ms">
+                <path d="M200 158 230 142" fill="none" stroke="#9DB3A8" stroke-dasharray="3 4"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 158 230 142" fill="none" stroke="#13803B"/>
+                <path pathLength="100" class="pulse-meteor" d="M200 158 230 142" fill="none" stroke="#13803B" style="animation-delay:.14s;opacity:.45"/>
+                <path d="M230 142 222.8 149.8" fill="none" stroke="#13803B" stroke-linejoin="round"/>
+                <path d="M230 142 219.6 143.6" fill="none" stroke="#13803B" stroke-linejoin="round"/>
+              </g>
+              <g class="lift" style="--l:-14px;--d:240ms">
+                <path d="M238 200C222 224 196 226 184 210" fill="none" stroke="#13803B" stroke-dasharray="3 4" stroke-opacity=".5"/>
+                <path d="M184 210 194 210" fill="none" stroke="#13803B" stroke-linejoin="round" stroke-opacity=".5"/>
+                <path d="M184 210 188 220" fill="none" stroke="#13803B" stroke-linejoin="round" stroke-opacity=".5"/>
+              </g>
+            </svg>
+          </div>
+          <h3>Clean up safely</h3>
+          <p>Old downloads, duplicates, and near-identical photos, reviewed before anything moves. Files only go to the Trash, with Undo.</p>
+        </li>
+
+        <li class="pillar">
+          <p class="fig">06</p>
           <div class="pillar-art">
             <svg viewBox="0 0 400 300" aria-hidden="true" focusable="false">
               <g fill="none" stroke="#9DB3A8" stroke-width="1">
@@ -1243,9 +1620,36 @@
               </g>
             </svg>
           </div>
-          <h3>Private</h3>
-          <p>Search, text recognition, duplicate detection and Visual Search run on your Mac. No account, no Wi‑Fi needed.</p>
+          <h3>Private by design</h3>
+          <p>Search, text recognition, duplicate detection, and Visual Search all run on your Mac. No account, no uploads, no tracking.</p>
         </li>
+      </ul>
+    </section>
+
+    <section id="visual-search" class="section" aria-labelledby="visual-search-title">
+      <div class="sec-head">
+        <p class="eyebrow">Visual Search</p>
+        <h2 id="visual-search-title" class="h2">Find photos by<br> what’s in them.</h2>
+        <p class="lede">Type what you see, like “horse”, “mountain” or “red car”, and Vista finds the photos and videos that match, even when the filename says nothing. It runs on an AI model that lives on your Mac: one download, then every search is offline.</p>
+      </div>
+
+      <div class="laptop mt-10 md:mt-14">
+        <div class="laptop-lid">
+          <figure class="media" style="aspect-ratio: 3024 / 1964" data-static>
+            <video autoplay muted loop playsinline preload="metadata"
+                   poster="images/visual-search-poster.jpg"
+                   aria-label="Vista's Visual Search: typing “horse on the mountain” and finding the matching photos and videos">
+              <source src="images/visual-search.mp4" type="video/mp4">
+            </video>
+          </figure>
+        </div>
+        <div class="laptop-base" aria-hidden="true"></div>
+      </div>
+
+      <ul class="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mt-6">
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4.8 17.2 9.6 12l3.9 3.9 2.6-2.2 3.1 3.5"/></svg>Finds photos and videos</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v9.5M8.5 10 12 13.5 15.5 10M5 19.5h14"/></svg>One-time model download</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.8 5.9v5.6c0 4.2 3 7.5 7.2 8.5 4.2-1 7.2-4.3 7.2-8.5V5.9z"/><path d="M9.2 11.9 11.2 14l3.8-3.8"/></svg>Searches stay offline</li>
       </ul>
     </section>
 
@@ -1253,49 +1657,18 @@
       <div class="sec-head">
         <p class="eyebrow">Make it yours</p>
         <h2 id="customize-title" class="h2">Color, shape and<br> name every folder.</h2>
-        <p class="lede">Vista sorts your files into folders by kind. Give each one its own color, style, icon and name — the styles are rounder and more Apple-like now, and one click applies a style to all your folders at once.</p>
+        <p class="lede">Vista sorts your files into folders by kind. Give each one its own color, style, icon and name. The styles are rounder and more Apple-like now, and one click applies a style to all your folders at once.</p>
       </div>
 
       <div class="laptop mt-10 md:mt-14">
         <div class="laptop-lid">
           <figure class="media aspect-[16/10]"
                   data-src="images/customize"
-                  data-alt="Customizing a folder in Vista: renaming it and choosing its color, shape and icon"
-                  data-note="Edit Folder: rename, color, shape, icon"
-                  data-size="1840 × 1012"></figure>
+                  data-alt="Vista's Edit Folder sheet: renaming a folder, choosing its color, shape and icon, then applying that style to every folder"
+                  data-note="Edit Folder: name, color, shape and icon, applied to every folder"
+                  data-size="3024 × 1964"></figure>
         </div>
         <div class="laptop-base" aria-hidden="true"></div>
-      </div>
-
-      <div class="grid md:grid-cols-3 gap-8 md:gap-6 mt-6">
-        <!-- 24 colors: a single gradient shown large (one of 24) -->
-        <div class="flex flex-col gap-4">
-          <div class="sup-art is-4x3 cz">
-            <img class="cz-single" src="images/cz-color-single.png" width="577" height="577"
-                 alt="One of Vista’s 24 folder colors: a warm peach-to-orange gradient"
-                 loading="lazy">
-          </div>
-          <p class="stat"><b>24</b> colors and gradients</p>
-        </div>
-
-        <!-- 7 folder shapes: one folder icon -->
-        <div class="flex flex-col gap-4">
-          <div class="sup-art is-4x3 cz">
-            <img class="cz-folder is-large" src="images/folder05.png" width="928" height="695"
-                 alt="Vista’s folder icon, one of seven rounder, more Apple-like styles">
-          </div>
-          <p class="stat"><b>7</b> rounder folder styles</p>
-        </div>
-
-        <!-- 31 icons: one icon shown large (one of 31) -->
-        <div class="flex flex-col gap-4">
-          <div class="sup-art is-4x3 cz">
-            <img class="cz-single is-icon" src="images/cz-icon-single.png" width="420" height="372"
-                 alt="One of Vista’s 31 folder icons"
-                 loading="lazy">
-          </div>
-          <p class="stat"><b>31</b> icons</p>
-        </div>
       </div>
 
       <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mt-6">
@@ -1316,120 +1689,13 @@
         <div class="laptop-lid">
           <figure class="media aspect-[16/10]"
                   data-src="images/search"
-                  data-cues='[[0.25, 1.4, "/", "to search"], [4.75, 1.4, "/", "to search"]]'
-                  data-alt="Vista searching for screenshots with wifi, then videos from August"
-                  data-note="Plain-English search with filter chips and results"
-                  data-size="2880 × 1800"></figure>
+                  data-cues='[[0.55, 1.2, "/", "to search"]]'
+                  data-alt="Vista searching for “imagination” and opening the screenshots that contain the word"
+                  data-note="Search the words inside screenshots and PDFs, then open a match"
+                  data-size="3024 × 1964"></figure>
         </div>
         <div class="laptop-base" aria-hidden="true"></div>
       </div>
-
-      <div class="grid md:grid-cols-2 gap-8 md:gap-6 mt-6">
-        <div class="flex flex-col gap-4">
-          <div class="sup-art">
-            <img src="images/Text%20inside%20screenshots%20and%20PDFS.png" alt="A screenshot result with the matching words highlighted inside the image" loading="lazy">
-          </div>
-          <p class="label">Text inside screenshots and PDFs</p>
-        </div>
-        <div class="flex flex-col gap-4">
-          <div class="sup-art">
-            <img src="images/Slack.png" alt="Downloaded From: files grouped by where they came from, with Slack selected" loading="lazy">
-          </div>
-          <p class="label">Downloaded From: Gmail, Slack, AirDrop</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="visual-search" class="section" aria-labelledby="visual-search-title">
-      <div class="sec-head">
-        <p class="eyebrow">Visual Search</p>
-        <h2 id="visual-search-title" class="h2">Find photos by<br> what’s in them.</h2>
-        <p class="lede">Type what you see — “horse”, “mountain”, “red car” — and Vista finds the photos and videos that match, even when the filename says nothing. It runs on an AI model that lives on your Mac: one download, then every search is offline.</p>
-      </div>
-
-      <div class="mock-art mt-10 md:mt-14">
-        <svg viewBox="0 0 1200 620" role="img" aria-labelledby="vs-art-title">
-          <title id="vs-art-title">Visual Search in Vista: typing “horse” returns matching photos and videos, and a note says the model runs on this Mac, even offline</title>
-          <defs>
-            <linearGradient id="vs-sky" x1="0" y1="0" x2=".4" y2="1"><stop offset="0" stop-color="#E1EFF6"/><stop offset="1" stop-color="#B6D6E6"/></linearGradient>
-            <linearGradient id="vs-sage" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#EDF5EA"/><stop offset="1" stop-color="#C3DCC7"/></linearGradient>
-            <linearGradient id="vs-peach" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#FCEFE3"/><stop offset="1" stop-color="#EFC49F"/></linearGradient>
-            <linearGradient id="vs-lilac" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#F3EFFA"/><stop offset="1" stop-color="#CBBEEC"/></linearGradient>
-          </defs>
-
-          <rect width="1200" height="620" fill="#F7FBF9"/>
-
-          <rect x="64" y="56" width="1072" height="88" rx="22" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
-          <g fill="none" stroke="#52645C" stroke-width="2.6" stroke-linecap="round">
-            <circle cx="118" cy="99" r="11"/>
-            <path d="M126.5 107.5 134.5 115.5"/>
-          </g>
-          <text x="152" y="110" font-size="31" font-weight="500" fill="#05261C">horse</text>
-          <rect x="944" y="76" width="168" height="48" rx="24" fill="#E3EEE8"/>
-          <path d="M970 90 973.6 96.6 980.2 100 973.6 103.4 970 110 966.4 103.4 959.8 100 966.4 96.6Z" fill="#0F6B31"/>
-          <text x="990" y="106" font-size="18" font-weight="600" fill="#0F6B31">Visual search</text>
-
-          <g font-size="18" fill="#42554C">
-            <rect x="64" y="176" width="158" height="44" rx="22" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
-            <text x="86" y="204">mountain</text>
-            <rect x="234" y="176" width="132" height="44" rx="22" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
-            <text x="256" y="204">sunset</text>
-            <rect x="378" y="176" width="140" height="44" rx="22" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
-            <text x="400" y="204">red car</text>
-            <rect x="530" y="176" width="212" height="44" rx="22" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
-            <text x="552" y="204">birthday cake</text>
-          </g>
-
-          <defs>
-            <clipPath id="vs-c1"><rect x="64" y="260" width="240" height="240" rx="18"/></clipPath>
-            <clipPath id="vs-c2"><rect x="341" y="260" width="240" height="240" rx="18"/></clipPath>
-            <clipPath id="vs-c3"><rect x="618" y="260" width="240" height="240" rx="18"/></clipPath>
-            <clipPath id="vs-c4"><rect x="895" y="260" width="240" height="240" rx="18"/></clipPath>
-          </defs>
-
-          <g clip-path="url(#vs-c1)">
-            <rect x="64" y="260" width="240" height="240" fill="url(#vs-sky)"/>
-            <circle cx="240" cy="316" r="18" fill="#FBEFD6"/>
-            <path d="M64 500v-88l70-70 62 62 34-28 74 72v52z" fill="#AFCCBC"/>
-            <path d="M64 500v-52l58-54 54 54 40-34 88 80v6z" fill="#87AC98"/>
-          </g>
-
-          <g clip-path="url(#vs-c2)">
-            <rect x="341" y="260" width="240" height="240" fill="url(#vs-sage)"/>
-            <circle cx="512" cy="320" r="16" fill="#FCF3DE"/>
-            <path d="M341 500v-58c44-32 82-32 120 0s76 32 120 0v58z" fill="#AECDB4"/>
-            <path d="M341 500v-30c46-24 82-24 120 0s74 24 120 0v30z" fill="#92BC9B"/>
-          </g>
-
-          <g clip-path="url(#vs-c3)">
-            <rect x="618" y="260" width="240" height="240" fill="url(#vs-peach)"/>
-            <circle cx="738" cy="362" r="34" fill="#F7CBA4"/>
-            <path d="M618 500v-54l66-48 74 58 44-28 56 42v30z" fill="#D9A680"/>
-          </g>
-          <circle cx="822" cy="292" r="17" fill="#FFFFFF" fill-opacity=".92"/>
-          <path d="M817.5 285.5 828 292l-10.5 6.5z" fill="#05261C"/>
-
-          <g clip-path="url(#vs-c4)">
-            <rect x="895" y="260" width="240" height="240" fill="url(#vs-lilac)"/>
-            <circle cx="1082" cy="314" r="14" fill="#F4EFFC"/>
-            <path d="M895 500v-66l56-44 62 50 58-46 64 54v52z" fill="#BBABE4"/>
-          </g>
-
-          <text x="64" y="560" font-size="20" fill="#42554C">12 photos and 3 videos, matched by what’s in them</text>
-          <rect x="852" y="528" width="284" height="52" rx="26" fill="#E3EEE8"/>
-          <g transform="translate(876 542)" fill="none" stroke="#0F6B31" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3 4.8 5.9v5.6c0 4.2 3 7.5 7.2 8.5 4.2-1 7.2-4.3 7.2-8.5V5.9z"/>
-            <path d="M9.2 11.9 11.2 14l3.8-3.8"/>
-          </g>
-          <text x="912" y="561" font-size="18" font-weight="600" fill="#0F6B31">On this Mac, even offline</text>
-        </svg>
-      </div>
-
-      <ul class="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mt-6">
-        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4.8 17.2 9.6 12l3.9 3.9 2.6-2.2 3.1 3.5"/></svg>Finds photos and videos</li>
-        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v9.5M8.5 10 12 13.5 15.5 10M5 19.5h14"/></svg>One-time model download</li>
-        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.8 5.9v5.6c0 4.2 3 7.5 7.2 8.5 4.2-1 7.2-4.3 7.2-8.5V5.9z"/><path d="M9.2 11.9 11.2 14l3.8-3.8"/></svg>Searches stay offline</li>
-      </ul>
     </section>
 
     <section id="viewer" class="section" aria-labelledby="viewer-title">
@@ -1441,8 +1707,9 @@
 
       <div class="laptop mt-10 md:mt-14">
         <div class="laptop-lid">
-          <figure class="media is-video" style="aspect-ratio: 1872 / 1012">
-            <video autoplay muted loop playsinline preload="auto"
+          <figure class="media is-video" style="aspect-ratio: 3024 / 1964">
+            <video autoplay muted loop playsinline preload="metadata"
+                   poster="images/viewer-poster.jpg"
                    aria-label="Vista’s viewer: photos and videos open full size, with zoom, pan and Live Text">
               <source src="images/viewer.mp4" type="video/mp4">
             </video>
@@ -1463,62 +1730,14 @@
         <div class="laptop-lid">
           <figure class="media fit"
                   data-src="images/gmail"
-                  data-alt="Vista driven only by the keyboard: the down arrow moving to the next category, then the up arrow moving back"
+                  data-alt="Vista driven only by the keyboard: the arrow keys moving between categories and files, then opening the Dieter Rams folder"
                   data-note="Keyboard only: ↓ and ↑ move between categories and files"
-                  data-size="1872 × 1013"
-                  data-steps='[[0.60,"down"],[0.95,"down"],[1.30,"down"],[1.55,"down"],[1.80,"down"],[2.10,"down"],[2.45,"down"],[2.65,"down"],[2.90,"up"],[3.15,"up"],[3.50,"up"],[3.85,"up"],[4.00,"up"],[4.25,"up"],[4.65,"up"],[4.90,"up"]]'></figure>
+                  data-size="3024 × 1964"></figure>
         </div>
         <div class="laptop-base" aria-hidden="true"></div>
       </div>
 
       <p class="keys-note"><kbd class="key">↓</kbd> <kbd class="key">↑</kbd> Move down and up between categories and files.</p>
-    </section>
-
-    <section id="menu-bar" class="section" aria-labelledby="menu-bar-title">
-      <div class="sec-head">
-        <p class="eyebrow">Menu bar</p>
-        <h2 id="menu-bar-title" class="h2">One click away,<br> in your menu bar.</h2>
-        <p class="lede">Vista now has a menu bar icon. Open it from anywhere — while you work in another app, with the Dock hidden, without hunting for a window.</p>
-      </div>
-
-      <div class="mock-art mt-10 md:mt-14">
-        <svg viewBox="0 0 1200 260" role="img" aria-labelledby="mb-art-title">
-          <title id="mb-art-title">The macOS menu bar with the Vista icon next to the clock, labelled as one click from any app</title>
-          <rect width="1200" height="260" fill="#F7FBF9"/>
-
-          <rect x="48" y="48" width="1104" height="64" rx="16" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
-          <g font-size="15" fill="#42554C">
-            <text x="88" y="85" font-weight="600" fill="#05261C">Finder</text>
-            <text x="176" y="85">File</text>
-            <text x="216" y="85">Edit</text>
-            <text x="256" y="85">View</text>
-            <text x="308" y="85">Go</text>
-            <text x="340" y="85">Window</text>
-            <text x="402" y="85">Help</text>
-          </g>
-
-          <rect x="946" y="56" width="48" height="48" rx="14" fill="none" stroke="#13803B" stroke-width="2"/>
-          <image href="images/vista-icon.svg" x="952" y="62" width="36" height="36"/>
-
-          <g fill="none" stroke="#42554C" stroke-width="2" stroke-linecap="round">
-            <path d="M1013 82a15 15 0 0 1 22 0"/>
-            <path d="M1018 88a8 8 0 0 1 12 0"/>
-          </g>
-          <circle cx="1024" cy="94" r="1.8" fill="#42554C"/>
-          <rect x="1052" y="74" width="26" height="14" rx="4" fill="none" stroke="#42554C" stroke-width="1.6"/>
-          <rect x="1055.5" y="77.5" width="16" height="7" rx="2" fill="#42554C"/>
-          <path d="M1080 79v4" stroke="#42554C" stroke-width="2" stroke-linecap="round"/>
-          <text x="1132" y="85" text-anchor="end" font-size="15" fill="#42554C">9:41</text>
-
-          <path d="M970 118v32" stroke="#9DB3A8" stroke-width="1.6" stroke-dasharray="3 4"/>
-          <circle cx="970" cy="154" r="3" fill="#9DB3A8"/>
-          <rect x="760" y="170" width="420" height="62" rx="18" fill="#FFFFFF" stroke="#DCE7E1" stroke-width="1.5"/>
-          <text x="786" y="199" font-size="17" font-weight="600" fill="#05261C">Menu bar icon</text>
-          <text x="786" y="219" font-size="15" fill="#42554C">Open Vista from any app, without the Dock.</text>
-        </svg>
-      </div>
-
-      <p class="keys-note">Vista in the menu bar — always there, never in the way.</p>
     </section>
 
     <section id="cleanup" class="section" aria-labelledby="cleanup-title">
@@ -1532,9 +1751,9 @@
         <div class="laptop-lid">
           <figure class="media aspect-[16/10]"
                   data-src="images/cleanup"
-                  data-alt="Vista's Clean Up: reviewing old screenshots, moving them to the Trash, then the Undo button that brings them back"
-                  data-note="Clean Up suggestions"
-                  data-size="2880 × 1800"></figure>
+                  data-alt="Vista's Clean Up: reviewing old screenshots and old downloads, then selecting the ones to clear and seeing how much space they free"
+                  data-note="Clean Up: review old downloads and screenshots before they go to the Trash"
+                  data-size="1920 × 1248"></figure>
         </div>
         <div class="laptop-base" aria-hidden="true"></div>
       </div>
@@ -1544,23 +1763,20 @@
       <div class="sec-head">
         <p class="eyebrow">Themes</p>
         <h2 id="themes-title" class="h2">Sage Soft, White,<br> or Dark.</h2>
-        <p class="lede">Sage Soft is the default — Vista’s own calm, soft green. White is clean and bright for the daytime, and Dark keeps everything quiet when the light goes down.</p>
+        <p class="lede">Sage Soft is the default: Vista’s own calm, soft green. White is clean and bright for the daytime, and Dark keeps everything quiet when the light goes down.</p>
       </div>
 
       <div class="laptop mt-10 md:mt-14">
         <div class="laptop-lid">
-          <figure class="media" style="aspect-ratio: 2560 / 1440">
-            <img id="theme-shot" src="images/SageTheme.png"
-                 alt="Vista's Home screen in the Sage Soft theme, in soft green"
-                 loading="lazy">
+          <figure class="media is-video" style="aspect-ratio: 3024 / 1964">
+            <video autoplay muted loop playsinline preload="metadata"
+                   poster="images/theme-poster.jpg"
+                   aria-label="Vista switching between the Sage Soft, White and Dark themes from the Theme picker in Settings">
+              <source src="images/theme.mp4" type="video/mp4">
+            </video>
           </figure>
         </div>
         <div class="laptop-base" aria-hidden="true"></div>
-      </div>
-      <div class="theme-switch" role="group" aria-label="Choose a theme preview">
-        <button type="button" class="theme-tab is-on" data-theme="sage" aria-pressed="true">Sage Soft</button>
-        <button type="button" class="theme-tab" data-theme="white" aria-pressed="false">White</button>
-        <button type="button" class="theme-tab" data-theme="dark" aria-pressed="false">Dark</button>
       </div>
     </section>
 
@@ -1568,7 +1784,7 @@
       <div class="sec-head">
         <p class="eyebrow">Privacy</p>
         <h2 id="privacy-title" class="h2">Works offline.<br> Stays on your Mac.</h2>
-        <p class="lede">Indexing, text recognition, duplicate detection and Visual Search run entirely on your Mac — with or without Wi‑Fi. The AI model is downloaded once; after that, nothing leaves the device.</p>
+        <p class="lede">Indexing, text recognition, duplicate detection and Visual Search run entirely on your Mac, with or without Wi‑Fi. The AI model is downloaded once; after that, nothing leaves the device.</p>
       </div>
 
       <div class="laptop mt-10 md:mt-14">
@@ -1577,18 +1793,18 @@
                   data-src="images/offline"
                   data-alt="Vista working with Wi‑Fi off: indexing, text recognition, duplicate detection and Visual Search all running on the Mac"
                   data-note="Vista working completely offline, with Wi‑Fi switched off"
-                  data-size="1840 × 1012"></figure>
+                  data-size="1920 × 1248"></figure>
         </div>
         <div class="laptop-base" aria-hidden="true"></div>
       </div>
 
       <ul class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mt-10 md:mt-14">
-        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>No account</li>
-        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>No cloud</li>
-        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>No tracking</li>
-        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.8 5.9v5.6c0 4.2 3 7.5 7.2 8.5 4.2-1 7.2-4.3 7.2-8.5V5.9z"/><path d="M9.2 11.9 11.2 14l3.8-3.8"/></svg>On-device AI</li>
-        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>Works without Wi‑Fi</li>
-        <li class="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>Offline license</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M256,136a12,12,0,0,1-12,12H204a12,12,0,0,1,0-24h40A12,12,0,0,1,256,136Zm-54.81,56.28a12,12,0,1,1-18.38,15.44C169.12,191.42,145,172,108,172c-28.89,0-55.46,12.68-74.81,35.72a12,12,0,0,1-18.38-15.44A124.08,124.08,0,0,1,63.5,156.53a72,72,0,1,1,89,0A124,124,0,0,1,201.19,192.28ZM108,148a48,48,0,1,0-48-48A48.05,48.05,0,0,0,108,148Z"/></svg>No account</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M56.88,31.93A12,12,0,1,0,39.12,48.07L71.79,84A68,68,0,0,0,72,220h88a91.26,91.26,0,0,0,30.66-5.24l8.46,9.31a12,12,0,0,0,17.76-16.14ZM160,196H72a44,44,0,0,1-1.8-87.95A91.91,91.91,0,0,0,68,128a12,12,0,0,0,24,0,68.22,68.22,0,0,1,2.66-18.84l77.88,85.67A68.67,68.67,0,0,1,160,196Zm92-68a91.32,91.32,0,0,1-17.53,54,12,12,0,1,1-19.41-14.11,68,68,0,0,0-89.57-98.53,12,12,0,0,1-12.2-20.66A92,92,0,0,1,252,128Z"/></svg>No cloud</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M56.88,31.93A12,12,0,1,0,39.12,48.07l16,17.65C20.67,88.66,5.72,121.58,5,123.13a12.08,12.08,0,0,0,0,9.75c.37.82,9.13,20.26,28.49,39.61C59.37,198.34,92,212,128,212a131.34,131.34,0,0,0,51-10l20.09,22.1a12,12,0,0,0,17.76-16.14ZM128,188c-29.59,0-55.47-10.73-76.91-31.88A130.69,130.69,0,0,1,29.52,128c5.27-9.31,18.79-29.9,42-44.29l90.09,99.11A109.33,109.33,0,0,1,128,188Zm123-55.12c-.36.81-9,20-28,39.16a12,12,0,1,1-17-16.9A130.48,130.48,0,0,0,226.48,128a130.36,130.36,0,0,0-21.57-28.12C183.46,78.73,157.59,68,128,68c-3.35,0-6.7.14-10,.42a12,12,0,1,1-2-23.91c3.93-.34,8-.51,12-.51,36,0,68.63,13.67,94.49,39.52,19.35,19.35,28.11,38.8,28.48,39.61A12.08,12.08,0,0,1,251,132.88Z"/></svg>No tracking</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M156,88H100a12,12,0,0,0-12,12v56a12,12,0,0,0,12,12h56a12,12,0,0,0,12-12V100A12,12,0,0,0,156,88Zm-12,56H112V112h32Zm88-4H220V116h12a12,12,0,0,0,0-24H220V56a20,20,0,0,0-20-20H164V24a12,12,0,0,0-24,0V36H116V24a12,12,0,0,0-24,0V36H56A20,20,0,0,0,36,56V92H24a12,12,0,0,0,0,24H36v24H24a12,12,0,0,0,0,24H36v36a20,20,0,0,0,20,20H92v12a12,12,0,0,0,24,0V220h24v12a12,12,0,0,0,24,0V220h36a20,20,0,0,0,20-20V164h12a12,12,0,0,0,0-24Zm-36,56H60V60H196Z"/></svg>On-device AI</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216.88,207.93a12,12,0,1,1-17.76,16.14L147.78,167.6a56.06,56.06,0,0,0-52.71,7.1,12,12,0,0,1-14.14-19.4,79.35,79.35,0,0,1,41.92-15.12L103.51,118.9a104.18,104.18,0,0,0-40.06,19.55,12,12,0,0,1-14.9-18.81A128.46,128.46,0,0,1,85.61,99.21l-17.31-19a151.14,151.14,0,0,0-36.68,22.28A12,12,0,1,1,16.39,83.91a175.52,175.52,0,0,1,35-22.38L39.12,48.07A12,12,0,1,1,56.88,31.93ZM128,188a16,16,0,1,0,16,16A16,16,0,0,0,128,188Zm64.55-49.55a12,12,0,0,0,14.9-18.81A127.27,127.27,0,0,0,170,99.05a12,12,0,0,0-7.87,22.67A103.62,103.62,0,0,1,192.55,138.45Zm47.06-54.54A176.33,176.33,0,0,0,128,44c-3.94,0-7.93.13-11.86.39a12,12,0,1,0,1.59,24c3.4-.23,6.86-.34,10.27-.34a152.24,152.24,0,0,1,96.38,34.46,12,12,0,1,0,15.23-18.55Z"/></svg>Works without Wi‑Fi</li>
+        <li class="fact"><svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M228.75,100.05c-3.52-3.67-7.15-7.46-8.34-10.33-1.06-2.56-1.14-7.83-1.21-12.47-.15-10-.34-22.44-9.18-31.27s-21.27-9-31.27-9.18c-4.64-.07-9.91-.15-12.47-1.21-2.87-1.19-6.66-4.82-10.33-8.34C148.87,20.46,140.05,12,128,12s-20.87,8.46-27.95,15.25c-3.67,3.52-7.46,7.15-10.33,8.34-2.56,1.06-7.83,1.14-12.47,1.21C67.25,37,54.81,37.14,46,46S37,67.25,36.8,77.25c-.07,4.64-.15,9.91-1.21,12.47-1.19,2.87-4.82,6.66-8.34,10.33C20.46,107.13,12,116,12,128S20.46,148.87,27.25,156c3.52,3.67,7.15,7.46,8.34,10.33,1.06,2.56,1.14,7.83,1.21,12.47.15,10,.34,22.44,9.18,31.27s21.27,9,31.27,9.18c4.64.07,9.91.15,12.47,1.21,2.87,1.19,6.66,4.82,10.33,8.34C107.13,235.54,116,244,128,244s20.87-8.46,27.95-15.25c3.67-3.52,7.46-7.15,10.33-8.34,2.56-1.06,7.83-1.14,12.47-1.21,10-.15,22.44-.34,31.27-9.18s9-21.27,9.18-31.27c.07-4.64.15-9.91,1.21-12.47,1.19-2.87,4.82-6.66,8.34-10.33C235.54,148.87,244,140.05,244,128S235.54,107.13,228.75,100.05Zm-17.32,39.29c-4.82,5-10.28,10.72-13.19,17.76-2.82,6.8-2.93,14.16-3,21.29-.08,5.36-.19,12.71-2.15,14.66s-9.3,2.07-14.66,2.15c-7.13.11-14.49.22-21.29,3-7,2.91-12.73,8.37-17.76,13.19C135.78,214.84,130.4,220,128,220s-7.78-5.16-11.34-8.57c-5-4.82-10.72-10.28-17.76-13.19-6.8-2.82-14.16-2.93-21.29-3-5.36-.08-12.71-.19-14.66-2.15s-2.07-9.3-2.15-14.66c-.11-7.13-.22-14.49-3-21.29-2.91-7-8.37-12.73-13.19-17.76C41.16,135.78,36,130.4,36,128s5.16-7.78,8.57-11.34c4.82-5,10.28-10.72,13.19-17.76,2.82-6.8,2.93-14.16,3-21.29C60.88,72.25,61,64.9,63,63s9.3-2.07,14.66-2.15c7.13-.11,14.49-.22,21.29-3,7-2.91,12.73-8.37,17.76-13.19C120.22,41.16,125.6,36,128,36s7.78,5.16,11.34,8.57c5,4.82,10.72,10.28,17.76,13.19,6.8,2.82,14.16,2.93,21.29,3,5.36.08,12.71.19,14.66,2.15s2.07,9.3,2.15,14.66c.11,7.13.22,14.49,3,21.29,2.91,7,8.37,12.73,13.19,17.76,3.41,3.56,8.57,8.94,8.57,11.34S214.84,135.78,211.43,139.34ZM176.49,95.51a12,12,0,0,1,0,17l-56,56a12,12,0,0,1-17,0l-24-24a12,12,0,1,1,17-17L112,143l47.51-47.52A12,12,0,0,1,176.49,95.51Z"/></svg>Offline license</li>
       </ul>
     </section>
 
@@ -1617,7 +1833,7 @@
           <div class="price-story">
             <p class="price-kicker">What you get</p>
             <h3 class="price-sub">Every feature.<br> Nothing to renew.</h3>
-            <p class="price-copy">Buy once and every feature is yours, with free updates — no account, no cloud, and nothing that expires.</p>
+            <p class="price-copy">Buy once and every feature is yours, with free updates: no account, no cloud, and nothing that expires.</p>
 
             <ul class="price-features" role="list">
               <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7"/></svg>Every feature</li>
@@ -1692,15 +1908,15 @@
           </details>
           <details>
             <summary>How does Visual Search work?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
-            <div class="faq-panel"><p>Vista uses an AI model that runs on your Mac. You describe what you are looking for — “horse”, “mountain”, “red car” — and it matches photos and videos by what’s in them, not by filename. The model is downloaded once when you set it up; after that, every search works with no internet.</p></div>
+            <div class="faq-panel"><p>Vista uses an AI model that runs on your Mac. You describe what you are looking for, like “horse”, “mountain” or “red car”, and it matches photos and videos by what’s in them, not by filename. The model is downloaded once when you set it up; after that, every search works with no internet.</p></div>
           </details>
           <details>
             <summary>Which themes does Vista have?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
-            <div class="faq-panel"><p>Sage Soft, White and Dark. Sage Soft is the default — Vista’s own soft green theme — and you can switch at any time.</p></div>
+            <div class="faq-panel"><p>Sage Soft, White and Dark. Sage Soft is the default, Vista’s own soft green theme, and you can switch at any time.</p></div>
           </details>
           <details>
             <summary>Can I style all my folders at once?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
-            <div class="faq-panel"><p>Yes. Pick a color, one of the seven rounder folder styles and an icon, then apply that style to every folder in one click — or keep individual folders different.</p></div>
+            <div class="faq-panel"><p>Yes. Pick a color, one of the seven rounder folder styles and an icon, then apply that style to every folder in one click, or keep individual folders different.</p></div>
           </details>
           <details>
             <summary>Does Vista work without internet?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
@@ -1712,7 +1928,7 @@
           </details>
           <details>
             <summary>Why is it $19 and not $29?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
-            <div class="faq-panel"><p>The first 300 licenses are $19 as a thank-you to early users. After that it’s $29 — still one payment, still with free updates.</p></div>
+            <div class="faq-panel"><p>The first 300 licenses are $19 as a thank-you to early users. After that it’s $29. Still one payment, still with free updates.</p></div>
           </details>
           <details>
             <summary>What do I need?<svg class="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary>
@@ -1757,7 +1973,7 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false">
             <path d="M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9"/><circle cx="12" cy="12" r="2.4"/>
           </svg>
-          Search, text recognition, and duplicate detection run on your Mac — never on a server.
+          Search, text recognition, and duplicate detection run on your Mac, never on a server.
         </p>
       </div>
 
@@ -1775,7 +1991,7 @@
         <div class="foot-panel-foot">
           <div class="flex flex-wrap gap-3">
             <a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" class="btn cta-arrow cta-lg" data-polar-checkout data-polar-checkout-theme="light">
-              <span class="cta-label">Buy now — $19</span>
+              <span class="cta-label">Buy now for $19</span>
               <span class="cta-arrow-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
               </span>
@@ -1811,7 +2027,6 @@
             <li><a href="#search">Search inside files</a></li>
             <li><a href="#viewer">Viewer</a></li>
             <li><a href="#keyboard">Keyboard</a></li>
-            <li><a href="#menu-bar">Menu bar</a></li>
             <li><a href="#cleanup">Clean up</a></li>
             <li><a href="#themes">Themes</a></li>
           </ul>
@@ -2037,74 +2252,245 @@
   })();
 </script>
 
+
+
 <script>
+  /* Hero product tour. The big shot changes with a directional slide: forward
+     moves left, backward moves right, 700ms cubic-bezier(.32,.72,0,1), and the
+     carousel wraps end to end. The slider below shows five large cards at a
+     time; neighbours step back and the track fades where more screens wait. */
   (() => {
-    const h = document.getElementById('hero-title');
-    const p = document.querySelector('.hero-lede');
-    if (!h || !p) return;
-    const fit = () => {
-      const r = document.createRange();
-      r.selectNodeContents(h);
-      const w = Math.max(0, ...Array.from(r.getClientRects(), (b) => b.width));
-      if (w > 0) p.style.setProperty('--hero-measure', Math.ceil(w) + 'px');
+    const gallery = document.querySelector('[data-hero-gallery]');
+    if (!gallery) return;
+    const shot = document.getElementById('hero-shot');
+    const incoming = document.getElementById('hero-shot-next');
+    const frameA = document.getElementById('hero-frame-a');
+    const frameB = document.getElementById('hero-frame-b');
+    const videoFrame = document.getElementById('hero-frame-video');
+    const clipEl = document.getElementById('hero-shot-video');
+    const panel = document.getElementById('hero-panel');
+    const tabs = [...gallery.querySelectorAll('.hero-thumb')];
+    const strip = gallery.querySelector('.hero-thumbs');
+    const captionName = gallery.querySelector('[data-caption-name]');
+    const captionText = gallery.querySelector('[data-caption-text]');
+    const prev = gallery.querySelector('[data-gallery-prev]');
+    const next = gallery.querySelector('[data-gallery-next]');
+    if (!shot || !panel || !tabs.length) return;
+
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const DURATION = 700;
+    const SLIDE = '112%';
+    let current = Math.max(0, tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true'));
+    let slideCommit = null;
+    let slideToken = 0;
+    let videoActive = false;
+
+    const updateFade = () => {
+      if (!strip) return;
+      const max = strip.scrollWidth - strip.clientWidth;
+      strip.style.setProperty('--fade-start', strip.scrollLeft > 2 ? '24px' : '0px');
+      strip.style.setProperty('--fade-end', strip.scrollLeft < max - 2 ? '24px' : '0px');
     };
-    fit();
-    window.addEventListener('resize', fit);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+
+    const reveal = (tab) => {
+      if (!strip || strip.scrollWidth <= strip.clientWidth + 1) return;
+      const r = tab.getBoundingClientRect();
+      const box = strip.getBoundingClientRect();
+      const delta = (r.left + r.width / 2) - (box.left + box.width / 2);
+      if (Math.abs(delta) > 2) {
+        tab.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
+      }
+    };
+
+    const stepBack = () => {
+      tabs.forEach((tab, n) => { tab.dataset.dist = String(Math.min(3, Math.abs(n - current))); });
+    };
+
+    const commitSlide = () => {
+      if (!slideCommit) return;
+      const done = slideCommit;
+      slideCommit = null;
+      done();
+    };
+
+    const showImage = (src, alt, dir) => {
+      commitSlide();
+      const token = ++slideToken;
+      if (!incoming || !frameA || !frameB || reduce) {
+        shot.src = src;
+        shot.alt = alt;
+        shot.hidden = false;
+        if (frameA) frameA.style.setProperty('--slide', '0%');
+        return;
+      }
+      incoming.src = src;
+      incoming.alt = '';
+      const run = () => {
+        if (token !== slideToken) return;
+        const inFrom = dir >= 0 ? SLIDE : '-' + SLIDE;
+        const outTo = dir >= 0 ? '-' + SLIDE : SLIDE;
+        frameA.style.transition = 'none';
+        frameB.style.transition = 'none';
+        frameB.style.setProperty('--slide', inFrom);
+        frameA.style.setProperty('--slide', '0%');
+        void frameB.offsetWidth;
+        frameA.style.transition = '';
+        frameB.style.transition = '';
+        frameB.style.setProperty('--slide', '0%');
+        frameA.style.setProperty('--slide', outTo);
+        const done = () => {
+          shot.src = src;
+          shot.alt = alt;
+          frameA.style.transition = 'none';
+          frameA.style.setProperty('--slide', '0%');
+          frameB.style.transition = 'none';
+          frameB.style.setProperty('--slide', SLIDE);
+          incoming.removeAttribute('src');
+          void frameA.offsetWidth;
+          frameA.style.transition = '';
+          frameB.style.transition = '';
+        };
+        slideCommit = done;
+        setTimeout(() => {
+          if (slideCommit !== done) return;
+          slideCommit = null;
+          done();
+        }, DURATION + 40);
+      };
+      let started = false;
+      const start = () => {
+        if (started || token !== slideToken) return;
+        started = true;
+        run();
+      };
+      if (incoming.complete) start();
+      else {
+        incoming.onload = start;
+        incoming.onerror = start;
+        setTimeout(start, 140);
+      }
+    };
+
+    const show = (tab, dir) => {
+      const src = tab.dataset.src;
+      if (!src) return;
+      const alt = tab.dataset.alt || '';
+      captionName.textContent = tab.dataset.name || '';
+      captionText.textContent = tab.dataset.text || '';
+      panel.setAttribute('aria-labelledby', tab.id);
+      if (tab.dataset.w) shot.width = tab.dataset.w;
+      if (tab.dataset.h) shot.height = tab.dataset.h;
+
+      const clipSrc = tab.dataset.video;
+      if (clipSrc && clipEl && videoFrame) {
+        commitSlide();
+        videoActive = true;
+        if (frameA) frameA.hidden = true;
+        if (frameB) frameB.hidden = true;
+        videoFrame.hidden = false;
+        clipEl.src = clipSrc;
+        clipEl.setAttribute('aria-label', alt || tab.dataset.name || '');
+        const played = clipEl.play();
+        if (played && played.catch) played.catch(() => {});
+        return;
+      }
+      if (clipEl && videoActive) {
+        clipEl.pause();
+        clipEl.removeAttribute('src');
+        clipEl.load();
+      }
+      if (videoFrame) videoFrame.hidden = true;
+      if (videoActive && frameA && frameB) {
+        videoActive = false;
+        frameA.hidden = false;
+        frameB.hidden = false;
+        frameA.style.transition = 'none';
+        frameA.style.setProperty('--slide', '0%');
+        frameB.style.transition = 'none';
+        frameB.style.setProperty('--slide', SLIDE);
+        void frameA.offsetWidth;
+        frameA.style.transition = '';
+        frameB.style.transition = '';
+      }
+      shot.hidden = false;
+      showImage(src, alt, dir);
+    };
+
+    const select = (index, opts = {}) => {
+      const raw = index;
+      const i = (index + tabs.length) % tabs.length;
+      if (i === current && !opts.force) {
+        if (opts.focus) tabs[i].focus();
+        return;
+      }
+      const dir = opts.dir || (raw > current ? 1 : -1);
+      current = i;
+      tabs.forEach((tab, n) => {
+        const on = n === i;
+        tab.setAttribute('aria-selected', String(on));
+        tab.tabIndex = on ? 0 : -1;
+      });
+      stepBack();
+      show(tabs[i], dir);
+      reveal(tabs[i]);
+      if (opts.focus) tabs[i].focus();
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(i));
+      tab.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        e.preventDefault();
+        select(i + (e.key === 'ArrowRight' ? 1 : -1), { focus: true });
+      });
+      tab.addEventListener('pointerenter', () => { if (tab.dataset.src) new Image().src = tab.dataset.src; }, { once: true });
+      tab.tabIndex = i === current ? 0 : -1;
+    });
+
+    const step = (delta) => select(current + delta);
+    if (prev) prev.addEventListener('click', () => step(-1));
+    if (next) next.addEventListener('click', () => step(1));
+
+    stepBack();
+
+    if (strip) {
+      strip.addEventListener('scroll', updateFade, { passive: true });
+      window.addEventListener('resize', updateFade);
+      updateFade();
+    }
+
+    let startX = null;
+    panel.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+    panel.addEventListener('touchend', (e) => {
+      if (startX === null) return;
+      const dx = e.changedTouches[0].clientX - startX;
+      startX = null;
+      if (Math.abs(dx) < 40) return;
+      select(current + (dx < 0 ? 1 : -1));
+    }, { passive: true });
   })();
 </script>
 
-
 <script>
+  /* Feature videos play only while they are on screen (the viewer, visual
+     search and theme clips), so offscreen footage is not decoded. */
   (() => {
-    const shot = document.getElementById('theme-shot');
-    if (!shot) return;
-    const tabs = Array.from(document.querySelectorAll('.theme-tab'));
-    const files = {
-      sage: 'images/SageTheme.png',
-      white: 'images/PureWhiteTheme.png',
-      dark: 'images/DarkTheme.png',
-    };
-    const alts = {
-      sage: "Vista's Home screen in the Sage Soft theme, in soft green",
-      white: "Vista's Home screen in the White theme",
-      dark: "Vista's Home screen in the Dark theme",
-    };
-    // Warm the cache for the alternate shots once the Themes section gets close,
-    // so a click swaps instantly without downloading ~2 MB up front on a page
-    // that otherwise lazy-loads everything.
-    const warm = () => Object.values(files).forEach((src) => { const pre = new Image(); pre.src = src; });
-    const figure = shot.closest('figure');
-    if ('IntersectionObserver' in window && figure) {
-      const io = new IntersectionObserver((entries, obs) => {
-        if (entries.some((e) => e.isIntersecting)) { warm(); obs.disconnect(); }
-      }, { rootMargin: '600px 0px' });
-      io.observe(figure);
-    } else {
-      warm();
-    }
+    const vids = [...document.querySelectorAll('#visual-search video, #viewer video, #themes video')];
+    if (!vids.length) return;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const show = () => {
-      shot.style.opacity = '1';
-      shot.style.filter = reduce ? 'none' : 'blur(0)';
-    };
-    tabs.forEach((tab) => {
-      tab.addEventListener('click', () => {
-        const name = tab.dataset.theme;
-        if (tab.classList.contains('is-on')) return;
-        shot.style.opacity = '0';
-        shot.style.filter = reduce ? 'none' : 'blur(4px)';
-        shot.addEventListener('load', show, { once: true });
-        shot.addEventListener('error', show, { once: true });
-        shot.src = files[name];
-        shot.alt = alts[name];
-        tabs.forEach((t) => {
-          const on = t === tab;
-          t.classList.toggle('is-on', on);
-          t.setAttribute('aria-pressed', on ? 'true' : 'false');
-        });
+    if (reduce) { vids.forEach((v) => v.pause()); return; }
+    if (!('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(({ target, isIntersecting }) => {
+        if (isIntersecting) {
+          const played = target.play();
+          if (played && played.catch) played.catch(() => {});
+        } else {
+          target.pause();
+        }
       });
-    });
+    }, { threshold: 0.35 });
+    vids.forEach((v) => io.observe(v));
   })();
 </script>
 
@@ -2179,7 +2565,7 @@
       showAll();
     }
 
-    /* layered drift — each art panel moves at its own depth */
+    /* layered drift, each art panel moves at its own depth */
     const depths = [0.05, 0.085, 0.065];
     let queued = 0;
     const update = () => {
@@ -2274,15 +2660,13 @@
     const clusters = [];
     const push = (items) => { if (items.length) clusters.push(items); };
 
-    ['customize', 'search', 'visual-search', 'viewer', 'keyboard', 'menu-bar', 'cleanup', 'themes', 'privacy'].forEach((id) => {
+    ['customize', 'search', 'visual-search', 'viewer', 'keyboard', 'cleanup', 'themes', 'privacy'].forEach((id) => {
       const sec = document.getElementById(id);
       if (!sec) return;
       push([...sec.querySelectorAll('.sec-head > *')]);
       push([...sec.querySelectorAll(':scope > .laptop')]);
-      push([...sec.querySelectorAll(':scope > .mock-art')]);
       push([...sec.querySelectorAll(':scope > .keys-note')]);
       push([...sec.querySelectorAll('.grid > *')]);
-      push([...sec.querySelectorAll(':scope > .theme-switch')]);
     });
 
     const faq = document.getElementById('faq');
