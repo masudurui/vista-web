@@ -13,7 +13,7 @@ export const pricing = {
   earlyBird: "$19",
   regular: "$29",
   licences: "300",
-  trialDays: "14",
+  trialDays: "7",
 } as const;
 
 export type Shot = {

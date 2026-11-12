@@ -39,7 +39,7 @@ export default function Page() {
               </span>
             </a>
           </div>
-          <p className="hero-meta text-[13px] text-faint">14-day free trial · One-time purchase · macOS 14+</p>
+          <p className="hero-meta text-[13px] text-faint">7-day free trial · One-time purchase · macOS 14+</p>
         </div>
       </div>
 
@@ -483,7 +483,7 @@ export default function Page() {
             <h2 id="pricing-title" className="price-title">Pay once.<br /> Keep it.</h2>
           </div>
           <div className="price-heading-side">
-            <p className="price-lede">Try everything free for 14 days. Then buy it once, with free updates.</p>
+            <p className="price-lede">Try everything free for 7 days. Then buy it once, with free updates.</p>
             <p className="price-signs" aria-hidden="true">
               <span className="price-sign-dot"></span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" focusable="false">
@@ -542,7 +542,7 @@ export default function Page() {
               </a>
               <a href="https://vistaformac.com/Vista.zip" download="Vista.zip" className="price-ticket-trial">Download free trial</a>
             </div>
-            <p className="price-ticket-fine">Try free for 14 days first · macOS 14 or later</p>
+            <p className="price-ticket-fine">Try free for 7 days first · macOS 14 or later</p>
           </div>
         </div>
 
@@ -609,7 +609,7 @@ export default function Page() {
       <div className="flex flex-col items-center text-center">
         <span className="appicon w-16 h-16" aria-hidden="true"></span>
         <h2 id="close-title" className="h2 mt-8">See what you have.</h2>
-        <p className="lede mt-5">14 days free. No account needed.</p>
+        <p className="lede mt-5">7 days free. No account needed.</p>
         <a href="https://vistaformac.com/Vista.zip" download="Vista.zip" className="btn cta-arrow has-icon mt-9">
           <span className="cta-icon" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14" /></svg>
