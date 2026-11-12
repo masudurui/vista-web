@@ -1,24 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { Inter } from "next/font/google";
+
 import "./globals.css";
 
-import { site, pricing } from "@/lib/site";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-});
-
 export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  title: {
-    default: `${site.name}: a visual file browser for macOS`,
-    template: `%s · ${site.name}`,
-  },
-  description: site.description,
-  applicationName: site.name,
+  metadataBase: new URL("https://vistaformac.com"),
+  title: "Vista: a visual file browser for macOS",
+  description:
+    "Vista is a file browser for macOS that shows your files as thumbnails, sorted by kind. Style every folder, search photos by what’s in them with an on-device AI model, and find the text inside screenshots and PDFs. Everything runs on your Mac.",
+  applicationName: "Vista",
   generator: "Next.js",
   keywords: [
     "Vista",
@@ -31,7 +21,7 @@ export const metadata: Metadata = {
     "folder customization",
     "clean up disk space macOS",
   ],
-  authors: [{ name: "Vista", url: site.url }],
+  authors: [{ name: "Vista", url: "https://vistaformac.com" }],
   creator: "Vista",
   publisher: "Vista",
   category: "productivity",
@@ -48,10 +38,11 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    url: site.url,
-    siteName: site.name,
-    title: `${site.name}: ${site.tagline}`,
-    description: site.ogDescription,
+    url: "https://vistaformac.com/",
+    siteName: "Vista",
+    title: "Vista: See your files, not filenames.",
+    description:
+      "A visual file browser for macOS. Thumbnails sorted by kind, rounder folders in Sage Soft, White or Dark, Visual Search for photos and videos, and search inside screenshots and PDFs. Everything runs on your Mac.",
     locale: "en_US",
     images: [
       {
@@ -64,8 +55,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name}: ${site.tagline}`,
-    description: site.ogDescription,
+    title: "Vista: See your files, not filenames.",
+    description:
+      "A visual file browser for macOS. Thumbnails sorted by kind, rounder folders in Sage Soft, White or Dark, Visual Search for photos and videos, and search inside screenshots and PDFs. Everything runs on your Mac.",
     images: ["/images/og-image.png"],
   },
   icons: {
@@ -82,59 +74,58 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#fbfaf7",
+  themeColor: "#ffffff",
   colorScheme: "light",
 };
 
-/**
- * Structured data for search engines. Values are taken from the same constants
- * used to render the page, so they cannot drift apart.
- */
+/** Same structured data the live page publishes. */
 const structuredData = {
   "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "SoftwareApplication",
-      name: site.name,
-      applicationCategory: "UtilitiesApplication",
-      operatingSystem: "macOS 14 or later",
-      description: site.description,
-      url: site.url,
-      image: `${site.url}/images/og-image.png`,
-      offers: [
-        {
-          "@type": "Offer",
-          name: "Early bird",
-          price: pricing.earlyBird.replace("$", ""),
-          priceCurrency: "USD",
-          category: "one-time purchase",
-          url: site.buyUrl,
-        },
-        {
-          "@type": "Offer",
-          name: "Regular",
-          price: pricing.regular.replace("$", ""),
-          priceCurrency: "USD",
-          category: "one-time purchase",
-          url: site.buyUrl,
-        },
-      ],
-    },
+  "@type": "SoftwareApplication",
+  name: "Vista",
+  url: "https://vistaformac.com/",
+  image: "https://vistaformac.com/images/og-image.png",
+  description:
+    "A visual file browser for macOS that shows files as thumbnails sorted by kind, lets you style every folder, and finds photos and videos by what’s in them with an AI model that runs on your Mac. Everything stays on the device.",
+  featureList: [
+    "Visual Search: describe a photo or video and find it by what’s in it",
+    "On-device AI model for Visual Search, downloaded once and then fully offline",
+    "Thumbnails sorted by kind",
+    "24 folder colors, 7 rounder folder styles and 31 icons",
+    "Apply one folder style to all folders at once",
+    "Sage Soft, White and Dark themes",
+    "Menu bar icon",
+    "Search filenames and the text inside screenshots and PDFs",
+    "Duplicate and near-identical photo detection",
+    "Keyboard-first navigation",
+    "Works offline, with no account and no cloud",
   ],
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "macOS 14+",
+  offers: {
+    "@type": "Offer",
+    price: "19.00",
+    priceCurrency: "USD",
+    availability: "https://schema.org/InStock",
+    url: "https://vistaformac.com/#pricing",
+  },
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en">
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+        />
+        <noscript>
+          <style>{`.site-head{transform:none!important;pointer-events:auto!important}`}</style>
+        </noscript>
+      </head>
       <body>
-        <a
-          href="#top"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:text-white"
-        >
-          Skip to content
-        </a>
         {children}
         <script
           type="application/ld+json"

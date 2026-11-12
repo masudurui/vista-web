@@ -1,10 +1,9 @@
-# Vista — Next.js marketing site
+# Vista — Next.js rebuild of the live landing page
 
-A rebuild of the Vista landing page on Next.js (App Router) + TypeScript + Tailwind CSS v4.
-
-This lives in its own folder on the `nextjs-rebuild` branch: the shipped static site at the
-repo root (`index.html`, `assets/`, `images/`, …) is **untouched** and still what
-`vistaformac.com` serves.
+A near-identical rebuild of the shipped static site (`https://vistaformac.com/`) on
+Next.js App Router + TypeScript + Tailwind CSS v4. It lives on the `nextjs-rebuild`
+branch, in its own folder: the static site at the repo root is untouched and is still
+what the domain serves.
 
 ## Run it
 
@@ -12,52 +11,57 @@ repo root (`index.html`, `assets/`, `images/`, …) is **untouched** and still w
 cd next-site
 npm install
 npm run dev      # http://localhost:3000
-```
-
-```bash
 npm run build    # production build (statically prerendered)
-npm start        # serve the production build
+npm start
 npm run typecheck
 ```
 
-Requires Node 20+ (built and tested on Node 24).
+## How the clone is put together
 
-## What's in here
+The goal here was fidelity, not a redesign, so the page *is* the live page:
 
-| Path | Purpose |
+| Layer | What it is |
 | --- | --- |
-| `src/app/layout.tsx` | Root layout, Inter via `next/font`, all SEO metadata, JSON-LD |
-| `src/app/page.tsx` | The landing page: hero, pillars, seven feature sections, pricing, FAQ, final call |
-| `src/app/globals.css` | Design tokens (`@theme`), base styles, `.btn` / `.shot` / `.wrap` and friends |
-| `src/components/HeroGallery.tsx` | Client component: the ten-shot product tour (click + arrow keys) |
-| `src/components/*` | Header, footer, section heading, screenshot frame, feature points, FAQ, price card, icons |
-| `src/lib/site.ts` | Every string, link and number — copy lifted from the shipped site so nothing is invented |
-| `public/images/` | A curated subset of the existing screenshots (hero shots + thumbs, posters, og image, icons) |
-| `next.config.ts` | Security headers (CSP, HSTS, `X-Frame-Options`, …), no `X-Powered-By` |
+| `src/app/vista.css` | The live stylesheet, copied across unchanged (tokens, header, hero, laptop frames, section heads, pricing, FAQ, footer). Two asset URLs were made absolute (`/images/…`). |
+| `src/app/globals.css` | Tailwind v4 + a `@theme` bridge that maps the live tokens (`ink`, `muted`, `faint`, `line`, `accent`, `stage`…) to Tailwind utilities, plus two rules that reproduce the Play CDN's cascade order for `line-height`. |
+| `src/app/page.tsx` | The live `<main>` markup, converted 1:1 to JSX: same section order, same classes, same nesting, same copy. |
+| `src/components/SiteHead.tsx` | Live header markup + the scroll behaviour (hidden at the top, `inert` while hidden, `--head-show-at` threshold). |
+| `src/components/HeroGallery.tsx` | Hero tour: wallpaper panel, sliding 16:10 window, caption, ten-thumbnail strip with edge fade, prev/next, arrow-key tablist. |
+| `src/components/VideoFigure.tsx` | The five clips the live page loads through its media loader: figure marked `is-video`, poster frame, keystroke cue, hover play/pause button, playback only while on screen. |
+| `src/components/Reveal.tsx` | The live scroll-in motion (`.rise` + `is-in`, 50 ms stagger, threshold 0.12). Classes are added client-side so server-rendered HTML stays visible. |
+| `src/components/FaqAccordion.tsx` | Native `<details>` rows with the animated height the live page uses. |
+| `src/lib/media.ts` | Hero screenshots, feature clips and links in one place. |
 
-Sections: hero → thumbnails/visual browsing → search inside files → Visual Search →
-folder customization → themes → Clean Up → privacy → pricing → FAQ → download CTA.
+Sections, in the live order: hero → intro (three pillars) → Visual Search → folder
+customization → search inside files → viewer → keyboard → Clean Up → themes → privacy →
+pricing → FAQ → closing call to action → footer.
 
-## Things to know
+## Parity checks
 
-- **Copy is not new.** Feature claims, FAQ answers and prices are copied verbatim from the
-  static site. The only addition is the honest "one-time model download, about 110 MB"
-  note on Visual Search.
-- **Buy and download links point at the live site.** `site.buyUrl` is the existing Polar
-  checkout; `site.downloadUrl` is `https://vistaformac.com/Vista.zip`, so the app binary
-  is not duplicated in this folder.
-- **Images are plain `<img>`**, not `next/image`. The files are already sized WebP/JPEG, so
-  they ship as-is and the project stays portable to any host (including `output: "export"`)
-  without an image optimiser. Every image has `width`/`height` to avoid layout shift.
-- **The theme is light-only by design.** `colorScheme: "light"` is set on purpose; the
-  design is a warm-paper page, and Dark is a feature *of the app*, not of this site.
+Measured with headless Chrome against the live page and this build, comparing element
+geometry and computed type:
 
-## Deploying later
+| Width | Page height | Sections |
+| --- | --- | --- |
+| 1440 | 17179 px vs **17179 px** | all 13 identical in offset + height |
+| 768 | 15054 px vs **15054 px** | all 13 identical |
+| 390 | 15094 px vs **15094 px** | all 13 identical |
 
-Nothing here is wired into GitHub Pages, so the live site is unaffected by this branch.
-When you want to ship it, either:
+Also identical: `h1`/`h2` font-size, weight, line-height, letter-spacing and colour; hero
+panel and window geometry; thumbnail size; pricing ticket; FAQ rows; footer bands.
+Console is clean (no hydration warnings), all 19 images load, and all 8 clips reach
+`readyState 4` and play when on screen.
 
-1. Point Pages/Vercel at this folder (`next` framework preset, root directory `next-site`), or
-2. `output: "export"` in `next.config.ts` and publish `next-site/out` — the page is fully
-   static, so the export works, but note that headers in `next.config.ts` are not applied
-   by static hosts.
+## Deliberate differences
+
+- **Polar checkout embed is not loaded.** The live page pulls
+  `cdn.jsdelivr.net/npm/@polar-sh/checkout` to open an overlay; here the Buy buttons are
+  the same links with the same `data-polar-checkout` attributes, so they work as normal
+  navigations. Add that script (and allow `cdn.jsdelivr.net` in the CSP) to get the
+  overlay back.
+- **Media is copied into `public/images`** (~24 MB) so the app is self-contained and
+  works offline; the live site reads the same files from `/images`.
+- **`/tools/`, `/privacy/`, `/compare/` and `Vista.zip`** point at the live domain — they
+  are still served by the static site.
+- **Nothing invented**: copy, prices and FAQ answers are the live ones, and the
+  folder-preview widget that was removed from the live page is absent here too.

@@ -1,0 +1,1115 @@
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:calc(64px + env(safe-area-inset-top,0px))}
+body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}
+img{max-width:100%}
+[hidden]:not([hidden=until-found i]){display:none!important}
+  :root {
+    color-scheme: light;
+    /* Page canvas. */
+    --bg: #FFFFFF;
+    --bg-rgb: 255 255 255; /* --bg as channels, for the header's frosted layer */
+    --stage: #F5F8F6;
+    --surface: #FFFFFF;
+    --paper: #E9F3EE;
+    --ink: #05261C;
+    --muted: #42554C;
+    --faint: #52645C;
+    --line: #E4EBE7;
+    --line-strong: #CFDCD5;
+    --accent: #13803B;
+    --accent-hover: #0F6B31;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #D3E8DA;
+    --accent-soft-hover: #C5E0CD;
+    --accent-strong: #0F6B31;
+    --ease-out: cubic-bezier(.23, 1, .32, 1);
+    --ease-in-out: cubic-bezier(.77, 0, .175, 1);
+    --r-card: 18px;
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", system-ui, sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  /* Site header (Atlas-style): hidden on arrival, slides in once the page is
+     scrolled past --head-show-at, and leaves again at the top. */
+  .site-head {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 70;
+    padding-top: env(safe-area-inset-top, 0px);
+    --head-show-at: 80px;
+    transform: translateY(-100%);
+    pointer-events: none;
+    transition: transform 400ms cubic-bezier(.2, .9, .3, 1.08), box-shadow 200ms ease;
+    will-change: transform;
+  }
+  .site-head::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgb(var(--bg-rgb) / .86);
+    -webkit-backdrop-filter: blur(14px) saturate(1.04);
+    backdrop-filter: blur(14px) saturate(1.04);
+    opacity: 0;
+    transition: opacity 200ms ease;
+    pointer-events: none;
+  }
+  .site-head.is-visible { transform: translateY(0); pointer-events: auto; box-shadow: 0 1px 0 var(--line), 0 16px 30px -28px rgba(5, 38, 28, .45); }
+  .site-head.is-visible::before { opacity: 1; }
+  .site-head-inner {
+    width: 100%;
+    max-width: 1232px;
+    margin-inline: auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  h1, h2 { text-wrap: balance; }
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
+
+  .h1 { font-weight: 600; letter-spacing: -0.05em; line-height: 0.95; font-size: clamp(48px, 8vw, 100px); }
+  .h2 { font-weight: 600; letter-spacing: -0.04em; line-height: 1.02; font-size: clamp(36px, 5.2vw, 64px); }
+  .eyebrow { font-size: 13px; font-weight: 500; color: var(--accent-strong); }
+  .lede { font-size: clamp(17px, 1.6vw, 19px); line-height: 1.5; color: var(--muted); text-wrap: pretty; }
+  .label { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink); }
+  .label-sub { margin-left: 6px; font-weight: 400; color: var(--faint); }
+
+  /* Hero, left-aligned copy above a product tour: one big screenshot on the
+     wallpaper, a caption under it, and a strip of thumbnails that swaps the
+     shot. The strip scrolls sideways, so adding more screens never squeezes
+     them down. */
+  .hero-copy { max-width: none; }
+  .hero-eyebrow { font-size: 15px; }
+  .hero-h1 { font-size: clamp(46px, 6.4vw, 84px); }
+  @media (min-width: 768px) { .hero-h1 { white-space: nowrap; text-wrap: nowrap; } }
+  .hero-lede { font-size: clamp(19px, 2vw, 23px); line-height: 1.45; letter-spacing: -0.012em; color: var(--muted); max-width: 42em; text-wrap: pretty; }
+  .hero-lede .hl { color: var(--ink); }
+
+  /* Hero entrance, Linear-style: the copy rises in with a short blur, then
+     each desktop window settles onto the wallpaper, back to front. */
+  @keyframes hero-copy-in {
+    from { opacity: 0; transform: translate3d(0, 16px, 0); filter: blur(8px); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
+  }
+  @keyframes hero-frame-in {
+    from { opacity: 0; transform: scale(.97); filter: blur(10px); }
+    to   { opacity: 1; transform: scale(1); filter: blur(0); }
+  }
+  .hero-eyebrow, .hero-h1, .hero-lede, .hero-cta, .hero-meta {
+    animation: hero-copy-in .95s cubic-bezier(.16, 1, .3, 1) backwards;
+  }
+  .hero-eyebrow { animation-delay: .05s; }
+  .hero-h1 { animation-delay: .13s; }
+  .hero-lede { animation-delay: .22s; }
+  .hero-cta { animation-delay: .31s; }
+  .hero-meta { animation-delay: .39s; }
+
+  .hero-showcase { position: relative; isolation: isolate; margin-top: clamp(44px, 7vw, 84px); }
+  /* Soft blue bloom under the panel so the wallpaper sits on the white page
+     instead of looking pasted on. */
+  .hero-showcase::before {
+    content: "";
+    position: absolute;
+    inset: 10% 0 10%;
+    z-index: -1;
+    background: radial-gradient(58% 62% at 50% 46%, rgba(74, 152, 224, .26), rgba(74, 152, 224, 0) 72%);
+    filter: blur(24px);
+    pointer-events: none;
+  }
+  .hero-panel {
+    position: relative;
+    isolation: isolate;
+    /* Resurf proportion: 960 x 605 on their site, same ratio here so the shot
+       and the panels around it keep the same silhouette at any width. */
+    aspect-ratio: 2632 / 1658;
+    border-radius: clamp(10px, .9vw, 12px);
+    overflow: hidden;
+    /* macOS 26 Tahoe light wallpaper behind the shot, cropped to the panel's
+       2632 x 1658 box so the showcase reads as the Mac desktop the app sits on. */
+    background: #668DC3 url("/images/hero-backdrop.webp") center / cover no-repeat;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35),
+                0 1px 2px rgba(8, 24, 44, .12),
+                0 42px 90px -54px rgba(8, 24, 44, .6);
+  }
+  /* The active screenshot sits centred on the wallpaper like an open Mac
+     window. The frame keeps a 16:10 box so swapping shots never shifts the
+     layout, and cropping for the odd 16:9 shot is only a few pixels. */
+  .hero-slides {
+    position: absolute;
+    inset: 0;
+    animation: hero-frame-in 1s cubic-bezier(.16, 1, .3, 1) .42s backwards;
+  }
+  .hero-frame {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 84%;
+    aspect-ratio: 2632 / 1658;
+    margin: 0;
+    /* --slide moves the window across the backdrop. */
+    transform: translate(calc(-50% + var(--slide, 112%)), -50%);
+    border-radius: clamp(6px, .8vw, 10px);
+    overflow: hidden;
+    background: #FFFFFF;
+    box-shadow: 0 2px 6px rgba(8, 24, 44, .18), 0 40px 80px -34px rgba(8, 24, 44, .6);
+    transition: transform .7s cubic-bezier(.32, .72, 0, 1);
+  }
+  #hero-frame-a { --slide: 0%; }
+  #hero-frame-video { --slide: 0%; }
+  .hero-frame img,
+  .hero-frame video {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .hero-frame video { background: #000000; }
+
+  /* Prev/next over the panel, Resurf-style glass circles. */
+  .hero-nav {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 999px;
+    color: var(--ink);
+    background: rgba(255, 255, 255, .88);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 1px 2px rgba(8, 24, 44, .14), 0 10px 22px -10px rgba(8, 24, 44, .45);
+    cursor: pointer;
+    transition: background-color .2s ease, scale .15s var(--ease-out);
+  }
+  .hero-nav--prev { left: 16px; }
+  .hero-nav--next { right: 16px; }
+  .hero-nav:hover { background: #FFFFFF; }
+  .hero-nav:active { scale: .94; }
+  @media (max-width: 640px) { .hero-nav { display: none; } }
+
+  /* Caption under the panel: names the active screen and says what it does. */
+  .hero-caption { max-width: 40rem; margin: 24px auto 0; text-align: center; font-size: 16px; line-height: 1.55; color: var(--muted); text-wrap: balance; }
+  .hero-caption b { font-weight: 500; color: var(--ink); }
+
+  /* Screenshot slider: five large cards on desktop, four on laptops, three on
+     tablets and one big card plus a peek on phones. It scrolls and snaps,
+     arrows sit outside the track, and the sides fade where more screens wait. */
+  .hero-thumbs-wrap { display: flex; align-items: center; margin-top: 8px; }
+
+  /* Resurf's strip: small, fixed-size cards left aligned under the panel with
+     20px gutters, so six or seven screens read at once instead of five
+     oversized ones. */
+  .hero-thumbs {
+    --gap: 20px;
+    display: flex;
+    gap: var(--gap);
+    padding: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--fade-start, 0px), #000 calc(100% - var(--fade-end, 0px)), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 var(--fade-start, 0px), #000 calc(100% - var(--fade-end, 0px)), transparent);
+  }
+  @media (prefers-reduced-motion: reduce) { .hero-thumbs { scroll-behavior: auto; } }
+  .hero-thumbs::-webkit-scrollbar { display: none; }
+  .hero-thumb {
+    flex: 0 0 170px;
+    aspect-ratio: 16 / 10;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #FFFFFF;
+    cursor: pointer;
+    scroll-snap-align: start;
+    outline: 2px solid transparent;
+    outline-offset: 4px;
+    box-shadow: 0 1px 2px rgba(8, 24, 44, .10), 0 14px 28px -18px rgba(8, 24, 44, .5);
+    transition: outline-color .2s ease, transform .45s var(--ease-out), box-shadow .3s ease;
+  }
+  .hero-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .hero-thumb[aria-selected="true"] { outline-color: var(--accent); }
+  .hero-thumb:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(8, 24, 44, .12), 0 16px 26px -16px rgba(8, 24, 44, .5); }
+  .hero-thumb:focus-visible { outline-color: var(--accent); }
+  .hero-thumb[aria-selected="true"]:hover { transform: translateY(-2px); }
+
+  @media (max-width: 1100px) { .hero-thumbs { --gap: 16px; } .hero-thumb { flex-basis: 154px; } }
+  @media (max-width: 900px) { .hero-thumb { flex-basis: 140px; } }
+
+
+  /* Phones: shorter panel, and the slider runs edge to edge with one big card
+     and a peek of the next. Arrows give way to swiping. */
+  @media (max-width: 760px) {
+    .hero-panel { border-radius: 10px; }
+    .hero-frame { width: 86%; border-radius: 8px; }
+    .hero-caption { margin-top: 16px; font-size: 14px; }
+    .hero-thumbs-wrap { margin-top: 4px; }
+    .hero-thumbs {
+      --gap: 12px;
+      margin-inline: -16px;
+      padding: 12px 16px;
+    }
+    .hero-thumb { flex-basis: 132px; }
+  }
+
+  /* MacBook-style frame around the hero shot: dark bezel = display surround,
+     silver base with a hinge notch underneath. */
+  .laptop {
+    position: relative;
+    isolation: isolate;
+    --lid-pad: clamp(5px, .6vw, 9px);
+    --lid-r: clamp(18px, 2.1vw, 28px);
+    --base-h: 12px;
+  }
+  /* The lid has four equal corners, so its bottom corners lift off the base.
+     This silver plane sits behind those corners and fills the white notch. */
+  .laptop::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: var(--base-h);
+    height: calc(var(--lid-r) + 6px);
+    z-index: -1;
+    background: linear-gradient(180deg, #232825, #0E1210);
+    pointer-events: none;
+  }
+  /* A soft floor shadow under the device, independent of the base edge. */
+  .laptop::after {
+    content: "";
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    bottom: -14px;
+    height: clamp(20px, 3vw, 42px);
+    z-index: -2;
+    border-radius: 50%;
+    background: radial-gradient(50% 50% at 50% 50%, rgba(5, 38, 28, .2), rgba(5, 38, 28, 0) 72%);
+    filter: blur(10px);
+    pointer-events: none;
+  }
+  .laptop-lid {
+    position: relative;
+    padding: var(--lid-pad);
+    border-radius: var(--lid-r);
+    background: linear-gradient(180deg, #252927, #0d100f);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14),
+                0 34px 70px -56px rgba(20, 32, 24, .4);
+  }
+  .laptop .laptop-lid > .media {
+    border: 0;
+    box-shadow: none;
+    /* Fallback only, data-src media carry their own source aspect inline, so a
+       1.82:1 video isn't forced into a 16:10 box and cropped. */
+    aspect-ratio: 16 / 10;
+    /* Rounded where it meets the lid at the top; the screen/video bottom edge is
+       deliberately square. */
+    border-radius: calc(var(--lid-r) - var(--lid-pad)) calc(var(--lid-r) - var(--lid-pad)) 0 0;
+    overflow: hidden;
+  }
+  /* Framed screens fill the display exactly; the frame's aspect ratio comes from
+     the media itself (see the aspect-ratio style on each figure / the loader), so
+     nothing is cropped. */
+  .laptop .laptop-lid > .media > img,
+  .laptop .laptop-lid > .media > video {
+    object-fit: cover;
+    object-position: center;
+  }
+  .laptop .laptop-lid > .media.center > img,
+  .laptop .laptop-lid > .media.center > video { object-position: center; }
+  .laptop-base {
+    position: relative;
+    height: var(--base-h);
+    margin: 0 -1.4%;
+    border-radius: 5px 5px 0 0;
+    background: linear-gradient(180deg, #1E2421, #101412 55%, #0A0D0C);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08),
+                0 1px 0 rgba(0, 0, 0, .25),
+                0 18px 30px -26px rgba(5, 38, 28, .45);
+  }
+  .laptop-base::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 72px;
+    height: 4px;
+    border-radius: 0 0 6px 6px;
+    background: rgba(255, 255, 255, .08);
+  }
+  /* Isometric pose for the card art: tilted while out of view, settles flat as it
+     enters. Only added by JS, so reduced-motion users just get the flat state. */
+  .iso {
+    transform: perspective(1400px) rotateX(15deg) rotateY(-11deg) rotateZ(1.5deg) translateY(14px);
+    transform-origin: 50% 100%;
+    transition: transform 1.05s cubic-bezier(.16, 1, .3, 1);
+    will-change: transform;
+  }
+  .iso.is-flat {
+    transform: perspective(1400px) rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateY(0);
+  }
+
+  .section { padding-top: clamp(112px, 13vw, 176px); }
+
+  /* Shared entrance for the sections below the hero: a short rise + blur,
+     staggered 50ms per item. Marketing motion can be slower than UI feedback. */
+  .rise {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    filter: blur(6px);
+    transition:
+      opacity 500ms var(--ease-out) var(--d, 0ms),
+      transform 600ms var(--ease-out) var(--d, 0ms),
+      filter 500ms var(--ease-out) var(--d, 0ms);
+  }
+  .rise.is-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+  @keyframes faq-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Section header: grid on desktop, eyebrow spans full width, title left,
+     paragraph beside it. Paragraph stays left-aligned at every breakpoint. */
+  .sec-head { display: grid; row-gap: 40px; column-gap: 56px; align-items: center; }
+  .sec-head > .lede { max-width: 44ch; margin-top: 12px; }
+  @media (min-width: 768px) {
+    .sec-head { grid-template-columns: fit-content(55%) minmax(0, 1fr); column-gap: 320px; }
+    .sec-head > .eyebrow { grid-column: 1 / -1; }
+    .sec-head > .lede { max-width: none; margin-top: 0; }
+  }
+
+  .intro-title { font-weight: 600; font-size: clamp(28px, 3.6vw, 48px); line-height: 1.2; letter-spacing: -0.032em; color: var(--muted); text-wrap: pretty; }
+  .intro-title .hl { color: var(--ink); }
+  .pillars { display: grid; gap: 56px; margin-top: clamp(48px, 6vw, 80px); }
+  @media (min-width: 768px) { .pillars { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; } }
+  @media (min-width: 1024px) { .pillars { gap: 48px; } }
+  .pillar-art { aspect-ratio: 4 / 3; position: relative; transform: perspective(1000px) translate3d(var(--mx, 0px), calc(var(--py, 0px) + var(--my, 0px)), 0) scale(var(--s, 1)) rotateX(calc(var(--brx, 0deg) + var(--rx, 0deg))) rotateY(calc(var(--bry, 0deg) + var(--ry, 0deg))); transform-origin: 50% 62%; will-change: transform; }
+  /* Private card: signals leaving the lock, stacks of dashes sliding along each
+     rail (a comet), plus a slow radar ping from the centre. */
+  .pulse { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .pulse-meteor { stroke-dasharray: 6 100; animation: pulse-meteor 3.4s linear infinite; }
+  @keyframes pulse-meteor { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -100; } }
+  .pulse-ping { transform-box: fill-box; transform-origin: center; animation: pulse-ping 3.4s cubic-bezier(.2, .7, .3, 1) infinite; }
+  @keyframes pulse-ping { 0% { transform: scale(.3); opacity: .5; } 70% { opacity: 0; } 100% { transform: scale(1.6); opacity: 0; } }
+  /* Linear-style figure caption: tiny label, then a hairline running to the edge. */
+  .pillar .fig { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+  .pillar .fig::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  /* Section motion, Linear-style: content rises out of a soft blur, the artwork
+     wipes up inside it, and each card drifts at a slightly different rate. */
+  .reveal { opacity: 0; transform: translate3d(0, 26px, 0); filter: blur(8px); }
+  .reveal.is-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+    transition: opacity .8s cubic-bezier(.16, 1, .3, 1),
+                transform .95s cubic-bezier(.16, 1, .3, 1),
+                filter .8s cubic-bezier(.16, 1, .3, 1);
+    transition-delay: var(--d, 0ms);
+  }
+  .pillar-art.reveal-clip { clip-path: inset(0 0 100% 0); }
+  .pillar-art.reveal-clip.is-in {
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 1s cubic-bezier(.16, 1, .3, 1);
+    transition-delay: var(--d, 0ms);
+  }
+  .pillar-art svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .pillar-art svg * { vector-effect: non-scaling-stroke; }
+  /* Visual card: the stacked planes lift apart on hover, staggered per layer , 
+     the same idea as Linear's purposeLift, using --l and --d on each group. */
+  .pillar-art .lift { transition: transform .5s cubic-bezier(.16, 1, .3, 1); transition-delay: var(--d, 0ms); }
+  .pillar-art:hover .lift { transform: translateY(var(--l, 0px)); }
+  /* "Yours" fan: everything turns around the hub, so the five swatches open and
+     extend from the fixed centre instead of lifting away and binding together. */
+  .pillar-art--fan .lift { transform-origin: 200px 246px; }
+  .pillar-art--fan:hover .lift { transform: rotate(var(--fan, 0deg)) scale(var(--grow, 1)); }
+  .pillar-art--fan .fan-hub { transform-origin: 200px 246px; transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
+  .pillar-art--fan:hover .fan-hub { transform: scale(1.35); }
+  .pillar h3 { margin-top: 24px; font-size: 19px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
+  .pillar p { margin-top: 12px; font-size: 16px; line-height: 1.55; color: var(--muted); }
+
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 20px; border-radius: 12px; background: var(--accent); color: var(--accent-ink); font-weight: 500; font-size: 15px; transition: background-color .15s ease, transform 140ms var(--ease-out); }
+  .btn:active { transform: scale(.97); }
+  @media (hover: hover) and (pointer: fine) {
+    .btn:hover { background: var(--accent-hover); }
+  }
+  .btn-quiet { display: inline-flex; align-items: center; height: 46px; padding: 0 20px; border-radius: 12px; background: var(--accent-soft); color: var(--accent-strong); font-weight: 500; font-size: 15px; box-shadow: inset 0 0 0 1px rgba(19, 128, 59, .10); transition: background-color .15s ease, transform 140ms var(--ease-out); }
+  .btn-quiet:active { transform: scale(.97); }
+  @media (hover: hover) and (pointer: fine) {
+    .btn-quiet:hover { background: var(--accent-soft-hover); }
+  }
+
+  /* Hero CTAs, Atlas-style hover: the label slides left while an arrow wipes
+     in from the right (blur + scale), and a leading icon fades out. */
+  .cta-arrow { position: relative; overflow: hidden; }
+  .cta-arrow .cta-label { display: inline-block; --cta-shift: -14px; transition: transform 300ms cubic-bezier(.4, 0, .2, 1); }
+  .cta-arrow.has-icon { gap: 8px; }
+  .cta-arrow.has-icon .cta-label { --cta-shift: -24px; }
+  .cta-arrow .cta-icon,
+  .cta-arrow .cta-arrow-icon { display: inline-flex; align-items: center; justify-content: center; flex: none; transition: transform 300ms cubic-bezier(.4, 0, .2, 1), opacity 300ms cubic-bezier(.4, 0, .2, 1), filter 300ms cubic-bezier(.4, 0, .2, 1); }
+  .cta-arrow .cta-arrow-icon { position: absolute; right: 14px; opacity: 0; filter: blur(8px); transform: translateX(100%) scaleX(.5); }
+  @media (hover: hover) and (pointer: fine) {
+    .cta-arrow:hover .cta-label { transform: translateX(var(--cta-shift)); }
+    .cta-arrow:hover .cta-icon { opacity: 0; filter: blur(8px); transform: translateX(-100%) scaleX(.5); }
+    .cta-arrow:hover .cta-arrow-icon { opacity: 1; filter: blur(0); transform: translateX(0) scaleX(1); }
+  }
+  .cta-arrow:focus-visible .cta-label { transform: translateX(var(--cta-shift)); }
+  .cta-arrow:focus-visible .cta-icon { opacity: 0; filter: blur(8px); transform: translateX(-100%) scaleX(.5); }
+  .cta-arrow:focus-visible .cta-arrow-icon { opacity: 1; filter: blur(0); transform: translateX(0) scaleX(1); }
+
+  /* Hero CTAs sit a touch wider so the hover arrow clears the rounded edge.
+     The header CTA is the same primary button at the same size. */
+  .hero-cta .btn,
+  .hero-cta .btn-quiet,
+  #site-head .btn { min-width: 160px; padding-inline: 22px; justify-content: center; }
+
+  /* Same component, one step larger for the footer's closing panel. */
+  .cta-lg { height: 50px; padding-inline: 26px; font-size: 16px; min-width: 170px; justify-content: center; }
+  @media (max-width: 480px) {
+    .foot-panel-foot .cta-lg { flex: 1 1 100%; }
+  }
+  .btn-sm { display: inline-flex; align-items: center; height: 34px; padding: 0 14px; border-radius: 10px; font-size: 13.5px; font-weight: 500; background: var(--accent-soft); color: var(--accent-strong); box-shadow: inset 0 0 0 1px rgba(19, 128, 59, .10); transition: background-color .15s ease, transform 140ms var(--ease-out); }
+  .btn-sm:active { transform: scale(.97); }
+  @media (hover: hover) and (pointer: fine) {
+    .btn-sm:hover { background: var(--accent-soft-hover); }
+  }
+
+  .appicon { border-radius: 23%; background: url("/images/vista-icon.svg") center / cover no-repeat; overflow: hidden; flex: none; }
+
+  .media { position: relative; overflow: hidden; border-radius: var(--r-card); background: var(--stage); border: 1px solid var(--line); box-shadow: 0 1px 2px rgba(20, 32, 24, .04), 0 32px 64px -44px rgba(20, 32, 24, .32); max-width: 100%; }
+  .media.sm { border-radius: var(--r-card); }
+  .media.has-media { background: transparent; }
+  .media.is-video { border-radius: var(--r-card); }
+  .media.sm.is-video { border-radius: var(--r-card); }
+  .media > img, .media > video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  /* Clips whose own ratio is slightly off get a common 16:10 frame. */
+  .media.fit { aspect-ratio: 16 / 10; }
+  .fade { -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent); mask-image: linear-gradient(to bottom, #000 82%, transparent); }
+
+  .ph { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 24px; text-align: center; }
+  .ph::before { content: ""; position: absolute; inset: 12px; border: 1px dashed var(--line-strong); border-radius: 10px; pointer-events: none; }
+  .media.sm .ph::before { inset: 10px; border-radius: 8px; }
+  .ph svg { color: var(--faint); margin-bottom: 4px; }
+  .ph b { font-size: 14px; font-weight: 500; color: var(--ink); }
+  .ph span { font-size: 13px; color: var(--muted); max-width: 42ch; }
+  .ph em { font-style: normal; font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; }
+
+  button.vbtn { position: absolute; right: 14px; bottom: 14px; width: 34px; height: 34px; border-radius: 999px; display: grid; place-items: center; color: var(--ink); background: rgba(246, 250, 245, .85); box-shadow: 0 0 0 1px var(--line); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); cursor: pointer; opacity: 0; transition: opacity 200ms var(--ease-out), transform 140ms var(--ease-out); }
+  .fade button.vbtn { top: 14px; bottom: auto; }
+  .media:hover button.vbtn, button.vbtn:focus-visible, .media.is-paused button.vbtn { opacity: 1; }
+  @media (hover: none) { button.vbtn { opacity: 1; } }
+  @media (hover: hover) and (pointer: fine) {
+    .media:hover button.vbtn { transform: scale(1.04); }
+  }
+  button.vbtn:active { transform: scale(.94); }
+
+  .cue, .badge { position: absolute; display: inline-flex; align-items: center; gap: 8px; color: var(--ink); background: rgba(252, 252, 251, .92); box-shadow: 0 0 0 1px var(--line), 0 10px 24px -14px rgba(5, 38, 28, .4); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); font-size: 13px; font-weight: 500; pointer-events: none; }
+  .cue { left: 50%; bottom: 16px; padding: 5px 12px 5px 5px; border-radius: 12px; opacity: 0; transform: translate(-50%, 6px); transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out); }
+  .cue.on { opacity: 1; transform: translate(-50%, 0); }
+  .cue kbd { min-width: 28px; height: 28px; padding: 0 8px; display: inline-grid; place-items: center; border-radius: 8px; background: #FFFFFF; box-shadow: 0 0 0 1px var(--line-strong), 0 1px 0 var(--line-strong); font: 600 14px/1 var(--font); }
+  .badge { left: 16px; bottom: 16px; height: 30px; padding: 0 12px 0 10px; border-radius: 999px; gap: 6px; font-size: 12.5px; }
+  .badge svg { color: var(--accent); }
+  @media (max-width: 560px) { .cue { display: none; } .badge { left: 10px; bottom: 10px; } }
+
+  /* Keyboard section: the arrow key that was just pressed lights up as the clip
+     moves down (and then back up) through the sidebar. Timings come from
+     data-steps on the figure, so the pills stay in sync with the loop. */
+  .keycue { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px 5px 5px; border-radius: 12px; color: var(--ink); background: rgba(252, 252, 251, .92); box-shadow: 0 0 0 1px var(--line), 0 10px 24px -14px rgba(5, 38, 28, .4); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); font-size: 13px; font-weight: 500; pointer-events: none; }
+  .keycue kbd { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: #FFFFFF; box-shadow: 0 0 0 1px var(--line-strong), 0 1px 0 var(--line-strong); font: 600 14px/1 var(--font); color: var(--ink); transition: background-color 120ms ease, color 120ms ease, transform 120ms var(--ease-out), box-shadow 120ms ease; }
+  .keycue kbd.is-on { background: var(--accent); color: var(--accent-ink); box-shadow: inset 0 1px 2px rgba(5, 38, 28, .3); transform: translateY(1px); }
+  .keycue-label { min-width: 176px; padding-right: 2px; white-space: nowrap; }
+  /* Phones get the caption under the laptop instead of the in-screen pill. */
+  @media (max-width: 560px) { .keycue { display: none; } }
+
+  .keys-note { margin-top: 18px; text-align: center; font-size: 14.5px; font-weight: 500; letter-spacing: -0.01em; color: var(--muted); }
+
+  kbd.key { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 7px; margin: 0 2px; border-radius: 7px; background: #FFFFFF; box-shadow: 0 0 0 1px var(--line-strong), 0 1px 0 var(--line-strong); font: 600 14px/1 var(--font); color: var(--ink); vertical-align: 1px; }
+
+  .sup-art { aspect-ratio: 16 / 10; border: 1px solid var(--line); border-radius: var(--r-card); overflow: hidden; }
+  .sup-art svg { display: block; width: 100%; height: 100%; }
+  .sup-art img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .sup-art svg text { font-family: var(--font); }
+  .sup-art.is-4x3 { aspect-ratio: 4 / 3; }
+
+  /* Make it yours, crops of the real product art (folder05.png, Colors.png, Icons.png).
+     Swatches are clipped to circles; icons sit on a white screenshot, so multiply
+     drops the white and leaves the glyph, with no panel behind either. */
+  .cz { display: grid; place-items: center; padding: 16px; }
+  .sup-art .cz-folder { width: auto; height: 112px; object-fit: contain; }
+  .sup-art .cz-folder.is-large { height: 168px; }
+  .cz-tile { display: block; width: 52px; height: 52px; }
+  .cz-grid { display: grid; grid-template-columns: repeat(2, 52px); gap: 14px; justify-content: center; }
+  /* Single specimen per column: one gradient, one folder, one icon. */
+  .sup-art .cz-single { display: block; width: auto; height: 168px; max-width: 100%; object-fit: contain; }
+  .sup-art .cz-single.is-icon { height: 160px; }
+
+  .stat { display: flex; align-items: baseline; gap: 10px; font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--muted); }
+  .stat b { font-size: 32px; font-weight: 600; letter-spacing: -0.04em; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  .fact { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--r-card); background: var(--surface); font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink); }
+  .fact svg { color: var(--accent); flex: none; }
+
+  /* FAQ rows: a hairline under every question, and a real height transition
+     so opening an answer never snaps the content below it. */
+  #faq details { border-bottom: 1px solid var(--line); }
+  details > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px 0; font-size: 17px; font-weight: 500; transition: color 160ms ease; }
+  @media (hover: hover) and (pointer: fine) {
+    details > summary:hover { color: var(--accent-strong); }
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary .pm { width: 18px; height: 18px; flex: none; color: var(--faint); transition: transform 220ms var(--ease-out), color 160ms ease; }
+  @media (hover: hover) and (pointer: fine) {
+    details > summary:hover .pm { color: var(--accent); }
+  }
+  details[open] summary .pm { transform: rotate(45deg); }
+  details p { padding: 10px 0 26px; color: var(--muted); font-size: 16px; line-height: 1.55; max-width: 60ch; }
+  .faq-panel { overflow: hidden; }
+  details[open] .faq-panel > p { animation: faq-in 240ms var(--ease-out) both; }
+  /* Pricing, a poster, not a table. The field keeps the dot pattern, the accent
+     ticket is the only solid block, and a cropped $19 anchors the composition. */
+  .price-poster {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin-top: clamp(40px, 5vw, 60px);
+    padding: clamp(28px, 4vw, 56px);
+    padding-bottom: clamp(190px, 23vw, 320px);
+    border: 1px solid var(--line);
+    border-radius: clamp(20px, 2.2vw, 28px);
+    background: var(--stage);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(5, 38, 28, .04), 0 40px 80px -60px rgba(5, 38, 28, .45);
+  }
+  .price-poster::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(rgba(5, 38, 28, .45) 1px, transparent 1.2px);
+    background-size: 16px 16px;
+    opacity: .3;
+    -webkit-mask-image: radial-gradient(130% 90% at 80% 105%, #000 12%, transparent 68%);
+    mask-image: radial-gradient(130% 90% at 80% 105%, #000 12%, transparent 68%);
+    pointer-events: none;
+  }
+  .price-poster-head {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 24px;
+    align-items: end;
+  }
+  @media (min-width: 900px) {
+    .price-poster-head { grid-template-columns: minmax(0, 1.1fr) minmax(300px, .9fr); gap: clamp(40px, 6vw, 96px); }
+  }
+  .price-eyebrow {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+  }
+  .price-title {
+    margin: 16px 0 0;
+    font-size: clamp(42px, 5.4vw, 74px);
+    font-weight: 600;
+    letter-spacing: -.05em;
+    line-height: .96;
+    color: var(--ink);
+  }
+  .price-heading-side { max-width: 36ch; }
+  @media (min-width: 900px) {
+    .price-heading-side { margin-left: auto; padding-bottom: 4px; }
+  }
+  .price-lede {
+    margin: 0;
+    font-size: clamp(15px, 1.3vw, 17px);
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .price-signs { display: flex; align-items: center; gap: 14px; margin: 18px 0 0; color: var(--faint); }
+  .price-sign-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .price-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: clamp(32px, 4vw, 48px);
+    margin-top: clamp(36px, 4.4vw, 60px);
+  }
+  @media (min-width: 900px) {
+    .price-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(340px, .8fr);
+      gap: clamp(40px, 5vw, 80px);
+      align-items: stretch;
+    }
+  }
+  .price-kicker {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .price-sub {
+    margin: 14px 0 0;
+    font-size: clamp(28px, 3.2vw, 42px);
+    font-weight: 600;
+    letter-spacing: -.04em;
+    line-height: 1.04;
+    color: var(--ink);
+  }
+  .price-copy {
+    max-width: 46ch;
+    margin: 16px 0 0;
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .price-features {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(24px, 3vw, 40px);
+    margin: clamp(26px, 3vw, 36px) 0 0;
+    padding: 0;
+  }
+  .price-features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .price-features svg { flex: none; color: var(--accent); }
+  @media (max-width: 519px) {
+    .price-features { grid-template-columns: minmax(0, 1fr); }
+  }
+  .price-local {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: clamp(24px, 3vw, 32px) 0 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .price-local svg { flex: none; margin-top: 1px; color: var(--accent); }
+
+  /* The ticket: the price card, lifted off the poster with a soft shadow. */
+  .price-ticket {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(24px, 2.6vw, 34px);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(5, 38, 28, .04), 0 30px 60px -36px rgba(5, 38, 28, .3);
+  }
+  .price-ticket-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .price-ticket-name { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+  @media (max-width: 340px) {
+    .price-ticket-top { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .price-ticket-name { font-size: 14px; }
+    .price-ticket-tag { padding: 0 10px; font-size: 10px; }
+  }
+  .price-ticket-tag {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+    white-space: nowrap;
+    height: 26px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+  }
+  .price-ticket-band { display: flex; align-items: center; gap: 16px; margin-top: clamp(18px, 2.2vw, 24px); }
+  .price-ticket-dots {
+    flex: 1;
+    height: 24px;
+    background-image: radial-gradient(rgba(5, 38, 28, .3) 1px, transparent 1.2px);
+    background-size: 11px 11px;
+    opacity: .75;
+    -webkit-mask-image: linear-gradient(90deg, #000 25%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 25%, transparent 100%);
+  }
+  .price-ticket-arrow { flex: none; width: 34px; height: 34px; color: var(--faint); }
+  .price-ticket-price { display: flex; align-items: baseline; gap: 14px; margin-top: clamp(18px, 2.4vw, 28px); }
+  .price-ticket-num {
+    font-size: clamp(64px, 7vw, 92px);
+    font-weight: 600;
+    letter-spacing: -.06em;
+    line-height: .88;
+    font-variant-numeric: tabular-nums;
+  }
+  .price-ticket-was { font-size: clamp(17px, 1.6vw, 20px); color: var(--faint); font-variant-numeric: tabular-nums; }
+  .price-ticket-note { max-width: 32ch; margin: 14px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+  .price-ticket-actions { display: flex; flex-direction: column; gap: 10px; margin-top: auto; padding-top: clamp(24px, 3vw, 36px); }
+  .price-ticket-buy {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 50px;
+    padding: 0 18px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: 15px;
+    font-weight: 600;
+    transition: background-color .15s ease, transform 140ms var(--ease-out);
+  }
+  .price-ticket-buy:active { transform: scale(.97); }
+  .price-ticket-buy svg { flex: none; transition: transform 250ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .price-ticket-buy:hover { background: var(--accent-hover); }
+    .price-ticket-buy:hover svg { transform: translateX(4px); }
+  }
+  .price-ticket-trial {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 46px;
+    border-radius: 12px;
+    box-shadow: inset 0 0 0 1px var(--line-strong);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    transition: background-color .15s ease, transform 140ms var(--ease-out);
+  }
+  .price-ticket-trial:active { transform: scale(.97); }
+  @media (hover: hover) and (pointer: fine) {
+    .price-ticket-trial:hover { background: var(--accent-soft); }
+  }
+  .price-ticket-fine {
+    margin: 16px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--faint);
+  }
+  .price-mega {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    z-index: 1;
+    margin: 0;
+    transform: translate(-50%, 22%);
+    font-size: clamp(180px, 33vw, 440px);
+    font-weight: 600;
+    letter-spacing: -.06em;
+    line-height: .8;
+    white-space: nowrap;
+    color: rgba(5, 38, 28, .16);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Footer, the page closes like a printed spread rather than a utility strip.
+     Two light panels carry the last message; underneath, a full-bleed band sets
+     the sitemap over a dot field and an oversized wordmark cropped by the band edge. */
+  .foot {
+    margin-top: clamp(24px, 4vw, 48px);
+    margin-left: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+    margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+  }
+  .foot-wrap {
+    width: 100%;
+    max-width: 1232px; /* 1200 of content + the 16px body gutters */
+    margin-inline: auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  /* Two-panel call to action */
+  .foot-panels { display: grid; gap: 12px; }
+  @media (min-width: 820px) {
+    .foot-panels { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  .foot-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: clamp(350px, 32vw, 460px);
+    padding: clamp(24px, 3.1vw, 42px);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    isolation: isolate;
+    box-shadow: 0 1px 2px rgba(5, 38, 28, .04), 0 30px 60px -44px rgba(5, 38, 28, .26);
+  }
+  .foot-panel--brand { background: var(--bg); color: var(--ink); }
+  .foot-panel--pattern { background: var(--bg); color: var(--ink); }
+  .foot-panel--brand::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(120% 100% at 12% 0%, rgba(19, 128, 59, .055), transparent 62%);
+    pointer-events: none;
+  }
+  .foot-panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+  .foot-eyebrow {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+  .foot-panel--brand .foot-eyebrow { color: var(--accent-strong); }
+  .foot-panel--pattern .foot-eyebrow { color: var(--faint); }
+  .foot-mark { width: 22px; height: 22px; flex: none; color: currentColor; }
+  .foot-panel--brand .foot-mark { color: var(--accent); }
+  .foot-panel--pattern .foot-mark { color: var(--faint); }
+  .foot-panel-title {
+    margin: clamp(28px, 3vw, 44px) 0 0;
+    font-size: clamp(30px, 3.3vw, 46px);
+    font-weight: 600;
+    letter-spacing: -.042em;
+    line-height: 1.02;
+  }
+  .foot-panel-rule { display: block; height: 1px; margin-top: clamp(20px, 2.2vw, 28px); background: var(--line-strong); }
+  .foot-panel-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    max-width: 36ch;
+    margin: auto 0 0;
+    padding-top: 34px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .foot-panel-note svg { flex: none; margin-top: 2px; color: var(--accent); }
+  .foot-panel-foot { display: flex; flex-direction: column; align-items: flex-start; margin-top: auto; padding-top: clamp(30px, 4vw, 48px); }
+  .foot-panel-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(10px, 1.4vw, 18px);
+    font-size: clamp(31px, 3.5vw, 52px);
+    font-weight: 600;
+    letter-spacing: -.05em;
+    line-height: 1;
+    color: var(--ink);
+    transition: transform 140ms var(--ease-out);
+  }
+  .foot-panel-cta:active { transform: scale(.99); }
+  .foot-panel-cta svg { flex: none; width: 1.02em; height: .6em; transition: transform 250ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .foot-panel-cta:hover svg { transform: translateX(8px); }
+  }
+  @media (max-width: 355px) {
+    .foot-panel-cta { font-size: 26px; gap: 8px; }
+  }
+  .foot-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 44px;
+    margin-top: clamp(22px, 2.4vw, 30px);
+    padding: 0 22px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 1px 2px rgba(5, 38, 28, .1);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    transition: background-color .2s ease, color .2s ease, transform 140ms var(--ease-out);
+  }
+  .foot-pill:active { transform: scale(.97); }
+  @media (hover: hover) and (pointer: fine) {
+    .foot-pill:hover { background: var(--accent-hover); color: var(--accent-ink); }
+  }
+
+  /* Full-bleed sitemap band */
+  .foot-band {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin-top: clamp(10px, 1.4vw, 16px);
+    padding-top: clamp(48px, 5.4vw, 76px);
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--muted);
+  }
+  /* Dot field, faded in toward the crop. */
+  .foot-band::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(rgba(5, 38, 28, .45) 1px, transparent 1.2px);
+    background-size: 15px 15px;
+    opacity: .3;
+    -webkit-mask-image: linear-gradient(180deg, transparent 32%, #000 100%);
+    mask-image: linear-gradient(180deg, transparent 32%, #000 100%);
+    pointer-events: none;
+  }
+  .foot-band-inner {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 40px;
+    padding-bottom: clamp(140px, 20vw, 280px);
+  }
+  @media (min-width: 768px) {
+    .foot-band-inner {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: clamp(48px, 8vw, 120px);
+      padding-bottom: clamp(190px, 19vw, 300px);
+    }
+  }
+  .foot-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -.025em;
+    color: var(--ink);
+  }
+  .foot-desc {
+    max-width: 34ch;
+    margin-top: 16px;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .foot-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+  @media (min-width: 768px) {
+    .foot-links { grid-template-columns: repeat(2, minmax(150px, auto)); gap: clamp(56px, 7vw, 104px); }
+  }
+  .foot-col { padding-top: 7px; }
+  .foot-kicker {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .foot-col ul { list-style: none; display: grid; gap: 11px; margin: 15px 0 0; padding: 0; }
+  .foot-col a {
+    font-size: 14px;
+    color: var(--muted);
+    padding-bottom: 1px;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0 1px;
+    transition: background-size .25s cubic-bezier(.16, 1, .3, 1), color .15s ease;
+  }
+  .foot-col a:active { opacity: .6; }
+  @media (hover: hover) and (pointer: fine) {
+    .foot-col a:hover { color: var(--ink); background-size: 100% 1px; }
+  }
+  .foot-mega {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    z-index: 1;
+    margin: 0;
+    transform: translate(-50%, 24%);
+    font-size: clamp(150px, 33vw, 430px);
+    font-weight: 600;
+    letter-spacing: -.06em;
+    line-height: .8;
+    white-space: nowrap;
+    color: rgba(5, 38, 28, .16);
+    pointer-events: none;
+    user-select: none;
+  }
+  @media (min-width: 768px) {
+    .foot-mega { transform: translate(-50%, 27%); }
+  }
+  .foot-bottom {
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+  }
+  .foot-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding: 18px 0 clamp(22px, 2.6vw, 32px);
+    font-size: 12.5px;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .foot-bar-left { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 0; }
+  .foot-bar-right { display: inline-flex; align-items: center; gap: 24px; margin-left: auto; }
+  .foot-top { display: inline-flex; align-items: center; gap: 6px; color: var(--faint); transition: color .15s ease, transform 140ms var(--ease-out); }
+  .foot-top:active { transform: scale(.97); }
+  .foot-top svg { transition: transform 220ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .foot-top:hover { color: var(--ink); }
+    .foot-top:hover svg { transform: translateY(-2px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Keep quick color/opacity feedback; remove movement and decorative loops. */
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .pulse-meteor, .pulse-ping, .iso { animation: none !important; }
+    .iso, .rise, .reveal, .pillar-art.reveal-clip,
+    .btn:active, .btn-quiet:active, .btn-sm:active,
+    .price-ticket-buy:active, .price-ticket-trial:active, .foot-pill:active,
+    .foot-panel-cta:active, .foot-top:active, button.vbtn, button.vbtn:active {
+      transform: none !important;
+    }
+    .rise, .reveal, .pillar-art.reveal-clip {
+      opacity: 1 !important;
+      filter: none !important;
+      clip-path: none !important;
+    }
+    .btn, .btn-quiet, .btn-sm, .price-ticket-buy,
+    .price-ticket-trial, .foot-pill, .foot-col a, .foot-top,
+    details > summary {
+      transition-duration: .15s !important;
+    }
+  }
