@@ -1,3 +1,5 @@
+import { PolarBuyButton } from "@/components/PolarBuyButton";
+
 export function SiteFooter() {
   return (
 <footer className="foot" id="foot">
@@ -33,12 +35,12 @@ export function SiteFooter() {
         <span className="foot-panel-rule" aria-hidden="true"></span>
         <div className="foot-panel-foot">
           <div className="flex flex-wrap gap-3">
-            <a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" className="btn cta-arrow cta-lg" data-polar-checkout data-polar-checkout-theme="light">
+            <PolarBuyButton className="btn cta-arrow cta-lg">
               <span className="cta-label">Buy now for $19</span>
               <span className="cta-arrow-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12h16m-6-6 6 6-6 6" /></svg>
               </span>
-            </a>
+            </PolarBuyButton>
             <a href="https://vistaformac.com/Vista.zip" download="Vista.zip" className="btn-quiet cta-arrow has-icon cta-lg">
               <span className="cta-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14" /></svg>

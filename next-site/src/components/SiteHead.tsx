@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
+import { PolarBuyButton } from "@/components/PolarBuyButton";
+
 /**
  * The live site's header: hidden on arrival, slides in once the page is scrolled
  * past ~80px, and leaves again at the top. Same markup and classes as the live
@@ -62,12 +64,7 @@ export function SiteHead() {
             </a>
           </nav>
           <div className="flex items-center gap-2">
-            <a
-              href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH"
-              className="btn cta-arrow"
-              data-polar-checkout
-              data-polar-checkout-theme="light"
-            >
+            <PolarBuyButton className="btn cta-arrow">
               <span className="cta-label">Buy now for $19</span>
               <span className="cta-arrow-icon" aria-hidden="true">
                 <svg
@@ -83,7 +80,7 @@ export function SiteHead() {
                   <path d="M4 12h16m-6-6 6 6-6 6" />
                 </svg>
               </span>
-            </a>
+            </PolarBuyButton>
           </div>
         </div>
       </div>

@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import Script from "next/script";
 
-import { PolarCheckout } from "@/components/PolarCheckout";
+import { PolarEmbed } from "@/components/PolarBuyButton";
 
 import "./globals.css";
 
@@ -131,16 +130,9 @@ export default function RootLayout({
       </head>
       <body>
         {children}
-        {/* Polar embedded checkout: `data-auto-init` wires every
-            [data-polar-checkout] trigger on the page, same as the live site.
-            PolarCheckout re-runs Polar.init() because the embed arrives after
-            DOMContentLoaded. */}
-        <Script
-          src="https://cdn.jsdelivr.net/npm/@polar-sh/checkout@latest/dist/embed.global.js"
-          strategy="afterInteractive"
-          data-auto-init=""
-        />
-        <PolarCheckout />
+        {/* Polar embedded checkout: loads embed.global.js with data-auto-init and
+            re-runs Polar's init() because the script arrives after DOMContentLoaded. */}
+        <PolarEmbed />
         <script
           type="application/ld+json"
           // Static, build-time JSON built from our own constants.

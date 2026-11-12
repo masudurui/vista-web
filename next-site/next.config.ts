@@ -3,16 +3,25 @@ import type { NextConfig } from "next";
 const isDev = process.env.NODE_ENV === "development";
 
 /**
- * Polar's embedded checkout: the loader comes from jsDelivr, and the overlay it
- * opens talks to Polar's own origins. Only those hosts are added.
+ * Polar's embedded checkout: the loader comes from jsDelivr, the overlay it
+ * opens talks to Polar's origins, and the card fields render inside Stripe's
+ * frames. Only the hosts those pieces need are added.
  */
 const POLAR_SCRIPT = "https://cdn.jsdelivr.net";
-const POLAR_FRAMES = ["https://buy.polar.sh", "https://polar.sh"];
+const POLAR_FRAMES = [
+  "https://buy.polar.sh",
+  "https://polar.sh",
+  "https://js.stripe.com",
+  "https://hooks.stripe.com",
+];
 const POLAR_CONNECT = [
   "https://api.polar.sh",
   "https://buy.polar.sh",
   "https://polar.sh",
+  "https://api.stripe.com",
+  "https://merchant-ui-api.stripe.com",
 ];
+const POLAR_IMAGES = ["https://buy.polar.sh", "https://polar.sh"];
 
 /**
  * Security headers applied to every route.
@@ -36,7 +45,7 @@ function contentSecurityPolicy(): string {
     `script-src ${scriptSrc.join(" ")}`,
     // The live page loads Inter as a fallback for non-Apple platforms.
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    `img-src 'self' data: blob: ${POLAR_FRAMES.join(" ")}`,
+    `img-src 'self' data: blob: ${POLAR_IMAGES.join(" ")}`,
     "media-src 'self'",
     "font-src 'self' data: https://fonts.gstatic.com",
     `connect-src ${connectSrc.join(" ")}`,

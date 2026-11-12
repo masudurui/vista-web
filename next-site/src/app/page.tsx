@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { FreeTools } from "@/components/FreeTools";
+import { PolarBuyButton } from "@/components/PolarBuyButton";
 import { HeroGallery } from "@/components/HeroGallery";
 import { Reveal } from "@/components/Reveal";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -24,12 +25,12 @@ export default function Page() {
         <p className="hero-lede mt-8 md:mt-10"><span className="hl">Vista shows your files as thumbnails, sorted by kind.</span> Give folders their own color and shape, find photos by what’s in them, and search the words inside screenshots and PDFs.</p>
         <div className="hero-cta mt-10 md:mt-12 flex flex-wrap items-center gap-x-5 gap-y-4">
           <div className="flex flex-wrap gap-3">
-            <a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" className="btn cta-arrow" data-polar-checkout data-polar-checkout-theme="light">
+            <PolarBuyButton className="btn cta-arrow">
               <span className="cta-label">Buy now for $19</span>
               <span className="cta-arrow-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12h16m-6-6 6 6-6 6" /></svg>
               </span>
-            </a>
+            </PolarBuyButton>
             <a href="https://vistaformac.com/Vista.zip" download="Vista.zip" className="btn-quiet cta-arrow has-icon">
               <span className="cta-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14" /></svg>
@@ -540,9 +541,9 @@ export default function Page() {
             <p className="price-ticket-note">One payment. Early bird for the first 300 licenses, then $29.</p>
 
             <div className="price-ticket-actions">
-              <a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" className="price-ticket-buy" data-polar-checkout data-polar-checkout-theme="light">Buy for $19
+              <PolarBuyButton className="price-ticket-buy">Buy for $19
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h13M13 6.5 18.5 12 13 17.5" /></svg>
-              </a>
+              </PolarBuyButton>
               <a href="https://vistaformac.com/Vista.zip" download="Vista.zip" className="price-ticket-trial">Download free trial</a>
             </div>
             <p className="price-ticket-fine">Try free for 7 days first · macOS 14 or later</p>
