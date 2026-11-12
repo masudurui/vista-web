@@ -179,7 +179,7 @@ export default function Page() {
             </svg>
           </div>
           <h3>Visual Search</h3>
-          <p>Describe a photo or video (“horse on the mountain”) and Vista finds it. On-device model, one-time download, then fully offline. Results show as “Visual match.”</p>
+          <p>Describe a photo or video (“horse on the mountain”) and Vista finds it. The AI model is a one-time download of about 110 MB; after that, every search runs on your Mac, offline. Results show as “Visual match.”</p>
         </li>
 
         <li className="pillar">
@@ -324,7 +324,7 @@ export default function Page() {
       <div className="sec-head">
         <p className="eyebrow">Visual Search</p>
         <h2 id="visual-search-title" className="h2">Find photos by<br /> what’s in them.</h2>
-        <p className="lede">Type what you see, like “horse”, “mountain” or “red car”, and Vista finds the photos and videos that match, even when the filename says nothing. It runs on an AI model that lives on your Mac: one download, then every search is offline.</p>
+        <p className="lede">Type what you see, like “horse”, “mountain” or “red car”, and Vista finds the matching photos and videos, even when the filename says nothing. It runs on an AI model that lives on your Mac: a one-time download of about 110 MB, and after that every search works offline — photos, videos, screenshots, PDFs and the text inside files.</p>
       </div>
 
       <div className="laptop mt-10 md:mt-14">
@@ -339,9 +339,9 @@ export default function Page() {
       </div>
 
       <ul className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mt-6">
-        <li className="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3" /><circle cx="9" cy="10" r="1.6" /><path d="M4.8 17.2 9.6 12l3.9 3.9 2.6-2.2 3.1 3.5" /></svg>Finds photos and videos</li>
-        <li className="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v9.5M8.5 10 12 13.5 15.5 10M5 19.5h14" /></svg>One-time model download</li>
-        <li className="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3 4.8 5.9v5.6c0 4.2 3 7.5 7.2 8.5 4.2-1 7.2-4.3 7.2-8.5V5.9z" /><path d="M9.2 11.9 11.2 14l3.8-3.8" /></svg>Searches stay offline</li>
+        <li className="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3" /><circle cx="9" cy="10" r="1.6" /><path d="M4.8 17.2 9.6 12l3.9 3.9 2.6-2.2 3.1 3.5" /></svg>Photos and videos</li>
+        <li className="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v9.5M8.5 10 12 13.5 15.5 10M5 19.5h14" /></svg>One-time 110 MB model</li>
+        <li className="fact"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3 4.8 5.9v5.6c0 4.2 3 7.5 7.2 8.5 4.2-1 7.2-4.3 7.2-8.5V5.9z" /><path d="M9.2 11.9 11.2 14l3.8-3.8" /></svg>Then searches work offline</li>
       </ul>
     </section>
 
@@ -455,7 +455,7 @@ export default function Page() {
       <div className="sec-head">
         <p className="eyebrow">Privacy</p>
         <h2 id="privacy-title" className="h2">Works offline.<br /> Stays on your Mac.</h2>
-        <p className="lede">Indexing, text recognition, duplicate detection and Visual Search run entirely on your Mac, with or without Wi‑Fi. The AI model is downloaded once; after that, nothing leaves the device.</p>
+        <p className="lede">Indexing, text recognition, duplicate detection and Visual Search run entirely on your Mac, with or without Wi‑Fi. Visual Search needs a one-time model download of about 110 MB; after that, search across photos, videos, screenshots, PDFs and the text inside files works offline, and nothing leaves the device.</p>
       </div>
 
       <div className="laptop mt-10 md:mt-14">
@@ -571,11 +571,11 @@ export default function Page() {
           </details>
           <details>
             <summary>Does anything leave my Mac?<svg className="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></summary>
-            <div className="faq-panel"><p>No. Search, text recognition, duplicate detection and Visual Search run on your Mac. There’s no account and no cloud.</p></div>
+            <div className="faq-panel"><p>No. Search, text recognition, duplicate detection and Visual Search run on your Mac. The only network request is the one-time Visual Search model download, about 110 MB; there’s no account and no cloud.</p></div>
           </details>
           <details>
             <summary>How does Visual Search work?<svg className="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></summary>
-            <div className="faq-panel"><p>Vista uses an AI model that runs on your Mac. You describe what you are looking for, like “horse”, “mountain” or “red car”, and it matches photos and videos by what’s in them, not by filename. The model is downloaded once when you set it up; after that, every search works with no internet.</p></div>
+            <div className="faq-panel"><p>Vista uses an AI model that runs on your Mac. You describe what you are looking for, like “horse”, “mountain” or “red car”, and it matches photos and videos by what’s in them, not by filename; text inside screenshots and PDFs is searchable too. The model is a one-time download of about 110 MB when you set it up, and after that every search works offline.</p></div>
           </details>
           <details>
             <summary>Which themes does Vista have?<svg className="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></summary>
@@ -587,7 +587,7 @@ export default function Page() {
           </details>
           <details>
             <summary>Does Vista work without internet?<svg className="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></summary>
-            <div className="faq-panel"><p>Yes. Visual Search needs its model downloaded once; after that everything runs locally, and your license works without a connection.</p></div>
+            <div className="faq-panel"><p>Yes. Visual Search needs its one-time model download of about 110 MB; after that everything runs locally, and your license works without a connection.</p></div>
           </details>
           <details>
             <summary>Is this a subscription?<svg className="pm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></summary>

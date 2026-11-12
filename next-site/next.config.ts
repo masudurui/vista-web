@@ -1,12 +1,53 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
+/**
+ * Polar's embedded checkout: the loader comes from jsDelivr, and the overlay it
+ * opens talks to Polar's own origins. Only those hosts are added.
+ */
+const POLAR_SCRIPT = "https://cdn.jsdelivr.net";
+const POLAR_FRAMES = ["https://buy.polar.sh", "https://polar.sh"];
+const POLAR_CONNECT = [
+  "https://api.polar.sh",
+  "https://buy.polar.sh",
+  "https://polar.sh",
+];
+
 /**
  * Security headers applied to every route.
  *
  * `script-src` has to allow inline scripts because the App Router streams its
- * hydration payload inline; everything else is locked to the same origin. No
- * third-party scripts, fonts or images are used, so this list stays short.
+ * hydration payload inline. Development additionally needs `'unsafe-eval'` and
+ * websockets for React Refresh / Turbopack HMR — those are only ever added when
+ * NODE_ENV is "development", so the production policy stays strict.
  */
+function contentSecurityPolicy(): string {
+  const scriptSrc = ["'self'", "'unsafe-inline'", POLAR_SCRIPT];
+  const connectSrc = ["'self'", ...POLAR_CONNECT];
+
+  if (isDev) {
+    scriptSrc.push("'unsafe-eval'");
+    connectSrc.push("ws:", "wss:");
+  }
+
+  return [
+    "default-src 'self'",
+    `script-src ${scriptSrc.join(" ")}`,
+    // The live page loads Inter as a fallback for non-Apple platforms.
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    `img-src 'self' data: blob: ${POLAR_FRAMES.join(" ")}`,
+    "media-src 'self'",
+    "font-src 'self' data: https://fonts.gstatic.com",
+    `connect-src ${connectSrc.join(" ")}`,
+    `frame-src ${POLAR_FRAMES.join(" ")}`,
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "object-src 'none'",
+  ].join("; ");
+}
+
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
@@ -19,22 +60,7 @@ const securityHeaders = [
     key: "Strict-Transport-Security",
     value: "max-age=63072000; includeSubDomains; preload",
   },
-  {
-    key: "Content-Security-Policy",
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob:",
-      "media-src 'self'",
-      "font-src 'self' data:",
-      "connect-src 'self'",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "object-src 'none'",
-    ].join("; "),
-  },
+  { key: "Content-Security-Policy", value: contentSecurityPolicy() },
 ];
 
 const nextConfig: NextConfig = {

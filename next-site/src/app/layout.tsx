@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import Script from "next/script";
+
+import { PolarCheckout } from "@/components/PolarCheckout";
 
 import "./globals.css";
 
@@ -7,7 +10,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://vistaformac.com"),
   title: "Vista: a visual file browser for macOS",
   description:
-    "Vista is a file browser for macOS that shows your files as thumbnails, sorted by kind. Style every folder, search photos by what’s in them with an on-device AI model, and find the text inside screenshots and PDFs. Everything runs on your Mac.",
+    "Vista is a file browser for macOS that shows your files as thumbnails, sorted by kind. Style every folder, find photos by what’s in them with an on-device AI model (a one-time 110 MB download, then offline), and search the text inside screenshots and PDFs. Everything runs on your Mac.",
   applicationName: "Vista",
   generator: "Next.js",
   keywords: [
@@ -86,10 +89,11 @@ const structuredData = {
   url: "https://vistaformac.com/",
   image: "https://vistaformac.com/images/og-image.png",
   description:
-    "A visual file browser for macOS that shows files as thumbnails sorted by kind, lets you style every folder, and finds photos and videos by what’s in them with an AI model that runs on your Mac. Everything stays on the device.",
+    "A visual file browser for macOS that shows files as thumbnails sorted by kind, lets you style every folder, and finds photos and videos by what’s in them with an AI model that runs on your Mac. The model is a one-time 110 MB download, then search works offline. Everything stays on the device.",
   featureList: [
     "Visual Search: describe a photo or video and find it by what’s in it",
-    "On-device AI model for Visual Search, downloaded once and then fully offline",
+    "Visual Search model: a one-time 110 MB download, then every search works offline",
+    "Offline search across photos, videos, screenshots, PDFs and the text inside files",
     "Thumbnails sorted by kind",
     "24 folder colors, 7 rounder folder styles and 31 icons",
     "Apply one folder style to all folders at once",
@@ -127,6 +131,16 @@ export default function RootLayout({
       </head>
       <body>
         {children}
+        {/* Polar embedded checkout: `data-auto-init` wires every
+            [data-polar-checkout] trigger on the page, same as the live site.
+            PolarCheckout re-runs Polar.init() because the embed arrives after
+            DOMContentLoaded. */}
+        <Script
+          src="https://cdn.jsdelivr.net/npm/@polar-sh/checkout@latest/dist/embed.global.js"
+          strategy="afterInteractive"
+          data-auto-init=""
+        />
+        <PolarCheckout />
         <script
           type="application/ld+json"
           // Static, build-time JSON built from our own constants.

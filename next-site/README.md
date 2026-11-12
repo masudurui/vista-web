@@ -41,27 +41,44 @@ pricing → FAQ → closing call to action → footer.
 Measured with headless Chrome against the live page and this build, comparing element
 geometry and computed type:
 
-| Width | Page height | Sections |
+| Width | Page height (live → clone) | Sections |
 | --- | --- | --- |
-| 1440 | 17179 px vs **17179 px** | all 13 identical in offset + height |
-| 768 | 15054 px vs **15054 px** | all 13 identical |
-| 390 | 15094 px vs **15094 px** | all 13 identical |
+| 1440 | 17179 → 17289 px | all 13 in the same order, identical x/width |
+| 768 | 15054 → 15563 px | all 13 in the same order |
+| 390 | 15094 → 15221 px | all 13 in the same order |
 
-Also identical: `h1`/`h2` font-size, weight, line-height, letter-spacing and colour; hero
-panel and window geometry; thumbnail size; pricing ticket; FAQ rows; footer bands.
-Console is clean (no hydration warnings), all 19 images load, and all 8 clips reach
-`readyState 4` and play when on screen.
+The clone runs 110–510 px taller depending on width, only because the Visual Search copy
+is longer by request (a one-time ~110 MB model download, then offline for photos, videos,
+screenshots, PDFs and the text inside files) and wraps onto more lines at tablet width.
+Layout, type, colour, radii, laptop frames, pricing ticket and footer bands still measure
+identically; no horizontal overflow at any of the three widths.
+
+## Fixes applied after the first clone
+
+1. **Visual Search / offline wording** — the same honest story everywhere (pillar,
+   section lede, the three chips, privacy lede, three FAQ answers, meta description and
+   JSON-LD): a one-time ~110 MB model download, then offline search across photos,
+   videos, screenshots, PDFs and the text inside files, everything on the Mac.
+2. **Hero slider direction** — the slide now mirrors the live implementation: the
+   incoming frame enters from the side you are travelling from (right for next, left for
+   previous), thumbnails jump to the correct slide with the right direction, and arrow
+   keys follow. The gallery markup and styling are unchanged.
+3. **Polar checkout** — the embed is loaded (`@polar-sh/checkout` from jsDelivr, same
+   URL as the live site) and `PolarCheckout` calls `Polar.EmbedCheckout.init()` once the
+   embed arrives, because `data-auto-init` only fires on `DOMContentLoaded`, which has
+   already passed when Next injects the script. Buy buttons keep their `href` and
+   `data-polar-checkout*` attributes, and the overlay opens in place like the live site.
+4. **Development CSP** — `next.config.ts` builds the policy per environment:
+   development adds `'unsafe-eval'` and `ws:`/`wss:` (React Refresh, Turbopack HMR);
+   production ships the strict list. CSP now also allows exactly what the clone needs:
+   jsDelivr + Polar for checkout, and `fonts.googleapis.com` / `fonts.gstatic.com` for
+   the Inter fallback.
 
 ## Deliberate differences
 
-- **Polar checkout embed is not loaded.** The live page pulls
-  `cdn.jsdelivr.net/npm/@polar-sh/checkout` to open an overlay; here the Buy buttons are
-  the same links with the same `data-polar-checkout` attributes, so they work as normal
-  navigations. Add that script (and allow `cdn.jsdelivr.net` in the CSP) to get the
-  overlay back.
 - **Media is copied into `public/images`** (~24 MB) so the app is self-contained and
   works offline; the live site reads the same files from `/images`.
 - **`/tools/`, `/privacy/`, `/compare/` and `Vista.zip`** point at the live domain — they
   are still served by the static site.
-- **Nothing invented**: copy, prices and FAQ answers are the live ones, and the
+- **Nothing invented**: copy, prices and FAQ answers come from the live site, and the
   folder-preview widget that was removed from the live page is absent here too.

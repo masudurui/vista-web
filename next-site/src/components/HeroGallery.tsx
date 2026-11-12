@@ -5,28 +5,48 @@ import {
   useEffect,
   useRef,
   useState,
-  type CSSProperties,
   type KeyboardEvent,
 } from "react";
 
 import { shots } from "@/lib/media";
 
 const SLIDE = 112;
-const DURATION = 720;
+const DURATION = 700;
 
 /**
- * The hero product tour, rebuilt to the live DOM: a wallpaper panel with a
- * 16:10 window that slides between screenshots, the caption underneath, and the
- * thumbnail strip with its edge fade. Arrow keys work on the tablist.
+ * The hero product tour, matching the live page's DOM and slide behaviour:
+ * the incoming frame starts on the side you are travelling from (right for
+ * next, left for previous), the outgoing frame leaves the other way, and the
+ * swap commits once the incoming screenshot has loaded.
  */
 export function HeroGallery() {
-  const [index, setIndex] = useState(0);
-  const [incoming, setIncoming] = useState<number | null>(null);
-  const [slides, setSlides] = useState({ a: 0, b: SLIDE });
-  const stripRef = useRef<HTMLDivElement | null>(null);
-  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  /** What the caption and the tablist show — updates on click, like the live page. */
+  const [selected, setSelected] = useState(0);
 
-  const shot = shots[index];
+  const indexRef = useRef(0); // the screenshot currently on screen
+  const aFig = useRef<HTMLElement | null>(null);
+  const bFig = useRef<HTMLElement | null>(null);
+  const aImg = useRef<HTMLImageElement | null>(null);
+  const bImg = useRef<HTMLImageElement | null>(null);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const stripRef = useRef<HTMLDivElement | null>(null);
+  const token = useRef(0);
+  const commit = useRef<(() => void) | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reduce = useRef(false);
+
+  const shot = shots[selected];
+
+  useEffect(() => {
+    reduce.current = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    [],
+  );
 
   const updateFade = useCallback(() => {
     const strip = stripRef.current;
@@ -45,46 +65,124 @@ export function HeroGallery() {
     return () => window.removeEventListener("resize", updateFade);
   }, [updateFade]);
 
-  /* Commit the slide once the incoming frame has landed. */
-  useEffect(() => {
-    if (incoming === null) return;
-    const dir = incoming > index ? 1 : -1;
-    const frame = requestAnimationFrame(() => {
-      setSlides({ a: -dir * SLIDE, b: 0 });
-    });
-    const commit = setTimeout(() => {
-      setIndex(incoming);
-      setIncoming(null);
-      setSlides({ a: 0, b: SLIDE });
-    }, DURATION);
-    return () => {
-      cancelAnimationFrame(frame);
-      clearTimeout(commit);
-    };
-    // Only react to a new incoming frame; index is read inside.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [incoming]);
+  /** Park both frames with transitions off: A showing the current shot. */
+  const resetFrames = useCallback(() => {
+    const a = aFig.current;
+    const b = bFig.current;
+    if (!a || !b) return;
+    a.style.transition = "none";
+    b.style.transition = "none";
+    a.style.setProperty("--slide", "0%");
+    b.style.setProperty("--slide", `${SLIDE}%`);
+    bImg.current?.removeAttribute("src");
+    void a.offsetWidth;
+    a.style.transition = "";
+    b.style.transition = "";
+  }, []);
+
+  const finish = useCallback(
+    (target: number) => {
+      const next = shots[target];
+      if (aImg.current) {
+        aImg.current.src = next.src;
+        aImg.current.alt = next.alt;
+      }
+      indexRef.current = target;
+      commit.current = null;
+      if (timer.current) {
+        clearTimeout(timer.current);
+        timer.current = null;
+      }
+      resetFrames();
+    },
+    [resetFrames],
+  );
+
+  const show = useCallback(
+    (target: number) => {
+      const a = aFig.current;
+      const b = bFig.current;
+      const bI = bImg.current;
+      if (!a || !b || !bI) return;
+      if (target === indexRef.current) return;
+
+      // Let any in-flight slide land first, so the direction is measured
+      // against the frame that is actually on screen.
+      if (commit.current) commit.current();
+
+      const next = shots[target];
+      const dir = target > indexRef.current ? 1 : -1; // >=: next, <: previous
+      const mine = ++token.current;
+
+      if (reduce.current) {
+        finish(target);
+        return;
+      }
+
+      bI.src = next.src;
+      bI.alt = "";
+
+      const run = () => {
+        if (mine !== token.current) return;
+        const inFrom = dir >= 0 ? `${SLIDE}%` : `-${SLIDE}%`;
+        const outTo = dir >= 0 ? `-${SLIDE}%` : `${SLIDE}%`;
+
+        a.style.transition = "none";
+        b.style.transition = "none";
+        b.style.setProperty("--slide", inFrom);
+        a.style.setProperty("--slide", "0%");
+        void b.offsetWidth;
+        a.style.transition = "";
+        b.style.transition = "";
+        b.style.setProperty("--slide", "0%");
+        a.style.setProperty("--slide", outTo);
+
+        const done = () => {
+          if (commit.current !== done) return;
+          finish(target);
+        };
+        commit.current = done;
+        timer.current = setTimeout(done, DURATION + 40);
+      };
+
+      let started = false;
+      const start = () => {
+        if (started || mine !== token.current) return;
+        started = true;
+        run();
+      };
+
+      if (bI.complete && bI.naturalWidth > 0) start();
+      else {
+        bI.onload = start;
+        bI.onerror = start;
+        setTimeout(start, 140);
+      }
+    },
+    [finish],
+  );
 
   const select = useCallback(
     (next: number, focus = true) => {
       const target = ((next % shots.length) + shots.length) % shots.length;
-      if (incoming === null && target !== index) setIncoming(target);
+      setSelected(target);
+      show(target);
       if (focus) tabRefs.current[target]?.focus();
       tabRefs.current[target]?.scrollIntoView({
         block: "nearest",
         inline: "center",
       });
     },
-    [index, incoming],
+    [show],
   );
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "ArrowRight") {
       event.preventDefault();
-      select(index + 1);
+      select(selected + 1);
     } else if (event.key === "ArrowLeft") {
       event.preventDefault();
-      select(index - 1);
+      select(selected - 1);
     } else if (event.key === "Home") {
       event.preventDefault();
       select(0);
@@ -93,8 +191,6 @@ export function HeroGallery() {
       select(shots.length - 1);
     }
   };
-
-  const nextShot = incoming === null ? null : shots[incoming];
 
   return (
     <div className="hero-showcase" data-hero-gallery>
@@ -105,32 +201,22 @@ export function HeroGallery() {
         aria-labelledby={shot.id}
       >
         <div className="hero-slides">
-          <figure
-            className="hero-frame"
-            id="hero-frame-a"
-            style={{ "--slide": `${slides.a}%` } as CSSProperties}
-          >
+          <figure className="hero-frame" id="hero-frame-a" ref={aFig}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               id="hero-shot"
-              src={shot.src}
-              width={shot.width}
-              height={shot.height}
-              fetchPriority={index === 0 ? "high" : "auto"}
+              ref={aImg}
+              src={shots[0].src}
+              width={shots[0].width}
+              height={shots[0].height}
+              fetchPriority="high"
               decoding="async"
-              alt={shot.alt}
+              alt={shots[0].alt}
             />
           </figure>
-          <figure
-            className="hero-frame"
-            id="hero-frame-b"
-            aria-hidden="true"
-            style={{ "--slide": `${slides.b}%` } as CSSProperties}
-          >
-            {nextShot ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img id="hero-shot-next" src={nextShot.src} alt="" decoding="async" />
-            ) : null}
+          <figure className="hero-frame" id="hero-frame-b" aria-hidden="true" ref={bFig}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img id="hero-shot-next" ref={bImg} alt="" decoding="async" />
           </figure>
           <figure className="hero-frame" id="hero-frame-video" hidden>
             <video
@@ -148,7 +234,7 @@ export function HeroGallery() {
           type="button"
           className="hero-nav hero-nav--prev"
           aria-label="Previous screenshot"
-          onClick={() => select(index - 1, false)}
+          onClick={() => select(selected - 1, false)}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M15 5l-7 7 7 7" />
@@ -158,7 +244,7 @@ export function HeroGallery() {
           type="button"
           className="hero-nav hero-nav--next"
           aria-label="Next screenshot"
-          onClick={() => select(index + 1, false)}
+          onClick={() => select(selected + 1, false)}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M9 5l7 7-7 7" />
@@ -189,20 +275,14 @@ export function HeroGallery() {
               className="hero-thumb"
               id={item.id}
               role="tab"
-              aria-selected={i === index}
+              aria-selected={i === selected}
               aria-controls="hero-panel"
               aria-label={item.name}
-              tabIndex={i === index ? 0 : -1}
+              tabIndex={i === selected ? 0 : -1}
               onClick={() => select(i, false)}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={item.thumb}
-                width={480}
-                height={300}
-                alt=""
-                decoding="async"
-              />
+              <img src={item.thumb} width={480} height={300} alt="" decoding="async" />
             </button>
           ))}
         </div>
@@ -210,3 +290,4 @@ export function HeroGallery() {
     </div>
   );
 }
+
