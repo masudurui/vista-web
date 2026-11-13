@@ -19,5 +19,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: path === "/tools/" ? 0.7 : 0.6,
     })),
+    {
+      url: `${site.url}/release-notes/`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${site.url}/compare/`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${site.url}/privacy/`,
+      lastModified,
+      changeFrequency: "yearly",
+      priority: 0.6,
+    },
+    {
+      url: `${site.url}/support/`,
+      lastModified,
+      changeFrequency: "yearly",
+      priority: 0.6,
+    },
   ];
 }

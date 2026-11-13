@@ -1,0 +1,133 @@
+/* Compare table. Mirrors assets/pages.css on the static site so both versions
+   of the page look and behave the same: a three-column table on desktop and
+   one card per feature on a phone. */
+
+.scroll {
+  margin-top: clamp(30px, 4vw, 44px);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: 0 1px 2px rgba(5, 38, 28, .04);
+}
+
+.table {
+  width: 100%;
+  min-width: 660px;
+  border-collapse: collapse;
+  font-size: 14.5px;
+  text-align: left;
+}
+
+.table thead th {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--stage);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.table thead th.vista { color: var(--accent-strong); }
+
+.table tbody th {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 500;
+  color: var(--ink);
+  vertical-align: top;
+  width: 30%;
+}
+
+.table tbody td {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  vertical-align: top;
+}
+
+.table tbody td.vista {
+  background: rgba(19, 128, 59, .045);
+  color: var(--ink);
+}
+
+.table tbody tr:last-child th,
+.table tbody tr:last-child td { border-bottom: 0; }
+
+.note {
+  margin: 12px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--faint);
+}
+
+.callout {
+  margin: 28px 0 0;
+  padding: 18px 20px;
+  max-width: 70ch;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--stage);
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.callout strong { color: var(--ink); }
+
+@media (max-width: 700px) {
+  /* Stack each feature as its own card so nothing is cut off on a phone. */
+  .scroll {
+    margin-top: 0;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+    box-shadow: none;
+  }
+
+  .table { display: block; min-width: 0; font-size: 15px; }
+  .table thead { display: none; }
+  .table tbody { display: grid; gap: 12px; }
+
+  .table tbody tr {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  .table tbody th {
+    display: block;
+    width: auto;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--stage);
+    font-weight: 600;
+  }
+
+  .table tbody td {
+    display: block;
+    padding: 12px 16px;
+    border-bottom: 0;
+  }
+
+  .table tbody td + td { border-top: 1px solid var(--line); }
+  .table tbody td.vista { background: rgba(19, 128, 59, .05); }
+
+  .table tbody td::before {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .table tbody td.vista::before { content: "Vista"; color: var(--accent-strong); }
+  .table tbody td.finder::before { content: "Finder"; }
+}

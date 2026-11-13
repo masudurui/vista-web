@@ -25,6 +25,10 @@ The goal here was fidelity, not a redesign, so the page *is* the live page:
 | `src/app/vista.css` | The live stylesheet, copied across unchanged (tokens, header, hero, laptop frames, section heads, pricing, FAQ, footer). Two asset URLs were made absolute (`/images/…`). |
 | `src/app/globals.css` | Tailwind v4 + a `@theme` bridge that maps the live tokens (`ink`, `muted`, `faint`, `line`, `accent`, `stage`…) to Tailwind utilities, plus two rules that reproduce the Play CDN's cascade order for `line-height`. |
 | `src/app/page.tsx` | The live `<main>` markup, converted 1:1 to JSX: same section order, same classes, same nesting, same copy. |
+| `src/app/release-notes/page.tsx` | The release notes page (`/release-notes/`): version and date header, what's new, fixes, pricing, and the download button, in the same design tokens. |
+| `src/app/privacy/page.tsx`, `src/app/support/page.tsx` | The App Store pages: the privacy policy and a support contact page, linked from every footer. |
+| `src/app/compare/page.tsx` | “Finder, or Vista?” — a three-column comparison table (Feature, Vista, Finder), rebuilt with the site's table styling and a stacked card layout on phones. |
+| `src/components/PageShell.tsx` | Header and footer shared by the secondary pages (release notes, privacy, support). |
 | `src/components/SiteHead.tsx` | Live header markup + the scroll behaviour (hidden at the top, `inert` while hidden, `--head-show-at` threshold). |
 | `src/components/HeroGallery.tsx` | Hero tour: wallpaper panel, sliding 16:10 window, caption, ten-thumbnail strip with edge fade, prev/next, arrow-key tablist. |
 | `src/components/VideoFigure.tsx` | The five clips the live page loads through its media loader: figure marked `is-video`, poster frame, keystroke cue, hover play/pause button, playback only while on screen. |
@@ -41,6 +45,16 @@ customization → search inside files → viewer → keyboard → Clean Up → t
 The Free tools section is the one addition: it is not on the live landing page, but the
 tools it lists are (they're served from `/tools/`), so the section was ported from
 `tools/index.html` with the same five tools, labels, hints and destinations.
+
+The release notes live on their own route at `/release-notes/`, linked from the footer.
+It is the page the Download button's release points to, and it also links back to the
+download and to `/#pricing`.
+
+`/privacy/` and `/support/` are the App Store pages: the privacy policy and the support
+contact (support@vistaformac.com). Both are linked from the footer of every page.
+
+`/compare/` is the Finder comparison — the same page the live site serves at the same
+URL, rebuilt here so every internal link resolves inside the app.
 
 ## Free tools (and how to add more)
 
@@ -113,7 +127,9 @@ identically; no horizontal overflow at any of the three widths.
 
 - **Media is copied into `public/images`** (~24 MB) so the app is self-contained and
   works offline; the live site reads the same files from `/images`.
-- **`/tools/`, `/privacy/`, `/compare/` and `Vista.zip`** point at the live domain — they
-  are still served by the static site.
+- **Every page runs inside this app** — `/tools/`, `/compare/`, `/privacy/` and
+  `/support/` — so the URLs match the static site without cross-domain links.
+- **`Vista.zip` ships in `public/`** so the Download buttons serve this app's copy of the
+  notarized build.
 - **Nothing invented**: copy, prices and FAQ answers come from the live site, and the
   folder-preview widget that was removed from the live page is absent here too.

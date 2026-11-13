@@ -8,6 +8,7 @@ import { Reveal } from "@/components/Reveal";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHead } from "@/components/SiteHead";
 import { VideoFigure } from "@/components/VideoFigure";
+import { site } from "@/lib/media";
 
 export default function Page() {
   return (
@@ -31,7 +32,7 @@ export default function Page() {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12h16m-6-6 6 6-6 6" /></svg>
               </span>
             </PolarBuyButton>
-            <a href="https://vistaformac.com/Vista.zip" download="Vista.zip" className="btn-quiet cta-arrow has-icon">
+            <a href={site.downloadUrl} download="Vista.zip" className="btn-quiet cta-arrow has-icon">
               <span className="cta-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14" /></svg>
               </span>
@@ -544,7 +545,7 @@ export default function Page() {
               <PolarBuyButton className="price-ticket-buy">Buy for $19
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h13M13 6.5 18.5 12 13 17.5" /></svg>
               </PolarBuyButton>
-              <a href="https://vistaformac.com/Vista.zip" download="Vista.zip" className="price-ticket-trial">Download free trial</a>
+              <a href={site.downloadUrl} download="Vista.zip" className="price-ticket-trial">Download free trial</a>
             </div>
             <p className="price-ticket-fine">Try free for 7 days first · macOS 14 or later</p>
           </div>
@@ -614,7 +615,7 @@ export default function Page() {
         <span className="appicon w-16 h-16" aria-hidden="true"></span>
         <h2 id="close-title" className="h2 mt-8">See what you have.</h2>
         <p className="lede mt-5">7 days free. No account needed.</p>
-        <a href="https://vistaformac.com/Vista.zip" download="Vista.zip" className="btn cta-arrow has-icon mt-9">
+        <a href={site.downloadUrl} download="Vista.zip" className="btn cta-arrow has-icon mt-9">
           <span className="cta-icon" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14" /></svg>
           </span>

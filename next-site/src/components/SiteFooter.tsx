@@ -1,4 +1,5 @@
 import { PolarBuyButton } from "@/components/PolarBuyButton";
+import { site } from "@/lib/media";
 
 export function SiteFooter() {
   return (
@@ -41,7 +42,7 @@ export function SiteFooter() {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12h16m-6-6 6 6-6 6" /></svg>
               </span>
             </PolarBuyButton>
-            <a href="https://vistaformac.com/Vista.zip" download="Vista.zip" className="btn-quiet cta-arrow has-icon cta-lg">
+            <a href={site.downloadUrl} download="Vista.zip" className="btn-quiet cta-arrow has-icon cta-lg">
               <span className="cta-icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14" /></svg>
               </span>
@@ -81,9 +82,11 @@ export function SiteFooter() {
           <p className="foot-kicker" id="foot-company">Company</p>
           <ul>
             <li><a href="#pricing">Pricing</a></li>
-            <li><a href="https://vistaformac.com/compare/">Compare with Finder</a></li>
+            <li><a href="/compare/">Compare with Finder</a></li>
             <li><a href="#faq">Questions</a></li>
-            <li><a href="https://vistaformac.com/privacy/">Privacy</a></li>
+            <li><a href="/privacy/">Privacy</a></li>
+            <li><a href="/support/">Support</a></li>
+            <li><a href="/release-notes/">Release notes</a></li>
             <li><a href="/tools/">Free tools</a></li>
           </ul>
         </nav>
@@ -96,7 +99,7 @@ export function SiteFooter() {
     <div className="foot-wrap">
       <div className="foot-bar">
         <p className="foot-bar-left">
-          <span>© 2026 Vista</span>
+          <span>© 2026 Vista for Mac</span>
           <span>macOS 14 Sonoma or later</span>
         </p>
         <div className="foot-bar-right">

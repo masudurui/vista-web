@@ -303,7 +303,7 @@ table.compare thead th {
   white-space: nowrap;
 }
 
-table.compare thead th:last-child { color: var(--accent-strong); }
+table.compare thead th.col-vista { color: var(--accent-strong); }
 
 table.compare tbody th {
   padding: 16px 18px;
@@ -311,7 +311,7 @@ table.compare tbody th {
   font-weight: 500;
   color: var(--ink);
   vertical-align: top;
-  width: 26%;
+  width: 30%;
 }
 
 table.compare tbody td {
@@ -321,7 +321,7 @@ table.compare tbody td {
   vertical-align: top;
 }
 
-table.compare tbody td:last-child {
+table.compare tbody td.col-vista {
   background: rgba(19, 128, 59, .045);
   color: var(--ink);
 }
@@ -377,9 +377,8 @@ table.compare tbody tr:last-child td { border-bottom: 0; }
     border-bottom: 0;
   }
   table.compare tbody td + td { border-top: 1px solid var(--line); }
-  table.compare tbody td:last-child { background: rgba(19, 128, 59, .05); color: var(--ink); }
+  table.compare tbody td.col-vista { background: rgba(19, 128, 59, .05); color: var(--ink); }
   table.compare tbody td::before {
-    content: "Finder";
     display: block;
     margin-bottom: 3px;
     font-size: 10.5px;
@@ -388,7 +387,8 @@ table.compare tbody tr:last-child td { border-bottom: 0; }
     text-transform: uppercase;
     color: var(--faint);
   }
-  table.compare tbody td:nth-of-type(2)::before { content: "Vista"; color: var(--accent-strong); }
+  table.compare tbody td.col-vista::before { content: "Vista"; color: var(--accent-strong); }
+  table.compare tbody td.col-finder::before { content: "Finder"; }
 }
 
 /* ---------- Footer ---------- */

@@ -3,9 +3,9 @@
 export const site = {
   url: "https://vistaformac.com",
   buyUrl:
-    "https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH",
-  /** The app binary is served by the live site; nothing is duplicated here. */
-  downloadUrl: "https://vistaformac.com/Vista.zip",
+    "https://buy.polar.sh/polar_cl_7UyQ6ez6Rg33eeY8r3EyC1KVhw6HkaqtusPx81HRmRo",
+  /** The notarized build ships in public/, so the button serves this app's copy. */
+  downloadUrl: "/Vista.zip",
   requirements: "macOS 14+",
 } as const;
 

@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Release notes | Vista</title>
+<meta name="description" content="What’s new in the latest version of Vista: Visual Search that runs on your Mac, text search inside more kinds of files, a calmer Clean Up, a Home you can arrange, and a simpler look.">
+<link rel="canonical" href="https://vistaformac.com/release-notes/">
+<meta name="theme-color" content="#FFFFFF">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Vista">
+<meta property="og:url" content="https://vistaformac.com/release-notes/">
+<meta property="og:title" content="Release notes | Vista">
+<meta property="og:description" content="What’s new in the latest version of Vista: Visual Search on your Mac, text search inside more files, a calmer Clean Up, a Home you can arrange, and a simpler look.">
+<meta property="og:image" content="https://vistaformac.com/images/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Release notes | Vista">
+<meta name="twitter:description" content="Visual Search, text search inside more files, a calmer Clean Up, and more. Everything in the latest version of Vista.">
+<meta name="twitter:image" content="https://vistaformac.com/images/og-image.png">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/svg+xml" href="/images/vista-icon.svg" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="stylesheet" href="/assets/pages.css">
+<style>
+/* Release notes: version header, feature cards, fixes and pricing. Built on the
+   same tokens and spacing as the other secondary pages. */
+
+.rel-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 14px;
+  margin-top: 26px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid var(--line);
+}
+
+.rel-version {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  color: var(--ink);
+}
+
+.rel-build {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--stage);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--faint);
+  vertical-align: 1px;
+}
+
+.rel-date {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 14px;
+  color: var(--faint);
+}
+
+.rel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 22px;
+  margin-top: 22px;
+}
+
+.rel-actions .btn { height: 44px; min-width: 0; }
+
+.rel-link {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--accent-strong);
+  text-decoration: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rel-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+}
+
+.rel-block { margin-top: clamp(46px, 6vw, 64px); }
+
+.rel-block-title {
+  margin: 0;
+  font-size: clamp(23px, 2.7vw, 29px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+}
+
+.rel-block-note {
+  margin: 8px 0 0;
+  max-width: 62ch;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.rel-grid {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+@media (min-width: 760px) {
+  .rel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+}
+
+.rel-card {
+  padding: 22px 24px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--bg);
+  box-shadow: 0 1px 2px rgba(5, 38, 28, .03);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rel-card:hover { border-color: var(--line-strong); }
+}
+
+.rel-card h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -.015em;
+  color: var(--ink);
+}
+
+.rel-card p {
+  margin: 8px 0 0;
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.rel-fixes {
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 6px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--bg);
+}
+
+.rel-fixes li {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.rel-fixes li:last-child { border-bottom: 0; }
+
+.rel-check {
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  color: var(--accent);
+}
+
+.rel-price {
+  margin-top: 22px;
+  padding: clamp(22px, 3vw, 28px);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-card);
+  background: var(--paper);
+}
+
+.rel-price p {
+  margin: 0;
+  max-width: 56ch;
+  font-size: clamp(16px, 1.7vw, 17px);
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.rel-price .rel-actions { margin-top: 20px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="page-head">
+  <div class="page-head-inner">
+    <a class="brand" href="/"><span class="appicon" aria-hidden="true"></span>Vista</a>
+    <nav class="page-nav" aria-label="Main">
+      <a href="/#customize">Features</a>
+      <a href="/#pricing">Pricing</a>
+      <a href="/compare/">Compare</a>
+      <a href="/tools/">Free tools</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/#faq">FAQ</a>
+    </nav>
+    <a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" class="btn" data-polar-checkout data-polar-checkout-theme="light">Buy now for $19</a>
+  </div>
+</header>
+
+<main id="main" class="page-main">
+  <p class="eyebrow">Release notes</p>
+  <h1 class="page-title">What’s new in Vista</h1>
+  <p class="lede">Visual Search that runs on your Mac, text search inside more kinds of files, a calmer Clean Up, and a Home screen you can arrange. Here is everything in the latest release.</p>
+
+  <div class="rel-meta">
+    <p class="rel-version">Version 1.0<span class="rel-build">Build 2</span></p>
+    <p class="rel-date">13 November 2026 · macOS 14 or later · 7-day free trial</p>
+  </div>
+
+  <div class="rel-actions">
+    <a class="btn" href="/Vista.zip" download="Vista.zip">Download Vista</a>
+    <a class="rel-link" href="#pricing">Pricing</a>
+  </div>
+
+  <section class="rel-block" aria-labelledby="new-title">
+    <h2 class="rel-block-title" id="new-title">New in this release</h2>
+
+    <div class="rel-grid">
+      <article class="rel-card">
+        <h3>Search by sight</h3>
+        <p>Describe a photo or video and Vista finds it. Visual Search runs on your Mac with a one-time model download, then works offline. Videos are checked using a few frames from each.</p>
+      </article>
+
+      <article class="rel-card">
+        <h3>Search inside more files</h3>
+        <p>Vista can now read words in images, PDFs, and documents — including plain text, Markdown, RTF, Word, and Pages. Results show the matching line and highlight it in the file. PDF matches jump to the right page. Vista also spots links, emails, phone numbers, dates, amounts, and codes.</p>
+      </article>
+
+      <article class="rel-card">
+        <h3>Smarter search</h3>
+        <p>Results start with a Best Match view and show snippets explaining why each file matched. Sort by relevance, date, name, size, or kind. Move through suggestions with the arrow keys, then press Return or Esc.</p>
+      </article>
+
+      <article class="rel-card">
+        <h3>A calmer Clean Up</h3>
+        <p>Suggestions are split into “Safe to clear” and “Your call,” with a plain reason and the space each will free. Preview files before they move, switch between grid and list, and review exact copies or look-alike photos. Nothing is deleted — files go to the Trash.</p>
+      </article>
+
+      <article class="rel-card">
+        <h3>Make Home yours</h3>
+        <p>Reorder folders, hide the ones you don’t need, and change a folder’s name, color, shape, or icon. Apply one folder’s style to all folders, with matching or varied colors. Undo anytime or restore the defaults.</p>
+      </article>
+
+      <article class="rel-card">
+        <h3>Move faster</h3>
+        <p>The sidebar now has a 3×3 grid for your most-used destinations, with arrow-key navigation. Open Vista from the menu bar, press g then a letter to jump to a section, / to search, or ? for the shortcut list. Quick Settings gives you fast access to theme, text search, and Visual Search.</p>
+      </article>
+
+      <article class="rel-card">
+        <h3>Better names</h3>
+        <p>For screenshots, photos, and PDFs, “Suggest a Name” builds a clearer name from the text inside, plus its date or source. Review and edit the suggestions before renaming, and undo the batch later.</p>
+      </article>
+
+      <article class="rel-card">
+        <h3>Clearer folder access</h3>
+        <p>If macOS blocks a folder, Vista explains what happened, links to Privacy &amp; Security settings, and lets you try again.</p>
+      </article>
+
+      <article class="rel-card">
+        <h3>A simpler look</h3>
+        <p>Sage is the new default. The theme picker is now Sage, White, and Dark. Dark has a softer charcoal background and off-white text.</p>
+      </article>
+    </div>
+  </section>
+  <section class="rel-block" aria-labelledby="fixes-title">
+    <h2 class="rel-block-title" id="fixes-title">Fixes</h2>
+
+    <ul class="rel-fixes">
+      <li>
+        <svg class="rel-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6.5 9.5 17 4 11.5"/></svg>
+        <span>TypeScript files are no longer mistaken for videos</span>
+      </li>
+      <li>
+        <svg class="rel-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6.5 9.5 17 4 11.5"/></svg>
+        <span>Folder watching no longer re-indexes dependency or build folders</span>
+      </li>
+      <li>
+        <svg class="rel-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6.5 9.5 17 4 11.5"/></svg>
+        <span>Deleted or moved files drop out of search more reliably</span>
+      </li>
+      <li>
+        <svg class="rel-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6.5 9.5 17 4 11.5"/></svg>
+        <span>PDFs with little or no readable text are retried instead of skipped permanently</span>
+      </li>
+      <li>
+        <svg class="rel-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6.5 9.5 17 4 11.5"/></svg>
+        <span>Undoing a move from the Trash no longer creates duplicate entries</span>
+      </li>
+      <li>
+        <svg class="rel-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6.5 9.5 17 4 11.5"/></svg>
+        <span>Search handles accents and punctuation more naturally</span>
+      </li>
+    </ul>
+  </section>
+
+  <section class="rel-block" id="pricing" aria-labelledby="pricing-title">
+    <h2 class="rel-block-title" id="pricing-title">Pricing</h2>
+
+    <div class="rel-price">
+      <p>Vista Pro is $19 for early users, then $29. Free trial is now 7 days.</p>
+      <div class="rel-actions">
+        <a class="btn" href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" data-polar-checkout data-polar-checkout-theme="light">Buy now for $19</a>
+        <a class="rel-link" href="/Vista.zip" download="Vista.zip">Download the free trial</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="page-foot">
+  <div class="page-foot-inner">
+    <div>
+      <a class="foot-lockup" href="/"><span class="appicon" aria-hidden="true"></span>Vista</a>
+      <p class="foot-desc">A visual file browser for macOS.<br>No account, no cloud, no tracking.</p>
+    </div>
+    <div class="foot-links">
+      <nav aria-labelledby="foot-product">
+        <p class="foot-kicker" id="foot-product">Product</p>
+        <ul>
+          <li><a href="/#customize">Features</a></li>
+          <li><a href="/#pricing">Pricing</a></li>
+          <li><a href="/#faq">Questions</a></li>
+        </ul>
+      </nav>
+      <nav aria-labelledby="foot-company">
+        <p class="foot-kicker" id="foot-company">Company</p>
+        <ul>
+          <li><a href="/compare/">Compare with Finder</a></li>
+          <li><a href="/privacy/">Privacy</a></li>
+          <li><a href="/support/">Support</a></li>
+          <li><a href="/release-notes/">Release notes</a></li>
+          <li><a href="/tools/">Free tools</a></li>
+          <li><a href="https://buy.polar.sh/polar_cl_TUK1YuJb0ImcyWnIdfuDXfaBeenBgx5fgmHdU2T5oTH" data-polar-checkout data-polar-checkout-theme="light">Buy Vista</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="foot-bar">
+    <p><span>© 2026 Vista for Mac</span><span>Not affiliated with Apple Inc.</span></p>
+    <p><a href="/">Back to home</a></p>
+  </div>
+</footer>
+
+<script defer data-auto-init src="https://cdn.jsdelivr.net/npm/@polar-sh/checkout@latest/dist/embed.global.js"></script>
+</body>
+</html>
